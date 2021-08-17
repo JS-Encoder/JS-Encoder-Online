@@ -1,0 +1,80 @@
+@import './base.scss';
+@import './common.scss';
+@import './mixin.scss';
+
+.no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+/* flex */
+.flex {
+  display: flex;
+}
+.in-flex {
+  display: inline-flex;
+}
+.flex-1 {
+  flex: 1;
+}
+.flex-clo {
+  flex-direction: column;
+}
+.flex-ai {
+  align-items: center;
+}
+.flex-end {
+  align-items: flex-end;
+}
+.flex-jcc {
+  justify-content: center;
+}
+.flex-jcb {
+  justify-content: space-between;
+}
+.flex-jca {
+  justify-content: space-around;
+}
+.flex-nw {
+  flex-wrap: nowrap;
+}
+.flex-w {
+  flex-wrap: wrap;
+}
+.flex-sh {
+  flex-shrink: 0;
+}
+
+/* text */
+.title-xl {
+  font-size: 34px;
+}
+.title-lg {
+  font-size: 28px;
+}
+.title-m {
+  font-size: 24px;
+}
+.title-sm {
+  font-size: 20px;
+}
+.title-xs {
+  font-size: 18px;
+}
+.text-m {
+  font-size: 16px;
+}
+.text-sm {
+  font-size: 14px;
+}
+.text-xs {
+  font-size: 12px;
+}

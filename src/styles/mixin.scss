@@ -1,0 +1,52 @@
+@mixin setTransition($el, $time, $fn) {
+  transition: $el $time $fn;
+  -moz-transition: $el $time $fn;
+  -webkit-transition: $el $time $fn;
+}
+
+@mixin keyframes($animationName) {
+  @-webkit-keyframes #{$animationName} {
+    @content;
+  }
+  @-moz-keyframes #{$animationName} {
+    @content;
+  }
+  @-o-keyframes #{$animationName} {
+    @content;
+  }
+  @keyframes #{$animationName} {
+    @content;
+  }
+}
+
+@mixin animation($name, $time, $delay, $fn, $status) {
+  animation: $name $time $delay $fn $status;
+  -moz-animation: $name $time $delay $fn $status;
+  -webkit-animation: $name $time $delay $fn $status;
+  -o-animation: $name $time $delay $fn $status;
+}
+
+/* responsible layout */
+@mixin screenXS {
+  @media screen and (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin screenSM {
+  @media screen and (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin screenMD {
+  @media screen and (min-width: 992px) {
+    @content;
+  }
+}
+
+@mixin screenLG {
+  @media screen and (min-width: 1200px) {
+    @content;
+  }
+}
