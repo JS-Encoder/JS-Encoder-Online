@@ -11,13 +11,33 @@ module.exports = {
   productionSourceMap: !IS_PROD,
   parallel: require('os').cpus().length > 1,
   pwa: {},
-  devServer: {},
+  devServer: {
+    proxy: {
+      '/githubApi': {
+        target: 'https://api.github.com',
+        secure: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/githubApi': '',
+        },
+      },
+      '/cdnJS': {
+        target: 'https://api.cdnjs.com/libraries',
+        secure: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/cdnJS': '',
+        },
+      }
+    },
+  },
 
   chainWebpack: (config) => {
     config.resolve.alias
       .set('@', resolve('src'))
       .set('@styles', resolve('src/styles'))
       .set('@assets', resolve('src/assets'))
+      .set('@service', resolve('src/service'))
       .set('@components', resolve('src/components'))
       .set('@views', resolve('src/views'))
       .set('@store', resolve('src/store'))
@@ -29,7 +49,7 @@ module.exports = {
     sourceMap: false,
     loaderOptions: {
       scss: {
-        additionalData: `@import "@styles/main.scss";`,
+        additionalData: `@import '@styles/main.scss';`,
       },
     },
   },
