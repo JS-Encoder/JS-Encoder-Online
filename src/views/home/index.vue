@@ -1,17 +1,17 @@
 <template>
-  <div id="home" class="flex">
+  <div id="home" class="d-flex">
     <div class="preview">
       <img class="preview1-img" src="http://picstore.lliiooiill.cn/preview1.svg?123123" alt="">
       <img class="preview2-img" src="http://picstore.lliiooiill.cn/preview2.svg?12312313" alt="">
     </div>
     <div class="main-content">
-      <div class="slogan flex flex-clo">
+      <div class="slogan d-flex flex-clo">
         <span class="slogan-1 title-xl">简洁易用，功能丰富的 WEB 编辑器</span>
         <span class="slogan-2 title-m">一个分享代码，共同学习的平台</span>
       </div>
       <div class="btn-opt">
-        <v-btn class="btn-create" dark x-large color="#1980ff">创建新实例</v-btn>
-        <v-btn class="btn-offline" dark x-large outlined color="#1980ff">前往离线版</v-btn>
+        <v-btn class="btn-create" x-large color="primary">创建新实例</v-btn>
+        <v-btn class="btn-offline" x-large outlined color="primary">前往离线版</v-btn>
       </div>
     </div>
   </div>
@@ -28,28 +28,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@include keyframes(fade-right) {
-  0% {
-    opacity: 0;
-    margin-left: 100px;
-  }
-  100% {
-    opacity: 1;
-    margin-left: 0;
-  }
-}
-
-@include keyframes(fade-left) {
-  0% {
-    opacity: 0;
-    margin-right: 100px;
-  }
-  100% {
-    opacity: 1;
-    margin-right: 0;
-  }
-}
-
 #home {
   height: 100%;
   position: relative;
