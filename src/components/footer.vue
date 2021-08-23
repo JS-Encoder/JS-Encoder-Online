@@ -1,17 +1,17 @@
 <template>
   <div id="footer" class="no-select">
-    <div class="footer-content flex">
+    <div class="footer-content d-flex">
       <div class="side-info flex-1">
-        <div class="logo flex flex-ai">
+        <div class="logo d-flex flex-ai">
           <img class="logo-img" src="../assets/logo/logo.svg" alt="">
           <span class="logo-content">JS Encoder</span>
         </div>
-        <div class="copyright-info flex flex-clo text-sm">
+        <div class="copyright-info d-flex flex-clo text-sm">
           <span class="copyright">Copyright © 2021 JS-Encoder lliiooiill</span>
           <span>黑ICP备19007665号-1</span>
         </div>
       </div>
-      <div class="footer-menu flex">
+      <div class="footer-menu d-flex">
         <ul class="menu-box" v-for="(curMenu, menuIndex) in footerMenu" :key="menuIndex">
           <li class="menu-title title-sm">{{curMenu.title}}</li>
           <li class="menu-item text-sm pointer" v-for="(item, index) in curMenu.children" :key="index">{{item.name}}
