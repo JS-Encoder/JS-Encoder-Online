@@ -1,3 +1,17 @@
+@mixin text-ellipsis() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@mixin texts-ellipsis($lineNumber: 3) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $lineNumber;
+  -webkit-box-orient: vertical;
+}
+
 @mixin setTransition($el, $time, $fn) {
   transition: $el $time $fn;
   -moz-transition: $el $time $fn;
@@ -28,25 +42,31 @@
 
 /* responsible layout */
 @mixin screenXS {
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 600px) {
     @content;
   }
 }
 
 @mixin screenSM {
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 600px) {
     @content;
   }
 }
 
 @mixin screenMD {
-  @media screen and (min-width: 992px) {
+  @media screen and (min-width: 960px) {
     @content;
   }
 }
 
 @mixin screenLG {
-  @media screen and (min-width: 1200px) {
+  @media screen and (min-width: 1264px) {
+    @content;
+  }
+}
+
+@mixin screenXL {
+  @media screen and (min-width: 1904px) {
     @content;
   }
 }

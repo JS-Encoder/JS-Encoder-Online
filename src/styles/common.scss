@@ -24,6 +24,7 @@ span {
 
 a {
   text-decoration: none;
+  color: inherit;
 }
 
 li {
@@ -36,4 +37,9 @@ img {
   image-rendering: -webkit-optimize-contrast; /*Webkit (non-standard naming) */
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: white;
+  box-shadow: 0 0 0px 1000px #1a1a1a inset !important;
 }

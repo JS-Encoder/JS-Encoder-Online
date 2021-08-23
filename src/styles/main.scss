@@ -1,6 +1,8 @@
 @import './base.scss';
 @import './common.scss';
 @import './mixin.scss';
+@import './variables.scss';
+@import './vuetify.scss';
 
 .no-select {
   -webkit-touch-callout: none;
@@ -16,7 +18,7 @@
 }
 
 /* flex */
-.flex {
+.d-flex {
   display: flex;
 }
 .in-flex {
@@ -30,6 +32,9 @@
 }
 .flex-ai {
   align-items: center;
+}
+.flex-start {
+  align-items: flex-start;
 }
 .flex-end {
   align-items: flex-end;
@@ -60,7 +65,7 @@
 .title-lg {
   font-size: 28px;
 }
-.title-m {
+.title-md {
   font-size: 24px;
 }
 .title-sm {
@@ -69,7 +74,7 @@
 .title-xs {
   font-size: 18px;
 }
-.text-m {
+.text-md {
   font-size: 16px;
 }
 .text-sm {
@@ -77,4 +82,73 @@
 }
 .text-xs {
   font-size: 12px;
+}
+.text-bold {
+  font-weight: bold;
+}
+.text-bolder {
+  font-weight: bolder;
+}
+.text-right {
+  text-align: right;
+}
+.text-primary {
+  color: $primary-1;
+}
+.text-describe {
+  color: $light-6;
+}
+
+/* 一些公共的keyframes动画 */
+@include keyframes(fade-right) {
+  0% {
+    opacity: 0;
+    margin-left: 100px;
+  }
+  100% {
+    opacity: 1;
+    margin-left: 0;
+  }
+}
+
+@include keyframes(fade-left) {
+  0% {
+    opacity: 0;
+    margin-right: 100px;
+  }
+  100% {
+    opacity: 1;
+    margin-right: 0;
+  }
+}
+
+@include keyframes(fade-top) {
+  0% {
+    opacity: 0;
+    margin-bottom: 100px;
+  }
+  100% {
+    opacity: 1;
+    margin-bottom: 0;
+  }
+}
+
+@include keyframes(fade-bottom) {
+  0% {
+    opacity: 0;
+    margin-top: 100px;
+  }
+  100% {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+
+@include keyframes(background-fade) {
+  0% {
+    background-position: 50% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
 }

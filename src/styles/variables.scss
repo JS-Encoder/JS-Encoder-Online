@@ -1,0 +1,28 @@
+// 全局变量
+$border-radius-root: 5px;
+$font-size-root: 16px;
+
+// 变量必须定义在 import 之前
+$btn-letter-spacing: 0;
+$btn-font-weight: 400;
+$list-item-title-font-size: 0.929rem;
+$list-item-dense-title-font-size: 0.929rem;
+$list-item-dense-title-font-weight: initial;
+$fab-icon-sizes: (
+  'small': 20,
+);
+$btn-sizes: (
+  'default': 41,
+  'large': 54,
+);
+
+$headings: (
+  'h1': (
+    'size': 3.3125rem,
+    'line-height': 1.15em,
+  ),
+  'h2': (
+    'size': 2.25rem,
+    'line-height': 1.5em,
+  ),
+);
