@@ -80,6 +80,29 @@ const routes = [
     ]
   },
   {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('@views/settings'),
+    redirect: '/settings/profile',
+    children: [
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('@views/settings/profile'),
+      },
+      {
+        path: 'code',
+        name: 'Code',
+        component: () => import('@views/settings/code'),
+      },
+      {
+        path: 'account',
+        name: 'Account',
+        component: () => import('@views/settings/account'),
+      }
+    ]
+  },
+  {
     path: '*',
     name: '404',
     component: () => import('@views/404')
