@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "codemirror": "^5.62.3",
     "core-js": "^3.6.5",
     "qs": "^6.10.1",
     "vue": "^2.6.11",
+    "vue-codemirror": "^4.0.6",
+    "vue-cropperjs": "^4.1.0",
     "vue-router": "^3.2.0",
     "vuetify": "^2.4.0",
     "vuex": "^3.4.0"
