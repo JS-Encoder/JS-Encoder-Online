@@ -38,4 +38,10 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
+
+@include screenXS {
+  .goTop {
+    right: 10px;
+  }
+}
 </style>
