@@ -69,6 +69,7 @@ export default {
     margin-top: 30px;
     display: grid;
     grid-gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
   .page-opt {
     margin-top: 50px;
@@ -77,18 +78,9 @@ export default {
     }
   }
 }
-@include screenSM {
-  #liked {
-    .liked-list {
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    }
-  }
-}
 @include screenXL {
-  #liked {
-    .liked-list {
-      grid-template-columns: repeat(4, minmax(300px, 1fr));
-    }
+  #liked .liked-list {
+    grid-template-columns: repeat(4, minmax(300px, 1fr));
   }
 }
 </style>

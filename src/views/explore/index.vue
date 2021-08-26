@@ -4,7 +4,7 @@
     <div class="explore-content">
       <div class="explore-search">
         <v-row>
-          <v-col lg="6" md="8" sm="8" xs="12">
+          <v-col lg="6" md="8" sm="8" cols="12">
             <v-text-field ref="searchField" solo label="找找你想要的..." height="60" class="search-keyword" clearable
               hide-details>
               <template slot="append">
@@ -13,14 +13,14 @@
               </template>
             </v-text-field>
           </v-col>
-          <v-col lg="2" md="2" sm="2" xs="12">
-            <v-btn height="60" x-large :elevation="showFilter?5:0" plain @click="showFilter=!showFilter">
+          <v-col lg="2" md="2" sm="2" cols="12">
+            <v-btn height="60" x-large :elevation="showFilter?5:0" plain @click="showFilter=!showFilter" block>
               <v-icon left>mdi-filter-variant</v-icon> 过滤
             </v-btn>
           </v-col>
         </v-row>
         <v-row v-show="showFilter">
-          <v-col lg="4" md="4" sm="6" xs="12">
+          <v-col lg="4" md="4" sm="6" cols="12">
             <span>标签：</span>
             <v-combobox v-model="searchForm.tags" :items="tagList" clearable multiple chips solo hide-selected
               label="选择标签..." hide-details>
@@ -31,7 +31,7 @@
               </template>
             </v-combobox>
           </v-col>
-          <v-col lg="4" md="4" sm="6" xs="12">
+          <v-col lg="4" md="4" sm="6" cols="12">
             <span>排序：</span>
             <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="searchForm.sort" hide-details>
             </v-select>
@@ -47,7 +47,7 @@
         </div> -->
       </div>
       <div class="view-more d-flex flex-jcc">
-        <v-btn color="info" x-large>
+        <v-btn color="info" x-large >
           <v-icon left>mdi-eye-outline</v-icon>查看更多
         </v-btn>
       </div>
@@ -131,14 +131,19 @@ export default {
   }
 }
 
-@include screenSM {
+@include Mobile {
   #explore {
+    padding: 50px 10px 0;
     .explore-content {
-      width: 90%;
       .explore-instance-list {
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       }
     }
+  }
+}
+@include screenSM {
+  #explore .explore-content {
+    width: 90%;
   }
 }
 @include screenMD {

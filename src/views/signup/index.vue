@@ -19,7 +19,7 @@
             :rules="rules.nickname">
           </v-text-field>
           <v-row>
-            <v-col md="8" sm="12">
+            <v-col sm="8" cols="12" style="padding-bottom: 0">
               <v-text-field ref="emailField" label="邮箱" outlined color="primary" v-model="form.email"
                 :rules="rules.email">
                 <template slot="append">
@@ -29,8 +29,7 @@
                 </template>
               </v-text-field>
             </v-col>
-            <v-spacer></v-spacer>
-            <v-col md="4" sm="12">
+            <v-col sm="4" cols="12" class="auth-input">
               <v-text-field label="验证码" :disabled="!isEmailRight" outlined color="primary" v-model="form.authCode"
                 :rules="rules.authCode">
               </v-text-field>
@@ -202,8 +201,10 @@ export default {
 
 <style lang="scss" scoped>
 #sign-up {
+  padding: 50px 0 100px 0;
   .sign-up-content {
     .sign-up-form {
+      margin-top: 40px;
       .send-email-btn {
         height: 48px;
         top: 4px;
@@ -212,16 +213,28 @@ export default {
     }
   }
 }
-
+@include screenXS {
+  #sign-up {
+    .email-input {
+      padding-bottom: 0;
+    }
+    .auth-input {
+      padding-top: 0;
+    }
+  }
+}
+@include screenSM {
+  #sign-up {
+    .sign-up-content {
+      width: 480px;
+    }
+  }
+}
 @include screenLG {
   #sign-up {
     min-height: calc(100vh - 70px);
-    padding: 50px 0 100px 0;
     .sign-up-content {
       width: 480px;
-      .sign-up-form {
-        margin-top: 40px;
-      }
     }
   }
 }

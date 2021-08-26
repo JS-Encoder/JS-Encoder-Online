@@ -1,5 +1,18 @@
 <template>
   <div id="header" class="d-flex">
+    <v-btn icon class="menu-icon" height="50" width="50" @click="showNav = !showNav">
+      <v-icon>mdi-menu</v-icon>
+    </v-btn>
+    <v-navigation-drawer v-model="showNav" absolute temporary>
+      <v-list>
+        <v-list-item link v-for="item in navList" :key="item.name" @click="navJumpTo(item)">
+          <v-badge v-if="item.text==='新特性' && showBadge" dot color="primary">
+            <v-list-item-title>{{item.text}}</v-list-item-title>
+          </v-badge>
+          <v-list-item-title v-else>{{item.text}}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
     <router-link :to="{name:'Home'}">
       <div class="logo pointer no-select d-flex flex-ai">
         <img class="logo-img" src="../assets/logo/logo.svg" alt="">
@@ -9,13 +22,14 @@
     <div class="vert-divide-line"></div>
     <nav class="d-flex flex-1 no-select pointer">
       <v-btn v-for="(item, index) in navList" :key="index" class="nav-item rounded-0" @click="navJumpTo(item)" depressed
-        :plain="curRoutePath !== item.route" tile>
-        <v-badge v-if="item.name==='新特性' && showBadge" dot color="primary">
-          {{item.name}}
+        :plain="curRouteName !== item.name" tile>
+        <v-badge v-if="item.text==='新特性' && showBadge" dot color="primary">
+          {{item.text}}
         </v-badge>
-        <span v-else>{{item.name}}</span>
+        <span v-else>{{item.text}}</span>
       </v-btn>
     </nav>
+    <v-spacer></v-spacer>
     <div class="account d-flex flex-ai">
       <header-account />
     </div>
@@ -31,21 +45,22 @@ export default {
     return {
       navList: [
         {
-          name: '探索',
-          route: 'Explore',
+          text: '探索',
+          name: 'Explore',
         },
         {
-          name: '新特性',
-          route: 'Features',
+          text: '新特性',
+          name: 'Features',
         },
         {
-          name: '反馈',
-          route: 'Feedback',
+          text: '反馈',
+          name: 'Feedback',
         },
         {
-          name: 'GitHub',
+          text: 'GitHub',
         },
       ],
+      showNav: false,
       showBadge: true,
     }
   },
@@ -54,12 +69,12 @@ export default {
   },
   methods: {
     navJumpTo(navItem) {
-      if (navItem.name === 'GitHub') {
+      if (navItem.text === 'GitHub') {
         window.open('https://github.com/Longgererer/JS-Encoder-Online')
       } else {
         this.$router
           .push({
-            name: navItem.route,
+            name: navItem.name,
           })
           .catch(() => {})
       }
@@ -73,8 +88,8 @@ export default {
     },
   },
   computed: {
-    curRoutePath() {
-      return this.$route.path
+    curRouteName() {
+      return this.$route.name
     },
   },
   components: {
@@ -87,6 +102,9 @@ export default {
 #header {
   height: 70px;
   padding: 0 30px;
+  .menu-icon {
+    display: none;
+  }
   .logo {
     height: 100%;
     .logo-img {
@@ -122,6 +140,46 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+  }
+}
+
+@include Mobile {
+  #header {
+    height: 50px;
+    .menu-icon {
+      display: block;
+    }
+    .logo .logo-img {
+      width: 30px;
+      height: 30px;
+    }
+    .vert-divide-line,
+    nav {
+      display: none !important;
+    }
+  }
+}
+@include screenXS {
+  #header {
+    padding: 0;
+    .logo {
+      margin-left: 10px;
+      .logo-content {
+        display: none;
+      }
+    }
+  }
+}
+@include screenSM {
+  #header {
+    padding: 0 10px;
+    .logo {
+      margin-left: 20px;
+      .logo-content {
+        font-size: 18px;
+        margin-left: 10px;
+      }
     }
   }
 }

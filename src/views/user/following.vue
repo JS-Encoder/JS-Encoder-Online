@@ -74,7 +74,14 @@ export default {
     }
   }
 }
-@include screenSM {
+@include Mobile {
+  #following {
+    .following-list {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+  }
+}
+@include PC {
   #following {
     .following-list {
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

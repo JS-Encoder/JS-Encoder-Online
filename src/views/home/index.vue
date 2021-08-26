@@ -29,7 +29,6 @@ export default {
 
 <style lang="scss" scoped>
 #home {
-  height: 100%;
   position: relative;
   .preview {
     .preview1-img,
@@ -77,10 +76,93 @@ export default {
     }
   }
 }
-@include screenLG {
+@include Mobile {
+  #home {
+    .main-content {
+      width: 100%;
+      margin: 50px 0 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+}
+@include PC {
   #home {
     height: calc(100vh - 70px);
     min-height: 800px;
+  }
+}
+@include screenXS {
+  #home {
+    min-height: 800px;
+    .preview {
+      .preview1-img,
+      .preview2-img {
+        width: 85%;
+        max-width: 350px;
+      }
+      .preview1-img {
+        top: 40%;
+      }
+      .preview2-img {
+        top: 45%;
+      }
+    }
+    .main-content {
+      .slogan {
+        align-items: center;
+        margin-bottom: 450px;
+        font-weight: 600;
+        .slogan-1 {
+          font-size: 20px;
+        }
+      }
+      .btn-opt {
+        width: 85%;
+        display: flex;
+        flex-direction: column;
+        .btn-create {
+          margin-right: 0;
+          margin-bottom: 15px;
+        }
+      }
+    }
+  }
+}
+@include screenSM {
+  #home {
+    min-height: 1vh;
+    padding-bottom: 100px;
+    .preview {
+      .preview1-img,
+      .preview2-img {
+        width: 65%;
+        max-width: 450px;
+      }
+      .preview1-img {
+        top: 45%;
+      }
+      .preview2-img {
+        top: 51%;
+      }
+    }
+    .main-content .slogan {
+      margin-bottom: 80%;
+    }
+  }
+}
+@include screenMD {
+  #home {
+    .preview {
+      .preview1-img,
+      .preview2-img {
+        width: 350px;
+      }
+    }
+    .main-content {
+      margin: 200px 0 0 50px;
+    }
   }
 }
 </style>

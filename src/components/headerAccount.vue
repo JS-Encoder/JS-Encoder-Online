@@ -27,7 +27,7 @@
 export default {
   data() {
     return {
-      isLogin: true,
+      isLogin: false,
       menuList: [
         {
           name: '我的',
@@ -36,7 +36,7 @@ export default {
         },
         {
           name: '设置',
-          value: 'setting',
+          value: 'settings',
           icon: 'mdi-cog-outline',
         },
         {
@@ -59,7 +59,8 @@ export default {
           })
           break
         }
-        case 'setting': {
+        case 'settings': {
+          this.$router.push({ name: 'Settings' })
           break
         }
         case 'logout':
@@ -97,6 +98,19 @@ export default {
   .not-login {
     .login-btn {
       margin-right: 15px;
+    }
+  }
+}
+
+@include screenXS {
+  #headerAccount {
+    .not-login {
+      .login-btn {
+        margin-right: 5px;
+      }
+      .login-btn, .sign-up-btn{
+        height: 35px;
+      }
     }
   }
 }

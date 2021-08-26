@@ -14,7 +14,8 @@
       <div class="footer-menu d-flex">
         <ul class="menu-box" v-for="(curMenu, menuIndex) in footerMenu" :key="menuIndex">
           <li class="menu-title title-sm">{{curMenu.title}}</li>
-          <li class="menu-item text-sm pointer" v-for="(item, index) in curMenu.children" :key="index">{{item.name}}
+          <li class="menu-item text-sm pointer" v-for="(item, index) in curMenu.children" :key="index"
+            @click="handleFooterLink(item.name)">{{item.text}}
           </li>
         </ul>
       </div>
@@ -31,16 +32,16 @@ export default {
           title: '产品',
           children: [
             {
-              name: '新特性',
-              route: '',
+              text: '新特性',
+              name: 'Feature',
             },
             {
-              name: '更新日志',
-              route: '',
+              text: '更新日志',
+              name: 'Log',
             },
             {
-              name: '问题',
-              route: '',
+              text: '问题',
+              name: 'Issues',
             },
           ],
         },
@@ -48,12 +49,12 @@ export default {
           title: '关于',
           children: [
             {
+              text: 'GitHub',
               name: 'GitHub',
-              route: '',
             },
             {
-              name: '遵循协议',
-              route: '',
+              text: '遵循协议',
+              name: 'License',
             },
           ],
         },
@@ -61,19 +62,57 @@ export default {
           title: '支持',
           children: [
             {
-              name: '联系支持',
-              route: '',
+              text: '联系支持',
+              name: 'Email',
             },
             {
-              name: '赞助',
-              route: '',
+              text: '赞助',
+              name: 'Sponsor',
             },
           ],
         },
       ],
     }
   },
-  methods: {},
+  methods: {
+    handleFooterLink(name) {
+      switch (name) {
+        case 'Feature': {
+          this.$router.push({ name: 'Feature' })
+          break
+        }
+        case 'Log': {
+          window.open(
+            'https://github.com/Longgererer/JS-Encoder-Online/releases'
+          )
+          break
+        }
+        case 'Issues': {
+          window.open('https://github.com/Longgererer/JS-Encoder-Online/issues')
+          break
+        }
+        case 'GitHub': {
+          window.open('https://github.com/Longgererer/JS-Encoder-Online')
+          break
+        }
+        case 'License': {
+          window.open(
+            'https://github.com/Longgererer/JS-Encoder-Online/blob/main/LICENSE'
+          )
+          break
+        }
+        case 'Email': {
+          const a = document.createElement('a')
+          a.href = 'mailto:c2b139460q@163.com'
+          a.click()
+          break
+        }
+        case 'Sponsor': {
+          break
+        }
+      }
+    },
+  },
   components: {},
 }
 </script>
@@ -105,7 +144,6 @@ export default {
     .footer-menu {
       margin-top: 20px;
       .menu-box {
-        min-width: 200px;
         .menu-title {
           margin-bottom: 20px;
         }
@@ -118,6 +156,50 @@ export default {
         }
       }
     }
+  }
+}
+
+@include Mobile {
+  #footer {
+    height: auto;
+    padding: 50px 0;
+    .footer-content {
+      flex-direction: column-reverse;
+      align-items: center;
+      .footer-menu {
+        width: 100%;
+        justify-content: space-around;
+        .menu-box {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+      .side-info {
+        margin-top: 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .copyright-info {
+          margin-top: 25px;
+        }
+      }
+    }
+  }
+}
+@include screenMD {
+  .menu-box {
+    min-width: 150px;
+  }
+}
+@include screenLG {
+  .menu-box {
+    min-width: 200px;
+  }
+}
+@include screenXL {
+  .menu-box {
+    min-width: 300px;
   }
 }
 </style>

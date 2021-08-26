@@ -76,53 +76,50 @@ export default {
 
 <style lang="scss" scoped>
 #login {
+  min-height: calc(100vh - 70px);
+  padding: 50px 0 100px 0;
   .login-content {
+    width: 480px;
     .login-form {
+      margin-top: 40px;
       .forget-pwd {
         color: $light-6;
+      }
+      .divider {
+        margin: 30px 0;
+        position: relative;
+        &::after {
+          content: '或';
+          padding: 5px;
+          color: $light-7;
+          font-size: 12px;
+          background-color: $deep-5;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translateX(-50%) translateY(-50%);
+        }
+      }
+      .third-part-btn {
+        .btn-github {
+          margin-right: 15px;
+          &:hover {
+            color: #000000;
+          }
+        }
+        .btn-gitee {
+          &:hover {
+            color: $red-1;
+          }
+        }
       }
     }
   }
 }
 
-@include screenLG {
-  #login {
-    // min-height: calc(100vh - 70px);
-    padding: 50px 0 100px 0;
-    .login-content {
-      width: 480px;
-      .login-form {
-        margin-top: 40px;
-        .divider {
-          margin: 30px 0;
-          position: relative;
-          &::after {
-            content: '或';
-            padding: 5px;
-            color: $light-7;
-            font-size: 12px;
-            background-color: $deep-5;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translateX(-50%) translateY(-50%);
-          }
-        }
-        .third-part-btn {
-          .btn-github {
-            margin-right: 15px;
-            &:hover {
-              color: #000000;
-            }
-          }
-          .btn-gitee {
-            &:hover {
-              color: $red-1;
-            }
-          }
-        }
-      }
-    }
+@include screenXS {
+  #login .login-content {
+    width: 350px;
   }
 }
 </style>

@@ -80,15 +80,18 @@ export default {
 
 <style lang="scss" scoped>
 #resetPwd {
-  .reset-pwd-form {
-    margin-top: 40px;
+  padding: 50px 0 100px 0;
+  .reset-pwd-content {
+    width: 480px;
+    .reset-pwd-form {
+      margin-top: 40px;
+    }
   }
 }
-@include screenLG {
+@include screenXS {
   #resetPwd {
-    padding: 50px 0 100px 0;
     .reset-pwd-content {
-      width: 480px;
+      width: 350px;
     }
   }
 }

@@ -23,7 +23,7 @@
             </template>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <pre style="padding: 15px 0;">{{item.body}}</pre>
+            <pre style="padding: 15px 0;white-space: pre-wrap;word-wrap: break-word;">{{item.body}}</pre>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>

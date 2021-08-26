@@ -84,7 +84,9 @@ export default {
 
 <style lang="scss" scoped>
 #forgetPwd {
+  padding: 50px 0 100px 0;
   .forget-pwd-content {
+    width: 480px;
     .forget-pwd-form {
       margin-top: 40px;
     }
@@ -99,12 +101,9 @@ export default {
     }
   }
 }
-@include screenLG {
-  #forgetPwd {
-    padding: 50px 0 100px 0;
-    .forget-pwd-content {
-      width: 480px;
-    }
+@include screenXS {
+  #forgetPwd .forget-pwd-content {
+    width: 350px;
   }
 }
 </style>

@@ -8,7 +8,8 @@
       </div>
     </v-img>
     <v-card-actions>
-      <v-menu transition="none" :close-on-content-click="false" offset-y open-delay="500" close-delay="200" :open-on-hover="true" top>
+      <v-menu transition="none" :close-on-content-click="false" offset-y open-delay="500" close-delay="200"
+        :open-on-hover="true" top>
         <template v-slot:activator="{ on, attrs }">
           <v-avatar size="40" class="pointer" v-bind="attrs" v-on="on">
             <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
@@ -24,6 +25,7 @@
       <v-btn icon class="icon-like">
         <v-icon>mdi-heart</v-icon>
       </v-btn>
+      <span class="liked-num text-xs">12.2k</span>
       <v-btn icon class="icon-share">
         <v-icon>mdi-share-variant</v-icon>
       </v-btn>
@@ -68,11 +70,15 @@ export default {
   }
   .instance-info {
     margin-left: 10px;
-    width: calc(100% - 150px);
+    width: calc(100% - 180px);
     span {
       display: block;
       @include text-ellipsis;
     }
+  }
+  .liked-num {
+    margin-right: 5px;
+    color: $light-4;
   }
   .icon-like,
   .icon-share {

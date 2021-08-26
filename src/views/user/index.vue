@@ -21,9 +21,9 @@
       </div>
     </div>
     <div class="user-views">
-      <v-row class="user-tabs" no-gutters>
-        <v-col md="8" sm="12">
-          <v-tabs class="tab-list" v-model="curTabName">
+      <v-row class="user-tabs" no-gutters justify="center">
+        <v-col md="8" sm="8" cols="12">
+          <v-tabs class="tab-list" v-model="curTabName" center-active show-arrows grow>
             <v-tab class="tab" v-for="item in tabList" :key="item.route" @click="switchTabs(item)"
               :href="`#${item.route}`">
               <span class="text-md">{{item.name}}</span>
@@ -31,9 +31,9 @@
             </v-tab>
           </v-tabs>
         </v-col>
-        <v-spacer></v-spacer>
-        <v-col md="3" sm="12" class="d-flex flex-ai">
-          <span class="flex-sh">排序：</span>
+        <v-col md="1" sm="1" cols="0"></v-col>
+        <v-col md="3" sm="3" cols="12" class="d-flex flex-ai">
+          <span class="flex-sh sort-title">排序：</span>
           <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="sortBy" hide-details>
           </v-select>
         </v-col>
@@ -95,15 +95,18 @@ export default {
 </script>
 
 <style lang="scss">
-.v-item-group {
-  background-color: $deep-3 !important;
+#user {
+  .v-item-group {
+    background-color: $deep-3 !important;
+  }
 }
 </style>
 <style lang="scss" scoped>
 #user {
+  padding: 0 25px;
   .user-info-box {
     width: 100%;
-    height: 300px;
+    min-height: 300px;
     position: relative;
     .avatar {
       margin-top: 50px;
@@ -130,7 +133,7 @@ export default {
     .follow-info {
       color: $light-4;
       position: absolute;
-      right: 25px;
+      right: 0;
       bottom: 0;
       .followers {
         margin-right: 30px;
@@ -138,9 +141,9 @@ export default {
     }
   }
   .user-views {
+    width: 100%;
     margin-top: 50px;
     .user-tabs {
-      // margin: 0;
       .tab-list {
         background-color: $deep-3;
         .tab {
@@ -164,6 +167,36 @@ export default {
     }
   }
 }
+
+@include Mobile {
+  #user {
+    padding: 0 10px;
+    .user-info-box {
+      min-height: 350px;
+    }
+    .user-views {
+      .user-tabs {
+        position: sticky;
+        z-index: 10;
+        top: 0;
+        background-color: $deep-5;
+        box-shadow: 0 2px 4px $deep-5;
+        .tab-list {
+          .tab {
+            padding: 0;
+            .item-num {
+              display: none;
+            }
+          }
+        }
+        .sort-title {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
 @include screenLG {
   #user {
     .user-info-box {

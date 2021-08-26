@@ -69,18 +69,12 @@ export default {
     margin-top: 30px;
     display: grid;
     grid-gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
   .page-opt {
     margin-top: 50px;
     .before-btn {
       margin-right: 15px;
-    }
-  }
-}
-@include screenSM {
-  #works {
-    .work-list {
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
   }
 }

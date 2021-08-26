@@ -22,6 +22,11 @@ export default {
 
 <style lang="scss">
 .instance-skeleton {
+  .v-skeleton-loader__image {
+    width: 100%;
+    height: 0;
+    padding-bottom: 55%;
+  }
 }
 .self-instance-skeleton {
   .v-skeleton-loader__card-heading {
@@ -32,11 +37,6 @@ export default {
   }
 }
 .other-instance-skeleton {
-  .v-skeleton-loader__image {
-    width: 100%;
-    height: 0;
-    padding-bottom: 55%;
-  }
   .v-skeleton-loader__list-item-avatar {
     height: 57px;
   }

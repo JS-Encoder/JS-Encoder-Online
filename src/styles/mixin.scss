@@ -41,30 +41,39 @@
 }
 
 /* responsible layout */
-@mixin screenXS {
-  @media screen and (max-width: 600px) {
+@mixin Mobile {
+  @media screen and (max-width: 959px) {
     @content;
   }
 }
 
-@mixin screenSM {
-  @media screen and (min-width: 600px) {
-    @content;
-  }
-}
-
-@mixin screenMD {
+@mixin PC {
   @media screen and (min-width: 960px) {
     @content;
   }
 }
-
-@mixin screenLG {
-  @media screen and (min-width: 1264px) {
+/* Mobile */
+@mixin screenXS {
+  @media screen and (max-width: 599px) {
     @content;
   }
 }
-
+@mixin screenSM {
+  @media screen and (min-width: 600px) and (max-width: 959px) {
+    @content;
+  }
+}
+/* PC */
+@mixin screenMD {
+  @media screen and (min-width: 960px) and (max-width: 1263px) {
+    @content;
+  }
+}
+@mixin screenLG {
+  @media screen and (min-width: 1264px) and (max-width: 1903px) {
+    @content;
+  }
+}
 @mixin screenXL {
   @media screen and (min-width: 1904px) {
     @content;
