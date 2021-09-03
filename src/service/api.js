@@ -23,7 +23,8 @@ const api = {
   sendFeedback: () => { },
   /* 查询实例列表 */
   searchInstanceList: () => { },
-
+  /* cdn 列表 */
+  searchCDNList: (params) => get('/cdnJS', params)
 }
 
 export default api

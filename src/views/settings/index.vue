@@ -1,5 +1,15 @@
 <template>
   <div id="settings" class="d-flex">
+    <v-row no-gutters justify="center" class="head-tabs">
+      <v-col cols="12">
+        <v-tabs class="tab-list" v-model="curRouteName" center-active show-arrows grow>
+          <v-tab class="tab" v-for="item in menuList" :key="item.name" @click="switchItem(item.name)"
+            :href="`#${item.name}`">
+            <span class="text-md">{{item.text}}</span>
+          </v-tab>
+        </v-tabs>
+      </v-col>
+    </v-row>
     <div class="side-menu d-flex flex-clo flex-end">
       <span class="menu-title title-lg">设置</span>
       <v-card color="info" class="menu-card" rounded="lg">
@@ -61,22 +71,51 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-#settings {
-  .side-menu {
-    padding-top: 50px;
+<style lang="scss">
+.head-tabs {
+  .v-item-group {
+    background-color: $deep-5 !important;
   }
 }
-@include screenLG {
+</style>
+<style lang="scss" scoped>
+#settings {
+  min-height: 100%;
+  .head-tabs,
+  .side-menu {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+  }
+  .head-tabs {
+    display: none;
+    z-index: 2;
+    box-shadow: 0 2px 4px $deep-5;
+  }
+  .side-menu {
+    padding-top: 50px;
+    align-self: flex-start;
+    .menu-list-item {
+      box-sizing: border-box;
+      color: $light-6;
+      .icon {
+        color: inherit;
+      }
+    }
+    .menu-list-item-active {
+      border-right: 2px solid $primary-1;
+      color: $light-1;
+      &:before {
+        background-color: $deep-1;
+      }
+    }
+  }
+}
+@include PC {
   #settings {
-    min-height: 100%;
     .side-menu {
       width: 350px;
       height: 350px;
-      position: -webkit-sticky;
-      position: sticky;
-      top: 0px;
-      align-self: flex-start;
       .menu-card {
         width: 220px;
         margin-top: 25px;
@@ -84,20 +123,8 @@ export default {
           padding: 30px 0;
           .menu-list-item {
             padding: 0 40px;
-            box-sizing: border-box;
-            color: $light-6;
             &:not(:first-child) {
               margin-top: 10px;
-            }
-            .icon {
-              color: inherit;
-            }
-          }
-          .menu-list-item-active {
-            border-right: 2px solid $primary-1;
-            color: $light-1;
-            &:before {
-              background-color: $deep-1;
             }
           }
         }
@@ -109,6 +136,33 @@ export default {
         width: 450px;
         margin-right: 100px;
       }
+    }
+  }
+}
+@include screenXS {
+  #settings {
+    flex-direction: column;
+    .head-tabs {
+      display: block;
+      .tab-list {
+        background-color: $deep-6 !important;
+      }
+    }
+    .side-menu {
+      display: none !important;
+    }
+    .settings-content {
+      margin-top: 50px;
+    }
+  }
+}
+@include screenSM {
+  #settings {
+    .side-menu {
+      width: 150px;
+    }
+    .settings-content {
+      margin-top: 50px;
     }
   }
 }

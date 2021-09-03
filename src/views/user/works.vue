@@ -12,12 +12,14 @@
       <v-btn class="before-btn" @click="switchPage(-1)" :disabled="p<=1">上一页</v-btn>
       <v-btn color="primary" class="after-btn" @click="switchPage(1)">下一页</v-btn>
     </div>
+    <instance-config></instance-config>
   </div>
 </template>
 
 <script>
 import InstanceSkeleton from '@components/skeleton/instanceSkeleton'
 import SelfInstanceCard from '@components/selfInstanceCard'
+import InstanceConfig from '@components/dialog/instanceConfig'
 import * as p2b from '@utils/paramsToBase64'
 export default {
   data() {
@@ -57,8 +59,9 @@ export default {
     },
   },
   components: {
-    'instance-skeleton': InstanceSkeleton,
-    'self-instance-card': SelfInstanceCard,
+    InstanceSkeleton,
+    SelfInstanceCard,
+    InstanceConfig,
   },
 }
 </script>

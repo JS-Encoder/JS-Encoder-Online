@@ -1,7 +1,7 @@
 /**
  * 存储常用的静态公共数据
  */
-export const fontFamList = [
+const fontFamList = [
   'Consolas',
   'Monaco',
   'Courier Prime',
@@ -14,4 +14,20 @@ export const fontFamList = [
   'Inconsolata'
 ]
 
-export const fontSizeList = [10, 12, 14, 16, 18, 20, 22, 24, 26]
+const fontSizeList = [10, 12, 14, 16, 18, 20, 22, 24, 26]
+
+const defPrepOpts = {
+  HTML: ['HTML', 'Markdown', 'Pug'],
+  CSS: ['CSS', 'Sass', 'Scss', 'Less', 'Stylus'],
+  JavaScript: ['JavaScript', 'TypeScript', 'CoffeeScript'],
+}
+
+// 上传文件等后缀名列表
+const limitMimeType = ['html', 'css', 'js', 'md', 'pug', 'sass', 'scss', 'less', 'styl', 'ts', 'coffee']
+
+export {
+  fontFamList,
+  fontSizeList,
+  defPrepOpts,
+  limitMimeType
+}

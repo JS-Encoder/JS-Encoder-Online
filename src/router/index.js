@@ -103,6 +103,11 @@ const routes = [
     ]
   },
   {
+    path: '/newWork',
+    name: 'Work',
+    component: () => import('@views/instance')
+  },
+  {
     path: '*',
     name: '404',
     component: () => import('@views/404')

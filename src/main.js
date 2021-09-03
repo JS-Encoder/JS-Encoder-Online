@@ -7,9 +7,11 @@ import vuetify from './plugins/vuetify'
 import '@assets/css/code-font.css'
 
 // 插件
-import Alert from './plugins/alert'
+import './plugins/alert'
+import message from './plugins/message'
+Vue.prototype.$message = message
 import { codemirror } from 'vue-codemirror'
-Vue.use(Alert).use(codemirror)
+Vue.use(codemirror)
 
 Vue.config.productionTip = false
 

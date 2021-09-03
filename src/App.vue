@@ -1,11 +1,11 @@
 <template>
   <v-app id="app" :class="bgcClass">
-    <jse-header />
-    <section class="app-content">
+    <jse-header v-if="routeName!=='Work'" />
+    <section class="app-content" :class="routeName==='Work'?'app-full-screen':''">
       <router-view />
       <jse-snackbar />
     </section>
-    <jse-footer />
+    <jse-footer v-if="routeName!=='Work'" />
   </v-app>
 </template>
 
@@ -26,6 +26,9 @@ export default {
     }-bgc`
   },
   computed: {
+    routeName() {
+      return this.$route.name
+    },
     path() {
       return this.$route.path.replace('/', '')
     },
@@ -68,6 +71,9 @@ export default {
   background-color: $deep-5;
   position: relative;
   @include setTransition(all, 0.3s, ease);
+}
+.app-full-screen{
+  height: 100% !important;
 }
 .bgc-animation {
   background-position: 50% 0;

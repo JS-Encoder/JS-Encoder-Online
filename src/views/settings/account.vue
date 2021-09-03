@@ -23,11 +23,11 @@
       <span class="text-sm text-describe">修改绑定的邮箱，该邮箱用于找回密码及其他操作。</span>
       <div class="item-content">
         <v-row>
-          <v-col md="8">
+          <v-col cols="8">
             <v-text-field solo label="输入修改后的邮箱"></v-text-field>
           </v-col>
-          <v-col md="4">
-            <v-btn color="primary" height="48" block>修改</v-btn>
+          <v-col cols="4">
+            <v-btn color="primary" height="48" block x-large>修改</v-btn>
           </v-col>
         </v-row>
       </div>

@@ -23,7 +23,8 @@
           </v-btn>
         </template>
         <v-list class="works-menu">
-          <v-list-item class="works-menu-list" v-for="item in menuList" :key="item.value" link>
+          <v-list-item class="works-menu-list" v-for="item in menuList" :key="item.value" link
+            @click="handleMenu(item.value)">
             <v-icon class="icon">{{item.icon}}</v-icon>
             {{item.name}}
           </v-list-item>
@@ -34,6 +35,8 @@
 </template>
 
 <script>
+import { copyToClip } from '@utils/tools'
+
 export default {
   data() {
     return {
@@ -56,7 +59,41 @@ export default {
       ],
     }
   },
-  methods: {},
+  methods: {
+    handleMenu(val) {
+      switch (val) {
+        case 'delete': {
+          this.delete()
+          break
+        }
+        case 'share': {
+          this.shareLink()
+          break
+        }
+        case 'config': {
+          this.$store.commit('setVisibleDialogName', 'instanceConfig')
+        }
+      }
+    },
+    delete() {
+      this.$alert({
+        title: '删除实例',
+        content: '实例将会在回收站内保存7天，7天后将永久删除，确认继续该操作么',
+        okText: '确认并删除',
+        okColor: 'error',
+      }).then((res) => {
+        if (res) {
+          this.$message.success({ msg: '实例删除成功！' })
+        } else {
+          this.$message.error({ msg: '实例删除失败！' })
+        }
+      })
+    },
+    shareLink() {
+      copyToClip('123')
+      this.$message.success({ msg: '链接已复制到剪切板！' })
+    },
+  },
   components: {},
 }
 </script>

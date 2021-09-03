@@ -1,34 +1,30 @@
 <template>
-  <v-snackbar v-model="visible" :color="color" :bottom="bottom" :top="!bottom">
-    {{ msg }}
-    <template v-slot:action="{ attrs }">
-      <v-btn v-bind="attrs" v-if="showClose" icon @click="close" color="#F2F2F2">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </template>
-  </v-snackbar>
+  <div class="message-box d-flex flex-clo">
+    <v-alert v-for="(opts, index) in alertPool" dense border="left" :type="opts.type" :key="index"
+      transition="scale-transition">
+      <span>{{opts.msg}}</span>
+    </v-alert>
+  </div>
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
-const { mapState: mapStateSnackbar } = createNamespacedHelpers('snackbar')
+const { mapState: mapStateSnackbar } = createNamespacedHelpers('alertMsg')
 export default {
   computed: {
-    ...mapStateSnackbar([
-      'msg',
-      'visible',
-      'bottom',
-      'showClose',
-      'color',
-    ])
-  },
-  methods: {
-    close() {
-      this.$store.commit('snackbar/closeSnackbar')
-    },
+    ...mapStateSnackbar(['alertPool']),
   },
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.message-box {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  z-index: 9999;
+  min-width: 300px;
+  max-width: 460px;
+  transform: translateX(-50%);
+}
 </style>

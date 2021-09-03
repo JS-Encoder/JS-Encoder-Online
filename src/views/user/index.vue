@@ -15,9 +15,15 @@
         <p class="about text-describe text-sm">
           这是我的个人这是我的个人这是我的个人这是我的个人这是我的个人简介这是我的个人简介这是我的个人简介这是我的个人简介这是我的个人简介这是我的个人简介这是我的个人简介</p>
       </div>
-      <div class="follow-info text-md">
-        <span class="followers">粉丝：456</span>
-        <span class="following">关注：123</span>
+      <div class="other-info d-flex flex-jcb flex-w text-md">
+        <div class="email-info">
+          <v-icon class="icon">mdi-email-outline</v-icon>
+          <span>2072451919@qq.com</span>
+        </div>
+        <div class="follow-info">
+          <span class="followers">粉丝：456</span>
+          <span class="following">关注：123</span>
+        </div>
       </div>
     </div>
     <div class="user-views">
@@ -32,9 +38,9 @@
           </v-tabs>
         </v-col>
         <v-col md="1" sm="1" cols="0"></v-col>
-        <v-col md="3" sm="3" cols="12" class="d-flex flex-ai">
-          <span class="flex-sh sort-title">排序：</span>
-          <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="sortBy" hide-details>
+        <v-col md="3" sm="3" cols="12" class="d-flex flex-ai" v-show="showSort">
+          <span class="flex-sh sort-title" v-show="showSort">排序：</span>
+          <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="sortBy" hide-details v-show="showSort">
           </v-select>
         </v-col>
       </v-row>
@@ -76,14 +82,25 @@ export default {
           num: 12,
         },
       ],
-      curTabName: 'Works',
       sortList: ['喜爱度', '更新日期', '创建时间'],
       sortBy: '更新日期',
+      showSort: true,
     }
   },
-  created() {
-    // 根据路由切换tab
-    this.curTabName = this.$route.name
+  computed: {
+    curTabName: {
+      get() {
+        return this.$route.name
+      },
+      set(val) {
+        return val
+      },
+    },
+  },
+  watch: {
+    curTabName(name) {
+      this.showSort = ['Works', 'Liked'].includes(name)
+    },
   },
   methods: {
     switchTabs(item) {
@@ -103,7 +120,7 @@ export default {
 </style>
 <style lang="scss" scoped>
 #user {
-  padding: 0 25px;
+  padding: 0 35px;
   .user-info-box {
     width: 100%;
     min-height: 300px;
@@ -130,12 +147,19 @@ export default {
         margin-top: 10px;
       }
     }
-    .follow-info {
+    .other-info {
+      width: 100%;
       color: $light-4;
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      .followers {
+      .email-info {
+        span {
+          vertical-align: bottom;
+        }
+        .icon {
+          color: inherit;
+          margin-right: 10px;
+        }
+      }
+      .follow-info .followers {
         margin-right: 30px;
       }
     }
@@ -176,6 +200,7 @@ export default {
     }
     .user-views {
       .user-tabs {
+        position: -webkit-sticky;
         position: sticky;
         z-index: 10;
         top: 0;
@@ -197,15 +222,12 @@ export default {
   }
 }
 
-@include screenLG {
+@include PC {
   #user {
     .user-info-box {
       .about {
         max-width: 40%;
       }
-    }
-    .user-views {
-      width: 90%;
     }
   }
 }

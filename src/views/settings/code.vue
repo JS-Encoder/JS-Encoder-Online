@@ -23,7 +23,7 @@
       <div class="d-flex flex-ai">
         <span class="sub-title">缩进数</span>
         <v-slider v-model="form.indent.width" color="primary" thumb-label ticks="always" step="2" :max="8" hide-details
-          @change="updateTabSize">
+          @change="updateIndentSpaces">
         </v-slider>
       </div>
     </div>
@@ -105,7 +105,7 @@ export default {
     initEditor() {
       const form = this.form
       this.codeOptions = {
-        tabSize: form.indent.width,
+        indentSpaces: form.indent.width,
         mode: 'text/javascript',
         theme: 'default',
         indentWithTabs: !form.indent.replace,
@@ -117,8 +117,8 @@ export default {
       }
       this.editorCode = `function sum(a, b){\n\tconst res = a + b;\n\treturn res;\n}\nconsole.log(sum(1, 2))`
     },
-    updateTabSize(tabSize) {
-      this.codeOptions.tabSize = tabSize
+    updateIndentSpaces(indentSpaces) {
+      this.codeOptions.indentSpaces = indentSpaces
     },
     refreshEditor() {
       this.$refs.editor.refresh()

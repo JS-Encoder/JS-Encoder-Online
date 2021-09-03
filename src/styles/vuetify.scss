@@ -4,3 +4,29 @@
 .v-btn {
   text-transform: none;
 }
+// .v-dialog__content {
+//   align-items: flex-start;
+//   height: auto;
+//   top: 150px;
+// }
+.v-dialog {
+  .v-card__actions {
+    padding: 8px 24px;
+  }
+  &::-webkit-scrollbar {
+    outline: none;
+    width: 10px;
+    height: 10px;
+    background-color: #1e1e1e;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #1e1e1e;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #333333;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    outline: none;
+    background-color: rgba(80, 80, 80, 1);
+  }
+}

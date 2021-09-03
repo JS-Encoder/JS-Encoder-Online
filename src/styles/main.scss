@@ -17,6 +17,24 @@
   cursor: pointer;
 }
 
+.borbox {
+  box-sizing: border-box;
+}
+
+.ver-m {
+  vertical-align: middle;
+}
+.ver-t {
+  vertical-align: top;
+}
+.ver-b {
+  vertical-align: bottom;
+}
+
+.radius-2 {
+  border-radius: 2px;
+}
+
 /* flex */
 .d-flex {
   display: flex;
@@ -94,6 +112,9 @@
 }
 .text-primary {
   color: $primary-1;
+}
+.text-white {
+  color: $light-2;
 }
 .text-describe {
   color: $light-6;

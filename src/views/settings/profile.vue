@@ -52,6 +52,7 @@
 <script>
 import regexpList from '@utils/regexp'
 import Cropper from '@components/cropper'
+import { getImgMainColor } from '@utils/tools'
 export default {
   data() {
     return {
@@ -133,15 +134,21 @@ export default {
       return canvas.toDataURL('image/webp', 0.8)
     },
     crop() {
+      this.clearInputFiles()
       const sourceCanvas = this.$refs.cropper.$children[0].getCroppedCanvas()
       const image = this.getCroppedImage(sourceCanvas)
       this.form.imgUrl = image
       this.cropConf.cropUrl = ''
       this.cropDialogVisible = false
+      getImgMainColor(image).then((res) => {})
     },
     closeCrop() {
+      this.clearInputFiles()
       this.cropDialogVisible = false
       this.cropUrl = ''
+    },
+    clearInputFiles() {
+      this.$refs.fileInput.value = null
     },
     validate() {
       return this.$refs.form.validate()
@@ -150,10 +157,7 @@ export default {
       if (this.validate()) {
         this.loading = true
         setTimeout(() => {
-          this.$store.dispatch('snackbar/openSnackbar', {
-            msg: '保存成功！',
-            color: 'success',
-          })
+          this.$message.success({ msg: '个人设置保存成功！' })
           this.loading = false
         }, 3000)
       }

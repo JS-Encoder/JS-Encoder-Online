@@ -10,20 +10,31 @@
         <span class="slogan-2 title-m">一个分享代码，共同学习的平台</span>
       </div>
       <div class="btn-opt">
-        <v-btn class="btn-create" x-large color="primary">创建新实例</v-btn>
-        <v-btn class="btn-offline" x-large outlined color="primary">前往离线版</v-btn>
+        <v-btn class="btn-create" x-large color="primary" @click="newWork">创建新实例</v-btn>
+        <v-btn class="btn-offline" x-large outlined color="primary" @click="goToOffline">前往离线版</v-btn>
       </div>
     </div>
+    <login-verify></login-verify>
   </div>
 </template>
 
 <script>
+import loginVerify from '@components/dialog/loginVerify'
 export default {
   data() {
     return {}
   },
-  methods: {},
-  components: {},
+  methods: {
+    newWork() {
+      this.$router.push({ name: 'Work' })
+    },
+    goToOffline() {
+      window.open('http://jsencoder.lliiooiill.cn/')
+    },
+  },
+  components: {
+    'login-verify': loginVerify,
+  },
 }
 </script>
 

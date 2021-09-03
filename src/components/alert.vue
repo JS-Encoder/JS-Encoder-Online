@@ -1,15 +1,15 @@
 <template>
-  <v-overlay v-model="visible">
+  <v-overlay v-model="visible" class="global-alert">
     <v-dialog :style="{'z-index':zIndex}" dark persistent v-model="visible" :max-width="maxWidth" :width="width">
       <v-card>
         <v-card-title class="text-h5" v-if="title">{{title}}</v-card-title>
         <v-card-text>{{content}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="cancel" v-if="showCancel">
+          <v-btn @click="cancel" v-if="showCancel">
             {{cancelText}}
           </v-btn>
-          <v-btn text @click="ok">
+          <v-btn @click="ok" :color="okColor">
             {{okText}}
           </v-btn>
         </v-card-actions>
@@ -40,6 +40,10 @@ export default {
     okText: {
       type: String,
       default: '确定',
+    },
+    okColor: {
+      type: String,
+      default: 'primary',
     },
     cancelText: {
       type: String,
@@ -80,5 +84,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.v-dialog__content {
+  align-items: flex-start;
+  top: 25%;
+}
 </style>
