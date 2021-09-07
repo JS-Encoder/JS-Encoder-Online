@@ -5,15 +5,19 @@
         <span class="title-sm">实例设置</span>
       </v-card-title>
       <v-card-text>
-        <v-form class="form" ref="form">
+        <v-form class="form d-flex flex-clo" ref="form">
           <span class="form-item-title">实例标题</span>
-          <v-text-field solo v-model="form.title" label="填写实例标题..." background-color="info" :rules="rules.title">
+          <v-text-field class="form-item-input" solo v-model="form.title" label="填写实例标题..." background-color="info"
+            :rules="rules.title">
           </v-text-field>
           <span class="form-item-title">实例标签</span>
-          <v-combobox v-model="form.tags" :items="tagList" background-color="info" clearable multiple chips solo
-            hide-selected label="选择标签..." hide-details>
+          <span class="text-describe">添加或修改实例标签，标签最多三个，每个标签长度小于15</span>
+          <v-combobox class="form-item-input" v-model="form.tags" :items="tagList" background-color="info" clearable
+            multiple chips solo label="选择标签..." hide-selected :disable-lookup="form.tags.length>=3" @change="tagsChange"
+            :rules="rules.tags">
             <template v-slot:selection="{ attrs, item, select, selected }">
-              <v-chip v-bind="attrs" :input-value="selected" close @click="select" @click:close="removeTag(item)">
+              <v-chip v-bind="attrs" color="#1a1a1a" :input-value="selected" close @click="select"
+                @click:close="removeTag(item)">
                 <strong>{{ item }}</strong>
               </v-chip>
             </template>
@@ -50,8 +54,20 @@ export default {
       },
       rules: {
         title: [(v) => !!v || '请填写实例标题！'],
+        tags: [
+          (v) => {
+            console.log(v)
+            for (let i = v.length - 1; i >= 0; i--) {
+              console.log(v[i].length)
+              if (v[i].length > 15) {
+                return '每个标签长度不能大于15！'
+              }
+            }
+            return true
+          },
+        ],
       },
-      tagList: ['CSS', 'HTML', 'JS'],
+      tagList: ['CSS', 'HTML', 'JS', 'cd'],
       loading: false,
     }
   },
@@ -84,6 +100,12 @@ export default {
         }, 3000)
       }
     },
+    tagsChange(list) {
+      const len = list.length
+      if (len > 3) {
+        this.removeTag(list[list.length - 1])
+      }
+    },
     removeTag(item) {
       const form = this.form
       form.tags.splice(form.tags.indexOf(item), 1)
@@ -95,11 +117,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form-item-title {
-  display: inline-block;
-  margin-bottom: 10px;
-}
-.save-btn {
-  margin-top: 20px;
+.form-item-input {
+  margin-top: 10px;
 }
 </style>

@@ -33,7 +33,7 @@ export default {
     },
   },
   components: {
-    'login-verify': loginVerify,
+    loginVerify,
   },
 }
 </script>
@@ -89,6 +89,7 @@ export default {
 }
 @include Mobile {
   #home {
+    min-height: calc(100vh - 70px);
     .main-content {
       width: 100%;
       margin: 50px 0 0 0;

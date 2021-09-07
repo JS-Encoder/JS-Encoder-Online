@@ -25,9 +25,12 @@ const defPrepOpts = {
 // 上传文件等后缀名列表
 const limitMimeType = ['html', 'css', 'js', 'md', 'pug', 'sass', 'scss', 'less', 'styl', 'ts', 'coffee']
 
+const qiNiuImgLink = 'http://images.lliiooiill.cn/'
+
 export {
   fontFamList,
   fontSizeList,
   defPrepOpts,
-  limitMimeType
+  limitMimeType,
+  qiNiuImgLink
 }

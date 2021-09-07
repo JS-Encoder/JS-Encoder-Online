@@ -53,7 +53,7 @@ function getImgMainColor (dataURL) {
  * @param {Number} delay
  * @returns {Function}
  */
- function debounce (func, delay) {
+function debounce (func, delay) {
   let timer = null
   return function (...params) {
     let self = this
@@ -89,7 +89,7 @@ function throttle (func, delay) {
  * @param {String} str 需要转义的字符串
  * @returns {String}
  */
- function escapeRegExp (str) {
+function escapeRegExp (str) {
   const regexp = /[\\^$.*+?()[\]{}|]/g
   return str && new RegExp(regexp.source).test(str) ? str.replace(regexp, '\\$&') : str
 }
@@ -100,7 +100,7 @@ function throttle (func, delay) {
  * @param {Object|Array} target
  * @returns {Object|Array}
  */
- function deepCopy (target) {
+function deepCopy (target) {
   return JSON.parse(JSON.stringify(target))
 }
 
@@ -108,8 +108,53 @@ function throttle (func, delay) {
  * 判断当前操作系统是否为mac或ios
  * @returns {Boolean}
  */
- function isMac () {
+function isMac () {
   return /macintosh|mac os x/i.test(navigator.userAgent)
+}
+
+/**
+ * 生成随机的CSRF_Token，长为36位，中间随机四个位置放置分隔符-
+ * @param {Number} len 
+ * @param {Number} divideNum 
+ * @returns {String}
+ */
+function randomCSRFToken (len = 36, divideNum = 4) {
+  const arr = []
+  const divideCharPosList = []
+  const availableChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+  for (let i = 0;i < divideNum;i++) {
+    let num
+    do {
+      num = randomNum(len - 1, 0)
+    } while (divideCharPosList.includes(num))
+    divideCharPosList.push(num)
+  }
+  for (let i = 0;i < len;i++) {
+    if (divideCharPosList.includes(i)) {
+      arr[i] = '-'
+    } else {
+      arr[i] = availableChars.substr(Math.floor(Math.random() * availableChars.length), 1)
+    }
+  }
+  return arr.join('')
+}
+
+/**
+ * 生成一定范围内的随机数
+ * @param {Number} to 最大值
+ * @param {Number} from 最小值
+ * @returns {Number}
+ */
+function randomNum (to, from = 0) {
+  return Math.floor(Math.random() * (to - from + 1) + from)
+}
+
+/**
+ * 判断当前是否为生产环境
+ * @returns {Boolean}
+ */
+function isProd () {
+  return ['production', 'prod'].includes(process.env.NODE_ENV)
 }
 
 export {
@@ -119,5 +164,8 @@ export {
   throttle,
   escapeRegExp,
   isMac,
-  deepCopy
+  deepCopy,
+  randomCSRFToken,
+  isProd,
+  randomNum
 }

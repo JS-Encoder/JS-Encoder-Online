@@ -7,8 +7,8 @@
       </div>
       <div class="login-form">
         <v-form autocomplete="off" ref="loginForm">
-          <v-text-field label="用户名或邮箱" outlined color="primary" v-model="form.usernameOrEmail"
-            :rules="rules.usernameOrEmail" autocomplete="off"></v-text-field>
+          <v-text-field label="用户名或邮箱" outlined color="primary" v-model="form.username" :rules="rules.username"
+            autocomplete="off"></v-text-field>
           <v-text-field label="密码" autocomplete="new-password" outlined color="primary"
             :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'"
             @click:append="showPwd = !showPwd" v-model="form.password" :rules="rules.password"></v-text-field>
@@ -23,7 +23,7 @@
         <div class="third-part-btn d-flex flex-jcc">
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn icon x-large v-bind="attrs" v-on="on" class="btn-github">
+              <v-btn icon x-large v-bind="attrs" v-on="on" class="btn-github" @click="loginWithGitHub">
                 <i class="icon iconfont icon-github title-lg"></i>
               </v-btn>
             </template>
@@ -31,7 +31,7 @@
           </v-tooltip>
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn icon x-large v-bind="attrs" v-on="on" class="btn-gitee">
+              <v-btn icon x-large v-bind="attrs" v-on="on" class="btn-gitee" @click="loginWithGitee">
                 <i class="icon iconfont icon-gitee title-lg"></i>
               </v-btn>
             </template>
@@ -44,30 +44,98 @@
 </template>
 
 <script>
+import localStore from '@utils/local-storage'
+import { mapState, mapMutations } from 'vuex'
+import { randomCSRFToken } from '@utils/tools'
+import cookie from '@utils/cookie'
+import oauthCONFIG from '@utils/oauthConfig'
+import baseUrl from '@service/env'
+import qs from 'qs'
 export default {
   data() {
     return {
       showPwd: false,
       form: {
-        usernameOrEmail: '',
+        username: '',
         password: '',
       },
       rules: {
-        usernameOrEmail: [(v) => !!v || '请填写用户名或邮箱！'],
+        username: [(v) => !!v || '请填写用户名或邮箱！'],
         password: [(v) => !!v || '请填写密码！'],
       },
       loginLoading: false,
     }
   },
   methods: {
+    ...mapMutations(['setLoginInfo', 'setLoginState']),
     validate() {
       return this.$refs.loginForm.validate()
     },
     login() {
-      if (this.validate()) {
-        this.loginLoading = true
-        this.loginLoading = false
-      }
+      if (!this.validate()) void 0
+      this.loginLoading = true
+      // 获取第三方登录token
+      const tmpToken = sessionStorage.getItem('TMP_OAUTH_TOKEN')
+      const config = tmpToken ? { headers: { token: tmpToken } } : {}
+      this.$http
+        .login({ ...this.form, rememberMe: true }, config)
+        .then((res) => {
+          if (res.state) {
+            const { data, token, msg } = res
+            switch (msg) {
+              case 0: {
+                // 存储请求权限凭证
+                cookie.set('AUTH_TOKEN', token, Infinity)
+                // 自动登录
+                localStore.set('REMEMBER_ME', true)
+                // 临时的第三方登录rememberme
+                sessionStorage.setItem('TMP_REMEMBER_ME', true)
+                // 存储用户信息到VueX
+                const {
+                  username,
+                  name: nickname,
+                  userPicture: avatar,
+                  giteeId,
+                  githubId,
+                } = data
+                this.setLoginState(true)
+                this.setLoginInfo({
+                  username,
+                  nickname,
+                  avatar,
+                  giteeId,
+                  githubId,
+                })
+                break
+              }
+              case 1: {
+                this.$message.error('绑定第三方账户失败，该账户已被绑定！')
+                break
+              }
+            }
+            this.$message.success('登录成功！')
+          } else {
+            this.$message.error('登录失败，用户名/邮箱或密码错误！')
+          }
+          this.loginLoading = false
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$message.error('啊哦！服务器出了点问题😭')
+          this.loginLoading = false
+        })
+    },
+    loginWithGitHub() {},
+    loginWithGitee() {
+      const csrfT = randomCSRFToken()
+      const requireStr = qs.stringify({
+        client_id: oauthCONFIG.gitee.clientID,
+        redirect_uri: `${baseUrl.client}/?type=gitee`,
+        response_type: 'code',
+        state: csrfT,
+      })
+      cookie.set('CSRF_TOKEN', csrfT, 60 * 10)
+      window.open(`https://gitee.com/oauth/authorize?${requireStr}`, '_self')
     },
   },
   components: {},

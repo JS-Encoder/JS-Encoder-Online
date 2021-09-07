@@ -5,9 +5,10 @@
         <span class="item-title title-xs">头像</span>
         <span class="text-sm text-describe">从你的设备上选取一张 JPG 或 PNG 图片作为新的头像。</span>
         <div class="item-content d-flex flex-ai">
-          <div class="avatar-preview">
-            <img :src="form.imgUrl" class="avatar" />
-          </div>
+          <v-avatar size="150" color="primary">
+            <img :src="imgUrl" v-if="form.avatar || imgBgc" />
+            <span class="white--text text-h3" v-else>{{form.nickname|preNickname}}</span>
+          </v-avatar>
           <v-btn color="info" class="upload-btn">
             <a @change="chooseFile" class="upload-a" href="javascript:;">
               <input class="upload-input" ref="fileInput" type="file" accept="image/png,image/jpg,image/jpeg"
@@ -50,15 +51,22 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 import regexpList from '@utils/regexp'
 import Cropper from '@components/cropper'
 import { getImgMainColor } from '@utils/tools'
+import cookie from '@utils/cookie'
+import * as qiNiu from '@utils/qiNiu'
+import { qiNiuImgLink } from '@utils/publicData'
 export default {
   data() {
     return {
+      qiNiuImgLink,
+      imgUrl: '',
+      imgBgc: '',
       form: {
-        imgUrl: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        nickname: 'lliiooiill',
+        avatar: '',
+        nickname: '',
         about: '',
         email: '',
       },
@@ -67,7 +75,7 @@ export default {
           (v) => !!v || '请填写昵称',
           (v) => (v && v.length <= 25) || '昵称长度不能大于25！',
         ],
-        about: [(v) => v.length <= 150 || '关于内容长度不能超过150！'],
+        about: [(v) => !v || v.length <= 150 || '关于内容长度不能超过150！'],
         email: [(v) => !v || regexpList.email.test(v) || '邮箱格式错误！'],
       },
       loading: false,
@@ -78,7 +86,21 @@ export default {
       },
     }
   },
+  created() {
+    const { avatar, nickname, about, email } = this.curUserDetail
+    this.imgUrl = avatar ? qiNiuImgLink + avatar : ''
+    this.form = {
+      avatar,
+      nickname,
+      about,
+      email,
+    }
+  },
+  computed: {
+    ...mapState(['curUserDetail', 'loginInfo']),
+  },
   methods: {
+    ...mapMutations(['setCurUserDetail']),
     chooseFile() {
       // 获取上传文件，判断文件是否满足要求，打开裁切窗口
       const input = this.$refs.fileInput
@@ -137,10 +159,13 @@ export default {
       this.clearInputFiles()
       const sourceCanvas = this.$refs.cropper.$children[0].getCroppedCanvas()
       const image = this.getCroppedImage(sourceCanvas)
-      this.form.imgUrl = image
+      this.imgUrl = image
       this.cropConf.cropUrl = ''
       this.cropDialogVisible = false
-      getImgMainColor(image).then((res) => {})
+      // 获取图片主色调
+      getImgMainColor(image).then((res) => {
+        this.imgBgc = res
+      })
     },
     closeCrop() {
       this.clearInputFiles()
@@ -153,14 +178,45 @@ export default {
     validate() {
       return this.$refs.form.validate()
     },
-    save() {
-      if (this.validate()) {
-        this.loading = true
-        setTimeout(() => {
-          this.$message.success({ msg: '个人设置保存成功！' })
-          this.loading = false
-        }, 3000)
+    async save() {
+      if (!this.validate()) return void 0
+      this.loading = true
+      try {
+        const { avatar, nickname, about, email } = this.form
+        const imgKey = await this.uploadAvatar()
+        const userInfo = {
+          username: this.loginInfo.username,
+          description: about,
+          contactEmail: email,
+          name: nickname,
+          userPicture: imgKey || avatar,
+        }
+        const res = await this.$http.updateUserInfo(userInfo)
+        if (res.state) {
+          this.$message.success('个人设置保存成功！')
+          // 用户信息更新成功之后更新前端数据
+          this.setCurUserDetail({ nickname, about, email, avatar: imgKey })
+          this.form.avatar = imgKey
+          this.imgUrl = qiNiuImgLink + imgKey
+          this.imgBgc = ''
+        }
+      } catch (err) {
+        console.log(err)
+        this.$message.error('啊哦~服务器出了点问题😭')
       }
+      this.loading = false
+    },
+    async uploadAvatar() {
+      // 通过imgBgc判断用户有没有上传新头像，如果没有就没必要上传了
+      if (!this.imgBgc) return void 0
+      let token = cookie.get('QI_NIU_TOKEN')
+      // 如果没有token需要获取七牛云token
+      if (!token) {
+        token = await qiNiu.getToken()
+        cookie.set('QI_NIU_TOKEN', token, 50 * 60)
+      }
+      const res = await qiNiu.sendImgToQiNiu(this.imgUrl, token)
+      return res.data.key
     },
   },
   components: {
@@ -194,16 +250,16 @@ export default {
     }
   }
   .profile-avatar {
-    .avatar-preview {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      overflow: hidden;
-      .avatar {
-        width: 100%;
-        height: 100%;
-      }
-    }
+    // .avatar-preview {
+    //   width: 150px;
+    //   height: 150px;
+    //   border-radius: 50%;
+    //   overflow: hidden;
+    //   .avatar {
+    //     width: 100%;
+    //     height: 100%;
+    //   }
+    // }
     .upload-btn {
       padding: 0;
       margin-left: 50px;

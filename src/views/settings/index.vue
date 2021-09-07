@@ -29,12 +29,13 @@
       </v-card>
     </div>
     <div class="settings-content d-flex flex-1 flex-jcc">
-      <router-view class="content-view"></router-view>
+      <router-view class="content-view" v-if="isUserInfoGot"></router-view>
     </div>
   </div>
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex'
 export default {
   data() {
     return {
@@ -56,12 +57,40 @@ export default {
         },
       ],
       curRouteName: 'Profile',
+      isUserInfoGot: false
     }
   },
   created() {
     this.curRouteName = this.$route.name
+    // 先清空
+    this.clearCurUserDetail()
+    this.getUserInfo()
+  },
+  computed: {
+    ...mapState(['loginInfo']),
   },
   methods: {
+    ...mapMutations(['setCurUserDetail', 'clearCurUserDetail']),
+    getUserInfo() {
+      this.$http
+        .getUserInfo({
+          username: this.loginInfo.username,
+        })
+        .then((res) => {
+          const {
+            name: nickname,
+            contactEmail: email,
+            userPicture: avatar,
+            description: about,
+          } = res.data
+          this.setCurUserDetail({ nickname, email, avatar, about })
+          this.isUserInfoGot = true
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$message.error('获取用户信息失败!')
+        })
+    },
     switchItem(name) {
       this.curRouteName = name
       this.$router.push({ name })

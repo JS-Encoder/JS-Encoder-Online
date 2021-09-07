@@ -128,69 +128,82 @@ export default {
     },
   },
   methods: {
-    sendAuthCode() {
+    async sendAuthCode() {
       this.$refs.emailField.blur()
       // 向邮箱发送验证码 emailAuthCode
       const emailOpts = this.emailOpts
       emailOpts.authCodeLoading = true
-      setTimeout(() => {
-        // 2072451919@qq.com
-        emailOpts.sended = true
-        emailOpts.authCodeLoading = false
-        function calcEmailTime() {
-          let delay = emailOpts.emailDelay
-          emailOpts.emailText = `已发送（${delay}s）`
-          if (--delay < 0) {
-            clearInterval(emailOpts.emailSendTimer)
-            Object.assign(emailOpts, {
-              emailDelay: 60,
-              emailSendTimer: null,
-              emailText: '发送验证码',
-              sended: false,
-            })
-          } else {
-            emailOpts.emailDelay = delay
+      try {
+        const res = await this.$http.emailAuthCode({ email: this.form.email })
+        if (res.state) {
+          this.$message.success('验证码已发送！')
+          emailOpts.sended = true
+          function calcEmailTime() {
+            let delay = emailOpts.emailDelay
+            emailOpts.emailText = `已发送（${delay}s）`
+            if (--delay < 0) {
+              clearInterval(emailOpts.emailSendTimer)
+              Object.assign(emailOpts, {
+                emailDelay: 60,
+                emailSendTimer: null,
+                emailText: '发送验证码',
+                sended: false,
+              })
+            } else {
+              emailOpts.emailDelay = delay
+            }
           }
+          calcEmailTime()
+          emailOpts.emailSendTimer = setInterval(calcEmailTime, 1000)
         }
-        calcEmailTime()
-        emailOpts.emailSendTimer = setInterval(calcEmailTime, 1000)
-      }, 3000)
+      } catch (err) {
+        console.log(err)
+      }
+      emailOpts.authCodeLoading = false
     },
     validate() {
       return this.$refs.signUpForm.validate()
     },
-    checkUsernameUnique(username) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(false)
-        }, 3000)
-      }).then((res) => {
-        return res
-      })
-    },
     async signUp() {
       if (this.validate()) {
         this.signUpLoading = true
-        const form = this.form
-        // 验证用户名是否已被注册 usernameUnique
-        const usernameUnique = await this.checkUsernameUnique(form.username)
-        if (!usernameUnique) {
-          this.errors.username = ['该用户名已被注册！']
-          this.signUpLoading = false
-          return void 0
+        const {
+          username,
+          nickname: name,
+          email,
+          password,
+          authCode: code,
+        } = this.form
+        try {
+          const res = await this.$http.signUp({
+            username,
+            name,
+            email,
+            password,
+            code,
+          })
+          const { state, msg } = res
+          if (state) {
+            this.$message.success('注册成功！')
+          } else {
+            switch (msg) {
+              case 0: {
+                this.errors.authCode = ['验证码错误！']
+                break
+              }
+              case 1: {
+                this.$message.error('未知错误！')
+                break
+              }
+              case 2: {
+                this.errors.username = ['该用户名已被注册！']
+                break
+              }
+            }
+          }
+        } catch (err) {
+          this.$message.error('啊哦！服务器出了点问题😭')
         }
-        // 验证邮箱是否已被注册 emailUnique
-        const emailUnique = await this.checkUsernameUnique(form.email)
-        if (!emailUnique) {
-          this.errors.email = ['邮箱已被注册！']
-          this.signUpLoading = false
-          return void 0
-        }
-        // 注册
-        this.$store.dispatch('snackbar/openSnackbar', {
-          msg: '注册成功！',
-          color: 'success',
-        })
         this.signUpLoading = false
       }
     },

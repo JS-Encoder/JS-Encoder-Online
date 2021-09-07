@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Alert from '@components/alert'
 import Vuetify from 'vuetify/lib'
-import { getType } from '@utils/tools'
+import { getType } from '@utils/type'
 
 const vms = {
   create (comp, opts) {

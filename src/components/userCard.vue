@@ -1,8 +1,9 @@
 <template>
   <v-card class="user-card d-flex">
     <div class="avatar">
-      <v-avatar size="50" class="pointer">
-        <img :src="avatar" alt="John">
+      <v-avatar size="50" class="pointer" color="primary">
+        <!-- <img :src="avatar" alt="John"> -->
+        <span class="white--text text-h6">li</span>
       </v-avatar>
       <v-spacer></v-spacer>
     </div>
@@ -14,13 +15,6 @@
       <v-btn color="info">
         <v-icon left>mdi-plus</v-icon>关注
       </v-btn>
-      <!-- <div class="about">
-        <span class="text-describe text-xs">{{about}}</span>
-      </div> -->
-      <!-- <div class="text-xs num">
-        <span class="instances">实例: {{instances}}</span>
-        <span class="follower">粉丝: {{follower}}</span>
-      </div> -->
     </div>
   </v-card>
 </template>

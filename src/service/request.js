@@ -4,16 +4,26 @@
 
 import axios from 'axios'
 import qs from 'qs'
-import store from '@store/index.js'
+import store from '@store'
+import cookie from '@utils/cookie'
 
 axios.defaults.timeout = 10000
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
+axios.defaults.headers.put['Content-Type'] = 'multipart/form-data;charset=UTF-8'
 
 axios.interceptors.request.use(async config => {
-  config.cancelToken = new axios.CancelToken(cancel => {
-    store.commit('cancelRequest/pushToken', { cancelToken: cancel })
-  })
+  // config.cancelToken = new axios.CancelToken(cancel => {
+  //   store.commit('cancelRequest/pushToken', { cancelToken: cancel })
+  // })
+  if (store.state.loginState) {
+    const token = cookie.get('AUTH_TOKEN')
+    if (token) {
+      config.headers.token = token
+    }
+  }
+
   return config
+
 }, error => {
   return Promise.reject(error)
 })
@@ -35,7 +45,7 @@ axios.interceptors.response.use(
          */
         case 401:
           router.replace({
-            path: '/login',
+            name: 'Login',
             query: {
               redirect: router.currentRoute.fullPath
             }
@@ -54,7 +64,7 @@ axios.interceptors.response.use(
           // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面 
           setTimeout(() => {
             router.replace({
-              path: '/login',
+              name: 'Login',
               query: {
                 redirect: router.currentRoute.fullPath
               }
@@ -100,10 +110,38 @@ export function post (url, params = {}, config = {}) {
   return new Promise((resolve, reject) => {
     axios.post(url, qs.stringify(params), config)
       .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        reject(err.data)
+      })
+  })
+}
+
+export function put (url, params) {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData()
+    for (let key in params) {
+      formData.append(key, params[key])
+    }
+    axios.put(url, formData)
+      .then(res => {
         resolve(res.data);
       })
       .catch(err => {
         reject(err.data)
       })
-  });
+  })
+}
+
+export function deleteReq (url, params) {
+  return new Promise((resolve, reject) => {
+    axios.delete(url, params)
+      .then(res => {
+        resolve(res.data);
+      })
+      .catch(err => {
+        reject(err.data)
+      })
+  })
 }

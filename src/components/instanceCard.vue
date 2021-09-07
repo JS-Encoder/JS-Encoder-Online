@@ -11,8 +11,9 @@
       <v-menu transition="none" :close-on-content-click="false" offset-y open-delay="500" close-delay="200"
         :open-on-hover="true" top>
         <template v-slot:activator="{ on, attrs }">
-          <v-avatar size="40" class="pointer" v-bind="attrs" v-on="on">
-            <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+          <v-avatar size="40" class="pointer" v-bind="attrs" v-on="on" color="primary">
+            <!-- <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John"> -->
+            <span class="white--text text-h7">li</span>
           </v-avatar>
         </template>
         <user-card></user-card>
@@ -26,7 +27,7 @@
         <v-icon>mdi-heart</v-icon>
       </v-btn>
       <span class="liked-num text-xs">12.2k</span>
-      <v-btn icon class="icon-share">
+      <v-btn icon class="icon-share" @click="shareLink">
         <v-icon>mdi-share-variant</v-icon>
       </v-btn>
     </v-card-actions>
@@ -35,14 +36,20 @@
 
 <script>
 import UserCard from '@components/userCard'
+import { copyToClip } from '@utils/tools'
 export default {
   props: {},
   data() {
     return {}
   },
-  methods: {},
+  methods: {
+    shareLink() {
+      copyToClip('123')
+      this.$message.success({ msg: '链接已复制到剪切板！' })
+    },
+  },
   components: {
-    'user-card': UserCard,
+    UserCard,
   },
 }
 </script>

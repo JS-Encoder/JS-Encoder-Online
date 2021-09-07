@@ -1,9 +1,10 @@
+const baseUrl = require('./src/service/env')
 const path = require('path')
 const resolve = (dir) => path.join(__dirname, dir)
 const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV)
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'development' ? '/' : './',
+  publicPath: IS_PROD ? './' : '/',
   outputDir: 'dist',
   assetsDir: 'assets',
   lintOnSave: false,
@@ -13,6 +14,12 @@ module.exports = {
   pwa: {},
   devServer: {
     proxy: {
+      '/api': {
+        target: baseUrl.server,
+        pathRewrite: {
+          '^/api': '',
+        },
+      },
       '/githubApi': {
         target: 'https://api.github.com',
         secure: true,
@@ -27,6 +34,12 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           '^/cdnJS': '',
+        },
+      },
+      '/qiNiu': {
+        target: 'http://upload-z2.qiniup.com',
+        pathRewrite: {
+          '^/qiNiu': '',
         },
       }
     },

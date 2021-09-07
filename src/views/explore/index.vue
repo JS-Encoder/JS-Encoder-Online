@@ -1,5 +1,5 @@
 <template>
-  <div id="explore" class="d-flex flex-jcc">
+  <div id="explore" class="d-flex flex-ai flex-clo">
     <go-to-top></go-to-top>
     <div class="explore-content">
       <div class="explore-search">
@@ -38,18 +38,30 @@
           </v-col>
         </v-row>
       </div>
-      <div class="explore-instance-list" v-show="listLoading">
-        <div class="explore-list-item" v-for="(item, index) in 12" :key="index">
-          <instance-card></instance-card>
+      <div class="find-tip flex-jcc" v-show="!instanceList.length">
+        <div class="tip-content d-flex flex-clo flex-ai">
+          <span class="emoji">🧐</span>
+          <span class="text-describe">哎呀，什么都没找到诶~~</span>
+          <span class="text-describe">但我想，也许你可以为这里开拓一片新土地？</span>
         </div>
-        <!-- <div class="skeleton-list-item" v-for="(item, index) in 12" :key="index">
-          <instance-skeleton></instance-skeleton>
-        </div> -->
       </div>
-      <div class="view-more d-flex flex-jcc">
-        <v-btn color="info" x-large >
-          <v-icon left>mdi-eye-outline</v-icon>查看更多
-        </v-btn>
+      <div v-show="instanceList.length">
+        <div class="explore-instance-list" v-show="listLoading">
+          <div class="explore-list-item" v-for="(item, index) in 12" :key="index">
+            <instance-card></instance-card>
+          </div>
+          <div class="skeleton-list-item" v-for="(item, index) in 12" :key="`sk-${index}`">
+            <instance-skeleton></instance-skeleton>
+          </div>
+        </div>
+        <div class="view-more d-flex flex-jcc">
+          <v-btn color="info" x-large>
+            <v-icon left>mdi-eye-outline</v-icon>查看更多
+          </v-btn>
+        </div>
+        <div class="no-more-tip flex-jcc">
+          <span class="text-describe text-sm">别划了，真的一个也没有了😥</span>
+        </div>
       </div>
     </div>
   </div>
@@ -69,6 +81,7 @@ export default {
         tags: [],
         sort: null,
       },
+      instanceList: [1],
       searchLoading: false,
       showFilter: false,
       listLoading: true,
@@ -110,6 +123,21 @@ export default {
 #explore {
   padding: 30px 0 100px 0;
   .explore-content {
+    .find-tip {
+      display: flex;
+      padding: 50px 0 150px 0;
+      .tip-content {
+        padding: 25px 50px;
+        border-radius: 5px;
+        background-color: $deep-4;
+        span {
+          margin-bottom: 10px;
+        }
+        .emoji{
+          font-size: 64px;
+        }
+      }
+    }
     .explore-search {
       .search-keyword {
         .search-btn {
@@ -127,6 +155,10 @@ export default {
     }
     .view-more {
       margin-top: 35px;
+    }
+    .no-more-tip{
+      padding: 50px 0;
+      display: flex;
     }
   }
 }

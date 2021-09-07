@@ -8,13 +8,18 @@
           <i class="icon iconfont icon-github title-lg"></i>
           <span>GitHub</span>
           <v-spacer></v-spacer>
-          <v-btn text color="primary">绑定账户</v-btn>
+          <v-btn text color="error" v-if="loginInfo.githubId" @click="unbindTip('github')" :loading="githubLoading"
+            disabled>解除绑定
+          </v-btn>
+          <v-btn text color="primary" v-else @click="bindGithub" :loading="githubLoading" disabled>绑定账户</v-btn>
         </div>
         <div class="d-flex flex-ai third-list">
           <i class="icon iconfont icon-gitee title-lg"></i>
           <span>Gitee</span>
           <v-spacer></v-spacer>
-          <v-btn text color="error">解除绑定</v-btn>
+          <v-btn text color="error" v-if="loginInfo.giteeId" @click="unbindTip('gitee')" :loading="giteeLoading">解除绑定
+          </v-btn>
+          <v-btn text color="primary" v-else @click="bindGitee" :loading="giteeLoading">绑定账户</v-btn>
         </div>
       </div>
     </div>
@@ -43,11 +48,76 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex'
+import { randomCSRFToken } from '@utils/tools'
+import cookie from '@utils/cookie'
+import oauthCONFIG from '@utils/oauthConfig'
+import baseUrl from '@service/env'
+import qs from 'qs'
 export default {
   data() {
-    return {}
+    return {
+      giteeLoading: false,
+      githubLoading: false,
+    }
   },
-  methods: {},
+  computed: {
+    ...mapState(['loginInfo']),
+  },
+  methods: {
+    ...mapMutations(['setLoginInfoItem']),
+    unbindTip(type) {
+      this.$alert({
+        content: '确认解除该第三方绑定么？',
+        okColor: 'error',
+        okText: '解除绑定',
+      }).then((isUnbind) => {
+        if (isUnbind) {
+          if (type === 'gitee') {
+            this.unbindGitee()
+          } else {
+            this.unbindGithub()
+          }
+        }
+      })
+    },
+    async unbindGitee() {
+      try {
+        const res = await this.$http.unbindGitee({
+          username: this.loginInfo.username,
+        })
+        if (res.state) {
+          this.$message.success('解绑成功！')
+          this.setLoginInfoItem({ key: 'giteeId', val: null })
+        } else {
+          this.$message.error('解绑失败！')
+        }
+      } catch (err) {
+        console.log(err)
+        this.$message.error('啊哦~服务器出了点问题😭')
+      }
+    },
+    unbindGithub() {
+      const formData = new FormData()
+      formData.append('username', this.loginInfo.username)
+      this.$http.unbindGithub(formData).catch((err) => {
+        console.log(err)
+        this.$message.error('解绑失败！')
+      })
+    },
+    bindGithub() {},
+    bindGitee() {
+      const csrfT = randomCSRFToken()
+      const requireStr = qs.stringify({
+        client_id: oauthCONFIG.gitee.clientID,
+        redirect_uri: `${baseUrl.client}/?type=gitee`,
+        response_type: 'code',
+        state: csrfT,
+      })
+      cookie.set('CSRF_TOKEN', csrfT, 60 * 10)
+      window.open(`https://gitee.com/oauth/authorize?${requireStr}`)
+    },
+  },
   components: {},
 }
 </script>

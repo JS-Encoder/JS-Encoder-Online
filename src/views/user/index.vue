@@ -2,12 +2,14 @@
   <div id="user" class="d-flex flex-clo flex-ai">
     <!-- http://localhost:8080/user/lliiooiill -->
     <div class="user-info-box d-flex flex-clo flex-ai">
-      <v-avatar size="100" class="avatar">
-        <!-- <span class="white--text text-h5">CJ</span> -->
-        <v-img src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img>
-        <v-btn fab class="edit-btn" x-small title="设置">
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
+      <v-avatar size="100" class="avatar" color="primary">
+        <span class="white--text text-h4">li</span>
+        <!-- <v-img src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img> -->
+        <router-link to="/settings">
+          <v-btn fab class="edit-btn" x-small title="设置">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+        </router-link>
       </v-avatar>
       <div class="info-text d-flex flex-1 flex-clo flex-ai">
         <span class="nickname text-bold title-md">lliiooiill</span>
@@ -16,19 +18,16 @@
           这是我的个人这是我的个人这是我的个人这是我的个人这是我的个人简介这是我的个人简介这是我的个人简介这是我的个人简介这是我的个人简介这是我的个人简介这是我的个人简介</p>
       </div>
       <div class="other-info d-flex flex-jcb flex-w text-md">
-        <div class="email-info">
-          <v-icon class="icon">mdi-email-outline</v-icon>
+        <v-spacer></v-spacer>
+        <div class="email-info text-sm">
+          <v-icon class="icon" small>mdi-email-outline</v-icon>
           <span>2072451919@qq.com</span>
-        </div>
-        <div class="follow-info">
-          <span class="followers">粉丝：456</span>
-          <span class="following">关注：123</span>
         </div>
       </div>
     </div>
     <div class="user-views">
       <v-row class="user-tabs" no-gutters justify="center">
-        <v-col md="8" sm="8" cols="12">
+        <v-col md="7" sm="8" cols="12">
           <v-tabs class="tab-list" v-model="curTabName" center-active show-arrows grow>
             <v-tab class="tab" v-for="item in tabList" :key="item.route" @click="switchTabs(item)"
               :href="`#${item.route}`">
@@ -37,11 +36,26 @@
             </v-tab>
           </v-tabs>
         </v-col>
-        <v-col md="1" sm="1" cols="0"></v-col>
-        <v-col md="3" sm="3" cols="12" class="d-flex flex-ai" v-show="showSort">
+        <v-col cols="2" class="col-space"></v-col>
+        <v-col md="2" sm="3" cols="11" class="d-flex flex-ai" v-show="showSort">
           <span class="flex-sh sort-title" v-show="showSort">排序：</span>
-          <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="sortBy" hide-details v-show="showSort">
+          <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="sortBy" hide-details
+            v-show="showSort">
           </v-select>
+        </v-col>
+        <!-- <v-col cols="1" class="col-space"></v-col> -->
+        <v-col md="1" sm="1" cols="1" class="d-flex flex-ai" v-show="isSelfWorks">
+          <v-spacer></v-spacer>
+          <v-tooltip bottom color="info">
+            <template v-slot:activator="{ on, attrs }">
+              <router-link to="/newWork">
+                <v-btn small color="primary" fab v-bind="attrs" v-on="on">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </router-link>
+            </template>
+            <span>新建实例</span>
+          </v-tooltip>
         </v-col>
       </v-row>
       <div class="tab-content">
@@ -85,6 +99,9 @@ export default {
       sortList: ['喜爱度', '更新日期', '创建时间'],
       sortBy: '更新日期',
       showSort: true,
+      userInfo: {
+        bgc: '#1980ff'
+      }
     }
   },
   computed: {
@@ -95,6 +112,9 @@ export default {
       set(val) {
         return val
       },
+    },
+    isSelfWorks() {
+      return this.curTabName !== 'Works'
     },
   },
   watch: {
@@ -149,18 +169,15 @@ export default {
     }
     .other-info {
       width: 100%;
-      color: $light-4;
+      color: $light-5;
       .email-info {
         span {
           vertical-align: bottom;
         }
         .icon {
           color: inherit;
-          margin-right: 10px;
+          margin-right: 5px;
         }
-      }
-      .follow-info .followers {
-        margin-right: 30px;
       }
     }
   }
@@ -171,9 +188,9 @@ export default {
       .tab-list {
         background-color: $deep-3;
         .tab {
-          padding: 0 30px;
+          padding: 0 20px;
           .item-num {
-            padding: 2px 8px;
+            padding: 2px 5px;
             margin-left: 10px;
             color: inherit;
             border-radius: 5px;
@@ -218,6 +235,9 @@ export default {
           display: none;
         }
       }
+    }
+    .col-space {
+      display: none;
     }
   }
 }

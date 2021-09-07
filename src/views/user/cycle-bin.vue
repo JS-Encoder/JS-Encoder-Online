@@ -6,7 +6,7 @@
       <v-icon class="pointer" @click="showTip=false">mdi-close</v-icon>
     </v-card>
     <div class="cycle-bin-list">
-      <v-skeleton-loader type="list-item-two-line"></v-skeleton-loader>
+      <!-- <v-skeleton-loader type="list-item-two-line"></v-skeleton-loader> -->
       <v-card elevation="0" color="#272727" class="instance d-flex flex-ai" v-for="item in 10" :key="item">
         <div class="d-flex flex-clo">
           <span class="instance-title">瀑布流布局</span>
@@ -49,6 +49,9 @@ export default {
   }
   .cycle-bin-list {
     margin-top: 25px;
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
     .instance {
       padding: 10px;
       margin-bottom: 15px;

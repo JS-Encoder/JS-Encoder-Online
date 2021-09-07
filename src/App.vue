@@ -10,6 +10,10 @@
 </template>
 
 <script>
+import localStore from '@utils/local-storage'
+import { mapState, mapMutations } from 'vuex'
+import cookie from '@utils/cookie'
+
 import Header from '@components/header.vue'
 import Footer from '@components/footer.vue'
 import Snackbar from '@components/snackbar.vue'
@@ -17,6 +21,42 @@ export default {
   data() {
     return {
       bgcClass: '',
+    }
+  },
+  created() {
+    const rememberMe = localStore.get('REMEMBER_ME')
+    const oauthRememberMe = sessionStorage.getItem('TMP_REMEMBER_ME')
+    if (rememberMe !== 'false' || oauthRememberMe) {
+      this.$http
+        .verifyLogin()
+        .then((res) => {
+          if (res.state) {
+            const { data, token } = res
+            // 存储请求权限凭证
+            cookie.set('AUTH_TOKEN', token, Infinity)
+            // 存储用户信息到VueX
+            const {
+              username,
+              name: nickname,
+              userPicture: avatar,
+              giteeId,
+              githubId,
+            } = data
+            this.setLoginState(true)
+            this.setLoginInfo({
+              username,
+              nickname,
+              avatar,
+              giteeId,
+              githubId,
+            })
+            this.$message.success('登陆成功！')
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$message.error('啊哦！服务器出了点问题😭')
+        })
     }
   },
   mounted() {
@@ -44,16 +84,10 @@ export default {
           newVal === '' ? 'home' : newVal
         }-bgc`
       }
-      // this.$nextTick(() => {
-      //   if (/^user/.test(newVal)) {
-      //     this.bgcClass = 'user-bgc'
-      //   } else {
-      //     this.bgcClass = `bgc-animation bgc-before ${
-      //       newVal === '' ? 'home' : newVal
-      //     }-bgc`
-      //   }
-      // })
     },
+  },
+  methods: {
+    ...mapMutations(['setLoginInfo', 'setLoginState']),
   },
   components: {
     'jse-header': Header,
@@ -71,8 +105,11 @@ export default {
   background-color: $deep-5;
   position: relative;
   @include setTransition(all, 0.3s, ease);
+  .app-content {
+    min-height: calc(100vh - 70px);
+  }
 }
-.app-full-screen{
+.app-full-screen {
   height: 100% !important;
 }
 .bgc-animation {
@@ -125,7 +162,7 @@ export default {
 }
 .user-bgc {
   background-image: linear-gradient(
-    rgba(111, 0, 255, 0.3) -50px,
+    rgba(25, 128, 255, 0.3) -50px,
     $deep-5 300px
   ) !important;
 }

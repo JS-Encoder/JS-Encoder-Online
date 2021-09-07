@@ -1,6 +1,6 @@
 <template>
   <div id="works">
-    <div class="work-list">
+    <div class="work-list" v-if="workList.length">
       <div class="skeleton-list-item" v-for="(item, index) in 12" :key="index" v-show="loading">
         <instance-skeleton :self="true"></instance-skeleton>
       </div>
@@ -8,11 +8,23 @@
         <self-instance-card></self-instance-card>
       </div>
     </div>
-    <div class="page-opt d-flex flex-jcc">
+    <div class="page-opt d-flex flex-jcc" v-if="workList.length">
       <v-btn class="before-btn" @click="switchPage(-1)" :disabled="p<=1">上一页</v-btn>
       <v-btn color="primary" class="after-btn" @click="switchPage(1)">下一页</v-btn>
     </div>
-    <instance-config></instance-config>
+    <div class="create-tip d-flex flex-jcc" v-else>
+      <div class="tip-content d-flex flex-clo flex-ai">
+        <span class="text-describe">你当前还没有实例保存在云端哦~</span>
+        <span class="text-describe">赶快为社区贡献优质实例吧！</span>
+        <router-link to="/newWork">
+          <v-btn color="primary">
+            <v-icon left>mdi-plus</v-icon>
+            新建实例
+          </v-btn>
+        </router-link>
+      </div>
+    </div>
+    <instance-config @setWorkInfo="setWorkInfo" :workInfo="workInfo"></instance-config>
   </div>
 </template>
 
@@ -27,18 +39,22 @@ export default {
       p: 1,
       workList: [],
       loading: true,
+      workInfo: {
+        title: '',
+        tags: [],
+      },
     }
   },
   created() {
-    this.workList = Array.from({ length: 12 }, (_, i) => i + 12)
-    let f = this.$route.query.f
-    if (f) {
-      f = p2b.decode(f)
-      const p = parseInt(f.p)
-      this.p = p > 1 ? p : 1
-    } else {
-      this.p = 1
-    }
+    // this.workList = Array.from({ length: 12 }, (_, i) => i + 12)
+    // let f = this.$route.query.f
+    // if (f) {
+    //   f = p2b.decode(f)
+    //   const p = parseInt(f.p)
+    //   this.p = p > 1 ? p : 1
+    // } else {
+    //   this.p = 1
+    // }
     this.search()
   },
   methods: {
@@ -56,6 +72,9 @@ export default {
       setTimeout(() => {
         this.loading = false
       }, 5000)
+    },
+    setWorkInfo(workInfo) {
+      this.workInfo = workInfo
     },
   },
   components: {
@@ -78,6 +97,17 @@ export default {
     margin-top: 50px;
     .before-btn {
       margin-right: 15px;
+    }
+  }
+  .create-tip {
+    padding: 50px 0 150px 0;
+    .tip-content {
+      background-color: $deep-4;
+      padding: 25px 50px;
+      border-radius: 5px;
+      span {
+        margin-bottom: 10px;
+      }
     }
   }
 }

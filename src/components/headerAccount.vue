@@ -1,10 +1,11 @@
 <template>
   <div id="headerAccount">
-    <div class="is-login pointer" v-if="isLogin">
+    <div class="is-login pointer" v-if="loginState">
       <v-menu transition="slide-y-transition" bottom offset-y right>
         <template v-slot:activator="{ on, attrs }">
-          <v-avatar :size="dense?30:40" class="avatar" v-bind="attrs" v-on="on">
-            <v-img src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img>
+          <v-avatar :size="dense?30:40" class="avatar" v-bind="attrs" v-on="on" color="primary">
+            <v-img :src="qiNiuImgLink+loginInfo.avatar" v-if="loginInfo.avatar"></v-img>
+            <span class="white--text text-h7" v-else>{{loginInfo.nickname|preNickname}}</span>
           </v-avatar>
         </template>
         <v-list class="user-menu">
@@ -17,15 +18,22 @@
       </v-menu>
     </div>
     <div class="not-login" v-else>
-      <v-btn class="login-btn" depressed color="primary" href="/login" :small="dense" :class="dense?'radius-2':''">登录
-      </v-btn>
-      <v-btn class="sign-up-btn" depressed color="info" href="/signup" :small="dense" :class="dense?'radius-2':''">注册
-      </v-btn>
+      <router-link to="/login">
+        <v-btn class="login-btn" depressed color="primary" :small="dense" :class="dense?'radius-2':''">登录
+        </v-btn>
+      </router-link>
+      <router-link to="/signup">
+        <v-btn class="sign-up-btn" depressed color="info" :small="dense" :class="dense?'radius-2':''">注册
+        </v-btn>
+      </router-link>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+import localStore from '@utils/local-storage'
+import { qiNiuImgLink } from '@utils/publicData'
 export default {
   props: {
     dense: {
@@ -35,7 +43,7 @@ export default {
   },
   data() {
     return {
-      isLogin: true,
+      qiNiuImgLink,
       menuList: [
         {
           name: '我的',
@@ -60,7 +68,11 @@ export default {
       ],
     }
   },
+  computed: {
+    ...mapState(['loginState', 'loginInfo']),
+  },
   methods: {
+    ...mapMutations(['setLoginInfo', 'setLoginState']),
     handleMenu(val) {
       switch (val) {
         case 'user': {
@@ -83,7 +95,26 @@ export default {
           break
         }
         case 'logout': {
-          
+          this.$alert({
+            content: '登出之后，下次来只能手动登录哦！',
+            okColor: 'error',
+            okText: '登出',
+          }).then((isLogout) => {
+            if (!isLogout) void 0
+            // 取消自动登录
+            localStore.set('REMEMBER_ME', false)
+            // 临时的第三方登录rememberme
+            sessionStorage.removeItem('TMP_REMEMBER_ME')
+            this.setLoginState(false)
+            this.setLoginInfo({
+              username: '',
+              nickname: '',
+              avatar: '',
+            })
+            this.$http.logout().then((res) => {
+              this.$router.replace({ name: 'Home' }).catch((err) => {})
+            })
+          })
         }
       }
     },

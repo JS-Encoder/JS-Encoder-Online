@@ -27,6 +27,9 @@ export default {
       visible: false,
     }
   },
+  created() {
+    this.visible = this.name === this.visibleDialogName
+  },
   computed: {
     ...mapState(['visibleDialogName']),
   },
