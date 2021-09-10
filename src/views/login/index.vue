@@ -21,9 +21,9 @@
         </div>
         <v-divider class="divider"></v-divider>
         <div class="third-part-btn d-flex flex-jcc">
-          <v-tooltip top>
+          <v-tooltip top disabled>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn icon x-large v-bind="attrs" v-on="on" class="btn-github" @click="loginWithGitHub">
+              <v-btn icon x-large v-bind="attrs" v-on="on" class="btn-github" @click="loginWithGitHub" disabled>
                 <i class="icon iconfont icon-github title-lg"></i>
               </v-btn>
             </template>
@@ -82,34 +82,31 @@ export default {
         .then((res) => {
           if (res.state) {
             const { data, token, msg } = res
+            // 存储请求权限凭证
+            cookie.set('AUTH_TOKEN', token, Infinity)
+            // 自动登录
+            localStore.set('REMEMBER_ME', true)
+            // 存储用户信息到VueX
+            const {
+              username,
+              name: nickname,
+              userPicture: avatar,
+            } = data
+            this.setLoginState(true)
+            this.setLoginInfo({
+              username,
+              nickname,
+              avatar,
+            })
             switch (msg) {
-              case 0: {
-                // 存储请求权限凭证
-                cookie.set('AUTH_TOKEN', token, Infinity)
-                // 自动登录
-                localStore.set('REMEMBER_ME', true)
-                // 临时的第三方登录rememberme
-                sessionStorage.setItem('TMP_REMEMBER_ME', true)
-                // 存储用户信息到VueX
-                const {
-                  username,
-                  name: nickname,
-                  userPicture: avatar,
-                  giteeId,
-                  githubId,
-                } = data
-                this.setLoginState(true)
-                this.setLoginInfo({
-                  username,
-                  nickname,
-                  avatar,
-                  giteeId,
-                  githubId,
-                })
-                break
-              }
               case 1: {
                 this.$message.error('绑定第三方账户失败，该账户已被绑定！')
+                break
+              }
+              case 2: {
+                // 临时的第三方登录TMP_REMEMBER_ME
+                sessionStorage.setItem('TMP_REMEMBER_ME', true)
+                this.$message.success('绑定成功！')
                 break
               }
             }

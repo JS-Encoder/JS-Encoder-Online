@@ -23,6 +23,7 @@
 
 <script>
 import regexpList from '@utils/regexp'
+import cookie from '@utils/cookie'
 export default {
   data() {
     return {
@@ -49,14 +50,16 @@ export default {
     validate() {
       return this.$refs.form.validate()
     },
-    sendEmail() {
-      if (this.validate()) {
-        // 向邮箱发送重置密码验证链接 emailAuthLink
-        const emailOpts = this.emailOpts
-        emailOpts.authCodeLoading = true
-        setTimeout(() => {
+    async sendEmail() {
+      if (!this.validate()) return void 0
+      // 向邮箱发送重置密码验证链接 emailAuthLink
+      const emailOpts = this.emailOpts
+      emailOpts.authCodeLoading = true
+      try {
+        const { state, token } = await this.$http.emailAuthLink(this.form)
+        if (state) {
+          this.$message.success('邮件发送成功！')
           emailOpts.sended = true
-          emailOpts.authCodeLoading = false
           function calcEmailTime() {
             let delay = emailOpts.emailDelay
             emailOpts.emailText = `已发送（${delay}s）`
@@ -65,7 +68,7 @@ export default {
               Object.assign(emailOpts, {
                 emailDelay: 60,
                 emailSendTimer: null,
-                emailText: '发送验证码',
+                emailText: '发送邮件',
                 sended: false,
               })
             } else {
@@ -74,8 +77,11 @@ export default {
           }
           calcEmailTime()
           emailOpts.emailSendTimer = setInterval(calcEmailTime, 1000)
-        }, 3000)
+        }
+      } catch (err) {
+        console.log(err)
       }
+      emailOpts.authCodeLoading = false
     },
   },
   components: {},

@@ -166,8 +166,7 @@ export default {
         }
       }
     },
-    async runCode(daley = 0) {
-      if (!daley) daley = this.instanceSetting.delayTime
+    async runCode() {
       // 执行代码时，在底部的信息栏展示loading动画
       this.isCompiling = true
       const iframe = this.$refs.iframeBox
@@ -246,7 +245,7 @@ export default {
         this.consoleInfo = logs
         if (isMD) this.initSyncScroll(iframe)
         this.isCompiling = false
-      }, daley)
+      }, 200)
     },
     initSyncScroll(iframe) {
       // 初始化markdown同步滚动功能

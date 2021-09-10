@@ -62,6 +62,7 @@ module.exports = {
       .set('@views', resolve('src/views'))
       .set('@store', resolve('src/store'))
       .set('@utils', resolve('src/utils'))
+      .set('@plugins', resolve('src/plugins'))
   },
 
   css: {

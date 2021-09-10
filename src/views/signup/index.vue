@@ -20,8 +20,8 @@
           </v-text-field>
           <v-row>
             <v-col sm="8" cols="12" style="padding-bottom: 0">
-              <v-text-field ref="emailField" label="邮箱" outlined color="primary" v-model="form.email"
-                :rules="rules.email">
+              <v-text-field ref="emailField" class="email-field" label="邮箱" outlined color="primary"
+                v-model="form.email" :rules="rules.email">
                 <template slot="append">
                   <v-btn :disabled="!isEmailRight||emailOpts.sended" color="primary" class="send-email-btn"
                     @click.stop="sendAuthCode" absolute :loading="emailOpts.authCodeLoading">{{emailOpts.emailText}}
@@ -218,10 +218,15 @@ export default {
   .sign-up-content {
     .sign-up-form {
       margin-top: 40px;
-      .send-email-btn {
-        height: 48px;
-        top: 4px;
-        right: 4px;
+      .email-field {
+        ::v-deep input {
+          padding-right: 110px;
+        }
+        .send-email-btn {
+          height: 48px;
+          top: 4px;
+          right: 4px;
+        }
       }
     }
   }

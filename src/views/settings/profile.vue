@@ -100,7 +100,7 @@ export default {
     ...mapState(['curUserDetail', 'loginInfo']),
   },
   methods: {
-    ...mapMutations(['setCurUserDetail']),
+    ...mapMutations(['setCurUserDetail', 'setLoginInfoItem']),
     chooseFile() {
       // 获取上传文件，判断文件是否满足要求，打开裁切窗口
       const input = this.$refs.fileInput
@@ -190,12 +190,14 @@ export default {
           contactEmail: email,
           name: nickname,
           userPicture: imgKey || avatar,
+          backgroundColor: this.imgBgc,
         }
         const res = await this.$http.updateUserInfo(userInfo)
         if (res.state) {
           this.$message.success('个人设置保存成功！')
           // 用户信息更新成功之后更新前端数据
           this.setCurUserDetail({ nickname, about, email, avatar: imgKey })
+          this.setLoginInfoItem({ key: 'avatar', val: imgKey })
           this.form.avatar = imgKey
           this.imgUrl = qiNiuImgLink + imgKey
           this.imgBgc = ''

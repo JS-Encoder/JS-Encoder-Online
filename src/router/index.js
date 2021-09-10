@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '@views/home'
 import store from '@store/index.js'
 import cookie from '@utils/cookie'
+import localStore from '@utils/local-storage'
 
 Vue.use(VueRouter)
 
@@ -131,6 +132,8 @@ router.beforeEach(async (to, from, next) => {
   // } catch (error) {
   //   console.log(error)
   // }
+  const api = Vue.prototype.$http
+  const message = Vue.prototype.$message
   if (to.name === 'Home') {
     const { type, code, state: csrfT } = to.query
     const OauthTypeList = ['github', 'gitee']
@@ -141,55 +144,101 @@ router.beforeEach(async (to, from, next) => {
        * 请求数据成功后，如果用户没有注册过账号，需要跳转至注册页面注册
        * 如果注册了但没有和账号绑定过，需要跳转至登录页面登录
        */
-      // 清除浏览器地址栏中的参数
-      history.replaceState({}, '', '/')
       // csrfT用于防止csrf攻击
       const localCsrfT = cookie.get('CSRF_TOKEN')
       if (csrfT === localCsrfT || type === 'gitee') {
         cookie.del('CSRF_TOKEN')
-        const api = Vue.prototype.$http
-        const message = Vue.prototype.$message
         try {
-          const giteeRes = await api.loginGitee({ code })
+          const authT = cookie.get('AUTH_TOKEN')
+          const giteeRes = await api.loginGitee({ code }, authT ? { headers: { token: authT } } : {})
           const { state: bindState, token: tmpToken } = giteeRes
-          // 存储临时token用于第三方登录绑定账号
-          sessionStorage.setItem('TMP_OAUTH_TOKEN', tmpToken)
-          if (bindState) {
-            // 绑定账号了，直接将token传过去获取登录信息
-            const oauthLoginRes = await api.oauthLogin({}, { headers: { token: tmpToken } })
-            const { state: loginState, token: loginToken, data } = oauthLoginRes
-            if (loginState) {
-              // 存储请求权限凭证
-              cookie.set('AUTH_TOKEN', loginToken, Infinity)
-              // 存储用户信息到VueX
-              const { username, name: nickname, userPicture: avatar } = data
-              store.commit('setLoginState', true)
-              store.commit('setLoginInfo', {
-                username,
-                nickname,
-                avatar,
-              })
-              sessionStorage.removeItem('TMP_OAUTH_TOKEN')
-              // 临时的第三方登录rememberme
-              sessionStorage.setItem('TMP_REMEMBER_ME', true)
-              message.success('登录成功！')
-            } else {
-              message.error('登录失败！')
-            }
+          // 在本地已有登录凭证，说明是在登录状态下进行第三方绑定
+          if (authT && bindState) {
+            message.success('绑定第三方账户成功！')
+            login()
           } else {
-            // 没有绑定过账号就弹出dialog询问用户是否有账号
-            store.commit('setVisibleDialogName', 'loginVerify')
+            // 存储临时token用于第三方登录绑定账号
+            sessionStorage.setItem('TMP_OAUTH_TOKEN', tmpToken)
+            if (bindState) {
+              // 绑定账号了，直接将token传过去获取登录信息
+              const oauthLoginRes = await api.oauthLogin({}, { headers: { token: tmpToken } })
+              const { state: loginState, token: loginToken, data } = oauthLoginRes
+              if (loginState) {
+                // 存储请求权限凭证
+                cookie.set('AUTH_TOKEN', loginToken, Infinity)
+                // 存储用户信息到VueX
+                const { username, name: nickname, userPicture: avatar } = data
+                store.commit('setLoginState', true)
+                store.commit('setLoginInfo', {
+                  username,
+                  nickname,
+                  avatar,
+                })
+                sessionStorage.removeItem('TMP_OAUTH_TOKEN')
+                // 临时的第三方登录TMP_REMEMBER_ME
+                sessionStorage.setItem('TMP_REMEMBER_ME', true)
+                message.success('登录成功！')
+              } else {
+                message.error('登录失败！')
+              }
+            } else {
+              // 没有绑定过账号就弹出dialog询问用户是否有账号
+              store.commit('setVisibleDialogName', 'loginVerify')
+            }
           }
         } catch (err) {
           message.error('啊哦~服务器出了点问题😭')
         }
       }
+    } else {
+      login()
     }
+  } else {
+    login()
   }
   next()
-  history.replaceState({}, '', '/')
 })
+
+async function login () {
+  const api = Vue.prototype.$http
+  const message = Vue.prototype.$message
+  // 在本地存有REMEMBER_ME或在session中存有TMP_REMEMBER_ME(第三方记住我)进行正常登录
+  const rememberMe = localStore.get('REMEMBER_ME')
+  const oauthRememberMe = sessionStorage.getItem('TMP_REMEMBER_ME')
+  const loginState = store.state.loginState
+  if (!loginState && (rememberMe !== 'false' || oauthRememberMe)) {
+    try {
+      const res = await api.verifyLogin()
+      if (res.state) {
+        const { data, token } = res
+        // 存储请求权限凭证
+        cookie.set('AUTH_TOKEN', token, Infinity)
+        // 存储用户信息到VueX
+        const {
+          username,
+          name: nickname,
+          userPicture: avatar,
+        } = data
+        store.commit('setLoginState', true)
+        store.commit('setLoginInfo', {
+          username,
+          nickname,
+          avatar,
+        })
+        message.success('登录成功！')
+      }
+    } catch (err) {
+      console.log(err)
+      message.error('啊哦！服务器出了点问题😭')
+    }
+  }
+}
+
 router.afterEach((to, from, next) => {
+  if (to.name === 'Home') {
+    // 清除浏览器地址栏中的参数
+    history.replaceState({}, '', '/')
+  }
   window.scrollTo(0, 0)
 })
 

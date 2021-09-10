@@ -3,22 +3,23 @@ const user = {
     state.loginState = isLogin
   },
   setLoginInfo: (state, info) => {
-    state.loginInfo = info
+    state.loginInfo = Object.assign({}, state.loginInfo, info)
   },
-  setLoginInfoItem: (state, bindInfo) => {
-    state.loginInfo[bindInfo.key] = bindInfo.val
+  setLoginInfoItem: (state, info) => {
+    state.loginInfo[info.key] = info.val
   },
   setCurUserDetail: (state, detail) => {
-    state.curUserDetail = detail
+    state.curUserDetail = Object.assign({}, state.curUserDetail, detail)
+  },
+  setUserBindInfo: (state, bindInfo) => {
+    state.curUserDetail[bindInfo.key] = bindInfo.val
   },
   clearCurUserDetail: (state) => {
-    state.curUserDetail = {
-      avatar: '',
-      username: '',
-      nickname: '',
-      about: '',
-      email: ''
+    const detail = state.curUserDetail
+    for (let key in detail) {
+      detail[key] = ''
     }
+    state.curUserDetail = Object.assign({}, detail)
   }
 }
 

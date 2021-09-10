@@ -34,6 +34,7 @@
 import { mapState, mapMutations } from 'vuex'
 import localStore from '@utils/local-storage'
 import { qiNiuImgLink } from '@utils/publicData'
+import cookie from '@utils/cookie'
 export default {
   props: {
     dense: {
@@ -76,12 +77,14 @@ export default {
     handleMenu(val) {
       switch (val) {
         case 'user': {
-          this.$router.push({
-            name: 'User',
-            params: {
-              id: 'lliiooiill',
-            },
-          })
+          this.$router
+            .push({
+              name: 'User',
+              params: {
+                id: this.loginInfo.username,
+              },
+            })
+            .catch((err) => {})
           break
         }
         case 'newWork': {
@@ -91,7 +94,7 @@ export default {
           break
         }
         case 'settings': {
-          this.$router.push({ name: 'Settings' })
+          this.$router.push({ name: 'Settings' }).catch((err) => {})
           break
         }
         case 'logout': {
@@ -101,9 +104,11 @@ export default {
             okText: '登出',
           }).then((isLogout) => {
             if (!isLogout) void 0
+            // 删除登录身份凭证
+            cookie.del('AUTH_TOKEN')
             // 取消自动登录
             localStore.set('REMEMBER_ME', false)
-            // 临时的第三方登录rememberme
+            // 临时的第三方登录TMP_REMEMBER_ME
             sessionStorage.removeItem('TMP_REMEMBER_ME')
             this.setLoginState(false)
             this.setLoginInfo({

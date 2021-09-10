@@ -4,15 +4,17 @@ const user = {
     username: '',
     nickname: '',
     avatar: '',
-    giteeId: null,
-    githubId: null
   },
   /* 当前显示的用户的详细信息 */
   curUserDetail: {
+    username: '',
     avatar: '',
     nickname: '',
     about: '',
-    email: '' // 该邮箱不是注册邮箱
+    contactEmail: '',// 该邮箱不是注册邮箱
+    giteeId: '',
+    githubId: '',
+    email: ''
   }
   /* 进入其他用户主页显示的详细信息 */
 }

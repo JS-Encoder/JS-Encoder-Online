@@ -15,7 +15,7 @@
       </div>
       <div class="feedback-footer d-flex flex-jcb">
         <div class="exp">
-          <v-btn-toggle v-model="form.exp" tile group borderless active-class="selected-exp">
+          <v-btn-toggle v-model="form.emoji" tile group borderless active-class="selected-exp">
             <v-btn v-for="(exp, index) in expList" :key="index" class="">
               <span class="title-xs">{{exp}}</span>
             </v-btn>
@@ -35,7 +35,7 @@ export default {
       form: {
         title: '',
         content: '',
-        exp: 0,
+        emoji: 0,
       },
       rules: {
         title: [
@@ -47,31 +47,39 @@ export default {
       loading: false,
     }
   },
+  created() {
+    this.$http.getFeedbacks().then((res) => {
+      if (res.state) {
+        this.$message.success('获取反馈成功！')
+      }
+    })
+  },
   methods: {
     selectExp(index) {
-      this.form.exp = index
+      this.form.emoji = index
     },
-    submitSuggestion() {
-      if (this.validate()) {
-        this.loading = true
-        setTimeout(() => {
-          this.$store.dispatch('snackbar/openSnackbar', {
-            msg: '发送成功！',
-            style: 'success',
-          })
-          this.loading = false
+    async submitSuggestion() {
+      if (!this.validate()) return void 0
+      this.loading = true
+      try {
+        const username = this.$store.state.loginState.username
+        const res = await this.$http.sendFeedback({ ...this.form, username })
+        if (res.state) {
+          this.$message.success('反馈成功！')
           this.reset()
-        }, 3000)
+        } else {
+          this.$message.error('反馈失败！')
+        }
+      } catch (err) {
+        console.log(err)
       }
+      this.loading = false
     },
     validate() {
       return this.$refs.form.validate()
     },
     reset() {
       this.$refs.form.reset()
-    },
-    resetValidation() {
-      this.$refs.form.resetValidation()
     },
   },
   components: {},

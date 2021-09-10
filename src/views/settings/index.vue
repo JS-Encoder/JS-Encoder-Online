@@ -29,7 +29,10 @@
       </v-card>
     </div>
     <div class="settings-content d-flex flex-1 flex-jcc">
-      <router-view class="content-view" v-if="isUserInfoGot"></router-view>
+      <router-view class="content-view" v-if="true"></router-view>
+      <div v-else class="content-view">
+        <v-skeleton-loader type="article@5"></v-skeleton-loader>
+      </div>
     </div>
   </div>
 </template>
@@ -43,7 +46,7 @@ export default {
         {
           text: '个人设置',
           name: 'Profile',
-          icon: 'mdi-face',
+          icon: 'mdi-account-edit-outline',
         },
         {
           text: '编码设置',
@@ -57,7 +60,7 @@ export default {
         },
       ],
       curRouteName: 'Profile',
-      isUserInfoGot: false
+      isUserInfoGot: false,
     }
   },
   created() {
@@ -71,25 +74,34 @@ export default {
   },
   methods: {
     ...mapMutations(['setCurUserDetail', 'clearCurUserDetail']),
-    getUserInfo() {
-      this.$http
-        .getUserInfo({
+    async getUserInfo() {
+      try {
+        const res = await this.$http.getUserInfo({
           username: this.loginInfo.username,
         })
-        .then((res) => {
-          const {
-            name: nickname,
-            contactEmail: email,
-            userPicture: avatar,
-            description: about,
-          } = res.data
-          this.setCurUserDetail({ nickname, email, avatar, about })
-          this.isUserInfoGot = true
+        const {
+          name: nickname,
+          contactEmail,
+          userPicture: avatar,
+          description: about,
+          email,
+          username,
+          giteeId,
+          githubId,
+        } = res.data
+        this.setCurUserDetail({
+          nickname,
+          email,
+          contactEmail,
+          avatar,
+          about,
+          username,
+          giteeId,
+          githubId,
         })
-        .catch((err) => {
-          console.log(err)
-          this.$message.error('获取用户信息失败!')
-        })
+      } catch (err) {
+        this.$message.error('获取用户信息失败!')
+      }
     },
     switchItem(name) {
       this.curRouteName = name

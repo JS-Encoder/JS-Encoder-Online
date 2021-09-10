@@ -23,7 +23,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import regexpList from '@utils/regexp'
+import cookie from '@utils/cookie'
 export default {
   data() {
     return {
@@ -48,7 +50,17 @@ export default {
       },
     }
   },
+  created() {
+    const token = this.$route.query.token
+    cookie.set('TMP_EMAIL_TOKEN', token)
+    if (this.loginState || !token) {
+      // 如果已经登录了就跳回主页
+      this.$router.replace({ name: 'Home' })
+    }
+    history.replaceState({}, '', '/')
+  },
   computed: {
+    ...mapState(['loginState']),
     isPwdRight() {
       return regexpList.letterNumULine.test(this.form.password)
     },
@@ -57,21 +69,30 @@ export default {
     validate() {
       return this.$refs.form.validate()
     },
-    reset() {
-      if (this.validate()) {
-        // 重置密码 resetPwd
-        this.loading = true
-        this.loading = false
-        this.$store.dispatch('snackbar/openSnackbar', {
-          msg: '密码重置成功！',
-          color: 'success',
-        })
-        setTimeout(() => {
-          this.$router.replace({
-            path: '/login',
-          })
-        }, 2500)
+    async reset() {
+      if (!this.validate()) return void 0
+      const tmpToken = cookie.get('TMP_EMAIL_TOKEN')
+      console.log(tmpToken)
+      const config = { headers: { token: tmpToken } }
+      this.loading = true
+      // _4c2b139460q
+      try {
+        const res = await this.$http.resetPwd(
+          { password: this.form.password },
+          config
+        )
+        if (res.state) {
+          this.$message.success('重置密码成功！')
+          cookie.del('TMP_EMAIL_TOKEN')
+          this.$router.replace({ path: '/login' })
+        } else {
+          this.$message.error('重置密码失败！')
+        }
+      } catch (err) {
+        console.log(err)
+        this.$message.error('未知错误！')
       }
+      this.loading = false
     },
   },
   components: {},

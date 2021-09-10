@@ -6,8 +6,9 @@ import axios from 'axios'
 import qs from 'qs'
 import store from '@store'
 import cookie from '@utils/cookie'
+import message from '@plugins/message'
 
-axios.defaults.timeout = 10000
+axios.defaults.timeout = 30 * 1000
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 axios.defaults.headers.put['Content-Type'] = 'multipart/form-data;charset=UTF-8'
 
@@ -62,14 +63,14 @@ axios.interceptors.response.use(
           localStorage.removeItem('token')
           store.commit('loginSuccess', null)
           // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面 
-          setTimeout(() => {
-            router.replace({
-              name: 'Login',
-              query: {
-                redirect: router.currentRoute.fullPath
-              }
-            })
-          }, 1000)
+          // setTimeout(() => {
+          //   router.replace({
+          //     name: 'Login',
+          //     query: {
+          //       redirect: router.currentRoute.fullPath
+          //     }
+          //   })
+          // }, 1000)
           break
         // 404请求不存在
         case 404:
@@ -95,6 +96,7 @@ export function get (url, params = {}, config = {}) {
     }).then(res => {
       resolve(res.data)
     }).catch(err => {
+      message.error('啊哦~服务器出了点问题😭！')
       reject(err.data)
     })
   })
@@ -113,34 +115,37 @@ export function post (url, params = {}, config = {}) {
         resolve(res.data)
       })
       .catch(err => {
+        message.error('啊哦~服务器出了点问题😭！')
         reject(err.data)
       })
   })
 }
 
-export function put (url, params) {
+export function put (url, params, config = {}) {
   return new Promise((resolve, reject) => {
     const formData = new FormData()
     for (let key in params) {
       formData.append(key, params[key])
     }
-    axios.put(url, formData)
+    axios.put(url, formData, config)
       .then(res => {
         resolve(res.data);
       })
       .catch(err => {
+        message.error('啊哦~服务器出了点问题😭！')
         reject(err.data)
       })
   })
 }
 
-export function deleteReq (url, params) {
+export function del (url, params, config = {}) {
   return new Promise((resolve, reject) => {
-    axios.delete(url, params)
+    axios.delete(url, params, config)
       .then(res => {
         resolve(res.data);
       })
       .catch(err => {
+        message.error('啊哦~服务器出了点问题😭！')
         reject(err.data)
       })
   })

@@ -115,6 +115,17 @@ export default {
     'instanceSetting.lint'(newState) {
       this.codeOptions.lint = newState && this.getLintOpts(this.codeMode)
     },
+        'instanceSetting.delayTime'(newState) {
+      this.watchCode()
+      this.watchCode = this.$watch(
+        'code',
+        debounce(function (code) {
+          const mode = judgeMode(this.codeMode)
+          this.handleInstanceCode({ mode, code })
+          if (this.instanceSetting.autoExecute) this.$emit('runCode')
+        }, newState)
+      )
+    },
   },
   methods: {
     ...mapMutations(['setInstanceCode']),
@@ -135,7 +146,7 @@ export default {
           const mode = judgeMode(this.codeMode)
           this.setInstanceCode({ mode, code })
           if (this.instanceSetting.autoExecute) this.$emit('runCode')
-        }, 500)
+        }, this.instanceSetting.delayTime)
       )
     },
     getCodeMirror() {

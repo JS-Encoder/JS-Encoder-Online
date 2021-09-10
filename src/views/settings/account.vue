@@ -8,7 +8,7 @@
           <i class="icon iconfont icon-github title-lg"></i>
           <span>GitHub</span>
           <v-spacer></v-spacer>
-          <v-btn text color="error" v-if="loginInfo.githubId" @click="unbindTip('github')" :loading="githubLoading"
+          <v-btn text color="error" v-if="curUserDetail.githubId" @click="unbindTip('github')" :loading="githubLoading"
             disabled>解除绑定
           </v-btn>
           <v-btn text color="primary" v-else @click="bindGithub" :loading="githubLoading" disabled>绑定账户</v-btn>
@@ -17,7 +17,8 @@
           <i class="icon iconfont icon-gitee title-lg"></i>
           <span>Gitee</span>
           <v-spacer></v-spacer>
-          <v-btn text color="error" v-if="loginInfo.giteeId" @click="unbindTip('gitee')" :loading="giteeLoading">解除绑定
+          <v-btn text color="error" v-if="curUserDetail.giteeId" @click="unbindTip('gitee')" :loading="giteeLoading">
+            解除绑定
           </v-btn>
           <v-btn text color="primary" v-else @click="bindGitee" :loading="giteeLoading">绑定账户</v-btn>
         </div>
@@ -26,13 +27,13 @@
     <div class="account-item account-email d-flex flex-clo">
       <span class="item-title title-xs">绑定邮箱</span>
       <span class="text-sm text-describe">修改绑定的邮箱，该邮箱用于找回密码及其他操作。</span>
-      <div class="item-content">
-        <v-row>
-          <v-col cols="8">
-            <v-text-field solo label="输入修改后的邮箱"></v-text-field>
+      <div class="text-md bound-email item-content">
+        <v-row align="center">
+          <v-col cols="9">
+            当前邮箱：{{curUserDetail.email}}
           </v-col>
-          <v-col cols="4">
-            <v-btn color="primary" height="48" block x-large>修改</v-btn>
+          <v-col cols="3">
+            <v-btn color="primary" block @click="setVisibleDialogName('modifyBindEmail')">修改</v-btn>
           </v-col>
         </v-row>
       </div>
@@ -44,6 +45,7 @@
         <v-btn color="error" class="col-6" x-large>删除账户</v-btn>
       </div>
     </div>
+    <modify-bind-email></modify-bind-email>
   </div>
 </template>
 
@@ -54,6 +56,8 @@ import cookie from '@utils/cookie'
 import oauthCONFIG from '@utils/oauthConfig'
 import baseUrl from '@service/env'
 import qs from 'qs'
+
+import ModifyBindEmail from '@components/dialog/modifyBindEmail'
 export default {
   data() {
     return {
@@ -62,10 +66,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['loginInfo']),
+    ...mapState(['loginInfo', 'curUserDetail']),
   },
   methods: {
-    ...mapMutations(['setLoginInfoItem']),
+    ...mapMutations(['setUserBindInfo', 'setVisibleDialogName']),
     unbindTip(type) {
       this.$alert({
         content: '确认解除该第三方绑定么？',
@@ -88,13 +92,12 @@ export default {
         })
         if (res.state) {
           this.$message.success('解绑成功！')
-          this.setLoginInfoItem({ key: 'giteeId', val: null })
+          this.setUserBindInfo({ key: 'giteeId', val: '' })
         } else {
           this.$message.error('解绑失败！')
         }
       } catch (err) {
         console.log(err)
-        this.$message.error('啊哦~服务器出了点问题😭')
       }
     },
     unbindGithub() {
@@ -115,10 +118,12 @@ export default {
         state: csrfT,
       })
       cookie.set('CSRF_TOKEN', csrfT, 60 * 10)
-      window.open(`https://gitee.com/oauth/authorize?${requireStr}`)
+      window.open(`https://gitee.com/oauth/authorize?${requireStr}`, '_self')
     },
   },
-  components: {},
+  components: {
+    ModifyBindEmail
+  },
 }
 </script>
 
@@ -139,6 +144,13 @@ export default {
       .icon {
         margin-right: 25px;
       }
+    }
+  }
+  .account-email {
+    .bound-email {
+      margin-top: 15px;
+      margin-bottom: 25px;
+      color: $light-5;
     }
   }
 }
