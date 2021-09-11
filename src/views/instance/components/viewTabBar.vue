@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     refresh() {
-      this.$emit('runCode')
+      this.$emit('runCode', true)
     },
     fullScreen() {
       this.$emit('fullScreen', true)

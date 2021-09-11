@@ -29,7 +29,7 @@
       </v-card>
     </div>
     <div class="settings-content d-flex flex-1 flex-jcc">
-      <router-view class="content-view" v-if="true"></router-view>
+      <router-view class="content-view" v-if="isUserInfoGot"></router-view>
       <div v-else class="content-view">
         <v-skeleton-loader type="article@5"></v-skeleton-loader>
       </div>
@@ -99,6 +99,7 @@ export default {
           giteeId,
           githubId,
         })
+        this.isUserInfoGot = true
       } catch (err) {
         this.$message.error('获取用户信息失败!')
       }

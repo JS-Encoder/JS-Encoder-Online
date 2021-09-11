@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     newWork() {
-      this.$router.push({ name: 'Work' })
+      this.$router.push({ name: 'NewWork' })
     },
     goToOffline() {
       window.open('http://jsencoder.lliiooiill.cn/')

@@ -8,7 +8,7 @@ import store from '@store'
 import cookie from '@utils/cookie'
 import message from '@plugins/message'
 
-axios.defaults.timeout = 30 * 1000
+axios.defaults.timeout = 60 * 1000
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 axios.defaults.headers.put['Content-Type'] = 'multipart/form-data;charset=UTF-8'
 

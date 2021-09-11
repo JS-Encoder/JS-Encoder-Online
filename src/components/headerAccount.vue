@@ -89,7 +89,7 @@ export default {
         }
         case 'newWork': {
           this.$router.push({
-            name: 'Work',
+            name: 'NewWork',
           })
           break
         }

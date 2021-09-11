@@ -15,6 +15,9 @@ const instance = {
     const { index, newPrep } = obj
     state.prep.splice(index, 1, newPrep)
   },
+  setAllPrep: (state, newPrep) => {
+    state.prep = newPrep
+  },
   setCurTab: (state, tab) => {
     state.curTab = tab
   },
@@ -59,6 +62,12 @@ const instance = {
   },
   setConsoleInfoCount: (state, count) => {
     state.consoleInfoCount = count
+  },
+  setCompiledCode: (state, code) => {
+    state.compiledCode = code
+  },
+  setCurInstanceDetail: (state, detail) => {
+    state.curInstanceDetail = Object.assign({}, state.curInstanceDetail, detail)
   }
 }
 

@@ -3,11 +3,10 @@
     <div v-show="!loaded" class="loader flex-jcc">
       <div class="loader-content d-flex flex-clo flex-ai">
         <instance-loader class="page-loader"></instance-loader>
-        <span class="tip">请求成功！实例加载中</span>
-        <span class="tip">正在请求实例</span>
+        <span class="tip">{{tip}}</span>
       </div>
     </div>
-    <instance></instance>
+    <instance @init="init"></instance>
   </div>
 </template>
 
@@ -28,31 +27,13 @@ export default {
       loaded: false,
       clientWidth: window.innerWidth,
       clientHeight: document.documentElement.clientHeight,
+      tip: '实例页面加载中',
+      rendered: false,
     }
   },
-  mounted() {
-    setTimeout(() => {
-      const { clientHeight: clientH, clientWidth: clientW } = document.body
-      // iframe的高度等于整个可见窗口高度减去header和console的高度
-      const iframeH = clientH - this.consoleH - 41 - 30 - 20
-      this.setIframeH(iframeH)
-      // 将iframe和编辑窗口的宽度等分，需要减去分割线和侧边工具栏的宽度
-      const avgW = (clientW - 41 - 4) / 2
-      if (avgW % 1 !== 0) {
-        const floorAvg = Math.floor(avgW)
-        this.setIframeW(floorAvg)
-        this.setEditorW(floorAvg + 1)
-      } else {
-        this.setIframeW(avgW)
-        this.setEditorW(avgW)
-      }
-      window.onresize = () => {
-        this.clientWidth = window.innerWidth
-        this.clientHeight = document.documentElement.clientHeight
-      }
-      // 完成后隐藏全页面的加载动画
-      this.loaded = true
-    }, 3000)
+  async mounted() {
+    await this.init()
+    this.rendered = true
   },
   watch: {
     clientWidth(newW, oldW) {
@@ -104,7 +85,86 @@ export default {
     ...mapState(['iframeH', 'consoleH', 'editorW', 'iframeW']),
   },
   methods: {
-    ...mapMutations(['setIframeH', 'setIframeW', 'setEditorW', 'setConsoleH']),
+    ...mapMutations([
+      'setIframeH',
+      'setIframeW',
+      'setEditorW',
+      'setConsoleH',
+      'setCurInstanceDetail',
+      'setPrep',
+      'setInstancesCode',
+      'setInstanceSetting',
+      'setAllInstanceExtLinks',
+    ]),
+    async init() {
+      this.loaded = false
+      await this.initInstanceInfo()
+      if (!this.rendered) {
+        await this.calcSize()
+      }
+      // 完成后隐藏全页面的加载动画
+      this.loaded = true
+    },
+    async calcSize() {
+      this.tip = '实例页面加载中'
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const { clientHeight: clientH, clientWidth: clientW } = document.body
+          // iframe的高度等于整个可见窗口高度减去header和console的高度
+          const iframeH = clientH - this.consoleH - 41 - 30 - 20
+          this.setIframeH(iframeH)
+          // 将iframe和编辑窗口的宽度等分，需要减去分割线和侧边工具栏的宽度
+          const avgW = (clientW - 41 - 4) / 2
+          if (avgW % 1 !== 0) {
+            const floorAvg = Math.floor(avgW)
+            this.setIframeW(floorAvg)
+            this.setEditorW(floorAvg + 1)
+          } else {
+            this.setIframeW(avgW)
+            this.setEditorW(avgW)
+          }
+          window.onresize = () => {
+            this.clientWidth = window.innerWidth
+            this.clientHeight = document.documentElement.clientHeight
+          }
+          resolve()
+        }, 1500)
+      })
+    },
+    async initInstanceInfo() {
+      const route = this.$route
+      if (route.name !== 'Work') return void 0
+      const { username, instanceID: exampleId } = route.params
+      this.tip = '正在请求实例信息'
+      try {
+        const res = await this.$http.getWork({ username, exampleId })
+        if (res.state) {
+          const {
+            exampleId: id,
+            exampleName: title,
+            codeContent,
+            label: tags,
+            htmlStyle,
+            cssStyle,
+            jsStyle,
+          } = res.data
+          const { instanceCode, instanceExtLinks, headTags } =
+            JSON.parse(codeContent)
+          this.setCurInstanceDetail({ username, id, title, tags, save: true })
+          this.setPrep([htmlStyle, cssStyle, jsStyle])
+          this.setInstancesCode(instanceCode)
+          this.setInstanceSetting({ name: 'headTags', value: headTags })
+          this.setAllInstanceExtLinks(instanceExtLinks)
+          this.$message.success('获取实例信息成功！')
+        } else {
+          this.$message.error('获取实例信息失败！')
+          this.$router.replace({ name: '404' })
+        }
+      } catch (err) {
+        console.log(err)
+        this.$router.replace({ name: '404' })
+      }
+    },
   },
   components: {
     Instance,

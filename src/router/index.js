@@ -106,8 +106,15 @@ const routes = [
   },
   {
     path: '/newWork',
+    name: 'NewWork',
+    component: () => import('@views/instance'),
+    meta: { hideHAF: true } // 隐藏header和footer
+  },
+  {
+    path: '/work/:username/:instanceID',
     name: 'Work',
-    component: () => import('@views/instance')
+    component: () => import('@views/instance'),
+    meta: { hideHAF: true },
   },
   {
     path: '*',

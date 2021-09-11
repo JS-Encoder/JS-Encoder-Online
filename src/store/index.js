@@ -27,5 +27,12 @@ export default new Vuex.Store({
   modules: {
     alertMsg,
     cancelRequest
+  },
+  getters: {
+    instanceContent: (state) => {
+      const { instanceCode, instanceExtLinks, compiledCode, prep } = state
+      const headTags = state.instanceSetting.headTags
+      return { instanceCode, instanceExtLinks, compiledCode, headTags, prep }
+    }
   }
 })

@@ -1,11 +1,11 @@
 <template>
   <v-app id="app" :class="bgcClass" :style="curBgcStyle">
-    <jse-header v-if="routeName!=='Work'" />
-    <section class="app-content" :class="routeName==='Work'?'app-full-screen':''">
+    <jse-header v-if="!hideHAF" />
+    <section class="app-content" :class="hideHAF?'app-full-screen':''">
       <router-view />
       <jse-snackbar />
     </section>
-    <jse-footer v-if="routeName!=='Work'" />
+    <jse-footer v-if="!hideHAF" />
   </v-app>
 </template>
 
@@ -36,6 +36,9 @@ export default {
     userBgc() {
       return this.curUserDetail.bgc
     },
+    hideHAF() {
+      return this.$route.meta.hideHAF
+    }
   },
   watch: {
     path() {

@@ -1,7 +1,7 @@
 <template>
   <div id="instance">
     <div class="instance-content">
-      <instance-header></instance-header>
+      <instance-header @initInstanceData="initInstanceData"></instance-header>
       <div class="main-body d-flex">
         <sidebar class="flex-sh"></sidebar>
         <div class="d-flex flex-1 area">
@@ -135,7 +135,11 @@ export default {
       'setEditorW',
       'setConsoleInfo',
       'setConsoleInfoCount',
+      'setCurInstanceDetail',
     ]),
+    initInstanceData() {
+      this.$emit('init')
+    },
     viewResize(e) {
       // 用鼠标拖动分割线改变编辑器和预览窗口的宽度
       // 拖动时需要在iframe上显示一个遮罩层，否则鼠标滑动到iframe中会影响拖动事件监听
@@ -166,7 +170,7 @@ export default {
         }
       }
     },
-    async runCode() {
+    async runCode(init = false) {
       // 执行代码时，在底部的信息栏展示loading动画
       this.isCompiling = true
       const iframe = this.$refs.iframeBox
@@ -245,6 +249,7 @@ export default {
         this.consoleInfo = logs
         if (isMD) this.initSyncScroll(iframe)
         this.isCompiling = false
+        if (init) this.setCurInstanceDetail({ saved: false })
       }, 200)
     },
     initSyncScroll(iframe) {
@@ -299,7 +304,7 @@ export default {
     SettingsDialog,
     UploadDialog,
     DownloadDialog,
-    ShortcutDialog
+    ShortcutDialog,
   },
 }
 </script>

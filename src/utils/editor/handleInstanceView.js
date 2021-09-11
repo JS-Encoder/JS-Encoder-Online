@@ -1,3 +1,4 @@
+import store from '@store'
 import Loader from '../loader'
 const loader = new Loader()
 
@@ -34,8 +35,7 @@ class IframeHandler {
       const linkStr = `<script src="${JSLinks[i]}"></script>\n`
       extJS += linkStr
     }
-    iDoc.open()
-    iDoc.write(`
+    const compiledCode = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -52,7 +52,9 @@ class IframeHandler {
     ${HTMLCode}
     </body>
     </html>
-    `)
+    `
+    iDoc.open()
+    iDoc.write(compiledCode)
     iDoc.close()
     return new Promise((resolve) => {
       this.iframe.onload = () => {
@@ -61,6 +63,7 @@ class IframeHandler {
           this.renderFlowchart()
         }
         resolve(() => {
+          store.commit('setCompiledCode', compiledCode)
           this.insertScript(JSCode)
         })
       }

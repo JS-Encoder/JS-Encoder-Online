@@ -47,7 +47,7 @@ export default {
         codeArea.refresh()
         codeArea.codemirror.focus()
       }
-    }, 3100)
+    }, 1600)
   },
   computed: {
     ...mapState([
@@ -115,14 +115,14 @@ export default {
     'instanceSetting.lint'(newState) {
       this.codeOptions.lint = newState && this.getLintOpts(this.codeMode)
     },
-        'instanceSetting.delayTime'(newState) {
+    'instanceSetting.delayTime'(newState) {
       this.watchCode()
       this.watchCode = this.$watch(
         'code',
         debounce(function (code) {
           const mode = judgeMode(this.codeMode)
           this.handleInstanceCode({ mode, code })
-          if (this.instanceSetting.autoExecute) this.$emit('runCode')
+          if (this.instanceSetting.autoExecute) this.$emit('runCode', true)
         }, newState)
       )
     },
@@ -145,7 +145,7 @@ export default {
         debounce(function (code) {
           const mode = judgeMode(this.codeMode)
           this.setInstanceCode({ mode, code })
-          if (this.instanceSetting.autoExecute) this.$emit('runCode')
+          if (this.instanceSetting.autoExecute) this.$emit('runCode', true)
         }, this.instanceSetting.delayTime)
       )
     },

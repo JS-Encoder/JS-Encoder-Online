@@ -11,7 +11,7 @@
       <span v-show="cursorPos.selected">({{cursorPos.selected}} selected)</span>
     </div>
     <div class="d-flex flex-sh spaces flex-ai">
-      <span>Spaces: {{instanceSetting.indentSpaces}}</span>
+      <span>Spaces: {{instanceSetting.indent.width}}</span>
     </div>
     <div class="console-info-count d-flex flex-ai">
       <span><i class="icon iconfont icon-error"></i>{{consoleInfoCount.error}}</span>

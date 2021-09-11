@@ -233,9 +233,6 @@ export default {
 }
 @include screenXS {
   #sign-up {
-    .email-input {
-      padding-bottom: 0;
-    }
     .auth-input {
       padding-top: 0;
     }

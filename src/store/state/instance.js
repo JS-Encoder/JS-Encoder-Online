@@ -30,6 +30,7 @@ const instance = {
     cssLinks: [],
     JSLinks: [],
   },
+  compiledCode: '',
   /* iframe */
   iframeH: 0,
   iframeW: 0,
@@ -47,7 +48,17 @@ const instance = {
     error: 0,
     warn: 0,
     info: 0
-  }
+  },
+
+  /* 当前实例详情 */
+  curInstanceDetail: {
+    username: '',
+    title: '',
+    tags: '',
+    liked: false,
+    id: '',
+    saved: true // 当前实例是否被保存了
+  },
 }
 
 export default instance
