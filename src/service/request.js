@@ -140,7 +140,11 @@ export function put (url, params, config = {}) {
 
 export function del (url, params, config = {}) {
   return new Promise((resolve, reject) => {
-    axios.delete(url, params, config)
+    const formData = new FormData()
+    for (let key in params) {
+      formData.append(key, params[key])
+    }
+    axios.delete(url, formData, config)
       .then(res => {
         resolve(res.data);
       })
