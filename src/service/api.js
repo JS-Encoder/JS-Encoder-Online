@@ -50,7 +50,7 @@ const api = {
   sendFeedback: (params) => post('/api/feedback/addFeedback', params),
 
   //!/* 根据实例名或者标签查询实例 */
-  searchWorksByContent: (params) => get('/api/query/queryByExampleName', params),
+  searchWorksByContent: (params) => get('/api/query/queryExample', params),
 
   //!/* 查询实例列表 */
   searchWorks: (params) => get('/api/query/getExample', params),
@@ -72,13 +72,13 @@ const api = {
   addLikeWork: (params) => post('/api/example/addFavorites', params),
   //!/* 取消喜爱实例 */
   delLikeWork: (params) => post('/api/example/cancelFavorites', params),
-  //!/* 创建或保存实例 */
+  /* 创建或保存实例 */
   saveWork: (params) => post('/api/example/createExample', params),
-  //!/* 获取实例详情 */
+  /* 获取实例详情 */
   getWork: (params) => get('/api/content/getContent', params),
   //!/* 删除实例 */
   delWork: (params) => del('/api/example/', params),
-  //!/* 更新实例设置 */
+  /* 更新实例设置 */
   configWork: (params) => put('/api/example/', params),
   //!/* 永久删除实例 */
   permanentDelWork: (params) => del('/api/example/delete', params),
