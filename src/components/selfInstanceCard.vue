@@ -1,22 +1,21 @@
 <template>
   <v-card class="self-instance-card">
-    <v-img
-      src="https://assets.codepen.io/3364143/internal/screenshots/pens/ZEpxeYm.default.png?fit=cover&format=auto&ha=true&height=540&quality=75&v=2&version=1612345891&width=960"
-      class="instance-card-img white--text align-end" gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)">
-      <div class="img-screen pointer d-flex flex-ai flex-jcc">
+    <v-img :src="`${qiNiuImgLink}${info.img}`" class="instance-card-img">
+      <div class="img-screen pointer d-flex flex-ai flex-jcc" @click="viewInstance">
         <v-icon>mdi-eye</v-icon>
       </div>
     </v-img>
     <v-card-actions>
       <div class="instance-info d-flex flex-clo pointer">
-        <span class="text-sm" title="123">瀑布流特效1111111111111111111111111111111111111111111111</span>
+        <span class="text-sm" :title="info.exampleName">{{info.exampleName}}</span>
       </div>
       <v-spacer></v-spacer>
-      <v-btn icon class="icon-like">
+      <v-btn icon :class="info.myFavorites?'icon-like-active':'icon-like'" :disabled="!loginState||isSelfProfile"
+        :loading="likeLoading">
         <v-icon>mdi-heart</v-icon>
       </v-btn>
-      <span class="liked-num text-xs">12.2k</span>
-      <v-menu offset-y top>
+      <span class="liked-num text-xs">{{info.favorites|formatNumber}}</span>
+      <v-menu offset-y top v-if="isSelfProfile">
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon class="icon-more" v-bind="attrs" v-on="on">
             <v-icon>mdi-dots-horizontal</v-icon>
@@ -25,27 +24,30 @@
         <v-list class="works-menu">
           <v-list-item class="works-menu-list" v-for="item in menuList" :key="item.value" link
             @click="handleMenu(item.value)">
-            <v-icon class="icon">{{item.icon}}</v-icon>
-            {{item.name}}
+            <v-icon class="icon">{{item.icon}}</v-icon>{{item.name}}
           </v-list-item>
         </v-list>
       </v-menu>
+      <v-btn icon @click="shareLink" v-else>
+        <v-icon>mdi-share-variant</v-icon>分享
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
 import { copyToClip } from '@utils/tools'
-
+import { qiNiuImgLink } from '@utils/publicData'
+import env from '@service/env'
 export default {
+  props: {
+    info: Object,
+  },
   data() {
     return {
+      qiNiuImgLink: 'http://firstbird.asia/',
       menuList: [
-        {
-          name: '设置',
-          value: 'config',
-          icon: 'mdi-cog',
-        },
         {
           name: '分享',
           value: 'share',
@@ -57,7 +59,12 @@ export default {
           icon: 'mdi-trash-can',
         },
       ],
+      likeLoading: false,
     }
+  },
+  computed: {
+    ...mapState(['loginState', 'loginInfo']),
+    ...mapGetters(['isSelfProfile']),
   },
   methods: {
     handleMenu(val) {
@@ -70,9 +77,6 @@ export default {
           this.shareLink()
           break
         }
-        case 'config': {
-          this.$store.commit('setVisibleDialogName', 'instanceConfig')
-        }
       }
     },
     delete() {
@@ -81,17 +85,47 @@ export default {
         content: '实例将会在回收站内保存7天，7天后将永久删除，确认继续该操作么',
         okText: '确认并删除',
         okColor: 'error',
-      }).then((res) => {
+      }).then(async (res) => {
         if (res) {
-          this.$message.success({ msg: '实例删除成功！' })
-        } else {
-          this.$message.error({ msg: '实例删除失败！' })
+          const delRes = await this.$http.delWork({
+            exampleId: this.info.exampleId,
+          })
+          if (delRes.state) {
+            this.$emit('initData')
+            this.$message.success('实例删除成功！')
+          } else {
+            this.$message.error('实例删除失败！')
+          }
         }
       })
     },
     shareLink() {
-      copyToClip('123')
-      this.$message.success({ msg: '链接已复制到剪切板！' })
+      const { username, exampleId } = this.info
+      copyToClip(`${env.client}/work/${username}/${exampleId}`)
+      this.$message.success('链接已复制到剪切板！')
+    },
+    async like() {
+      const { myFavorites, exampleId } = this.info
+      this.likeLoading = true
+      try {
+        // 根据当前是否已喜欢来判定调用喜欢还是取消喜欢接口
+        const api = this.$http
+        const req = myFavorites ? api.delLikeWork : api.addLikeWork
+        const res = req({ username: this.loginInfo.username, exampleId })
+        if (res.state) {
+          this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
+          this.info.myFavorites = !myFavorites
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      this.likeLoading = false
+    },
+    viewInstance() {
+      const { username, exampleId } = this.info
+      this.$router.push({
+        path: `/work/${username}/${exampleId}`,
+      })
     },
   },
   components: {},
@@ -120,6 +154,9 @@ export default {
     height: 0;
     padding-bottom: 55%;
     position: relative;
+    ::v-deep .v-image__image {
+      background-position: 0% 0% !important;
+    }
     .img-screen {
       position: absolute;
       top: 0;
@@ -151,6 +188,9 @@ export default {
   .icon-like,
   .icon-more {
     color: $light-7;
+  }
+  .icon-like-active {
+    color: $red-1;
   }
   .icon-like {
     &:hover {
