@@ -5,14 +5,14 @@ import cancelRequest from "@store/modules/cancelRequest"
 import instanceMutations from './mutations/instance'
 import userMutations from './mutations/user'
 import instanceStates from './state/instance'
-import user from './state/user'
+import userStates from './state/user'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     ...instanceStates,
-    ...user,
+    ...userStates,
     visibleDialogName: '' // 全局显示的 dialog name
   },
   mutations: {
@@ -20,7 +20,7 @@ export default new Vuex.Store({
     ...userMutations,
     setVisibleDialogName (state, newName) {
       state.visibleDialogName = newName
-    }
+    },
   },
   actions: {
   },
@@ -33,6 +33,11 @@ export default new Vuex.Store({
       const { instanceCode, instanceExtLinks, compiledCode, prep } = state
       const headTags = state.instanceSetting.headTags
       return { instanceCode, instanceExtLinks, compiledCode, headTags, prep }
+    },
+    isSelfProfile (state) {
+      // 判断当前访问的是否为自己的主页
+      const { loginState, loginInfo, curUserDetail } = state
+      return loginState && loginInfo.username === curUserDetail.username
     }
   }
 })
