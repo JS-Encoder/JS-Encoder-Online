@@ -1,19 +1,20 @@
 <template>
   <div id="instanceBox">
-    <div v-show="!loaded" class="loader flex-jcc">
+    <div v-if="!loaded" class="loader flex-jcc">
       <div class="loader-content d-flex flex-clo flex-ai">
         <instance-loader class="page-loader"></instance-loader>
         <span class="tip">{{tip}}</span>
       </div>
     </div>
-    <instance @init="init"></instance>
+    <instance v-else @init="init"></instance>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
 import Instance from './components/instance.vue'
 import InstanceLoader from './components/loader.vue'
+import IframeHandler from '@utils/editor/handleInstanceView'
 /* css */
 import '@assets/css/codemirror.css'
 import '@assets/css/codemirror-dialog.css'
@@ -30,6 +31,9 @@ export default {
       tip: '实例页面加载中',
       rendered: false,
     }
+  },
+  created() {
+    this.resetInstanceState()
   },
   async mounted() {
     await this.init()
@@ -82,7 +86,16 @@ export default {
     },
   },
   computed: {
-    ...mapState(['iframeH', 'consoleH', 'editorW', 'iframeW']),
+    ...mapState([
+      'iframeH',
+      'consoleH',
+      'editorW',
+      'iframeW',
+      'curInstanceDetail',
+      'loginState',
+      'loginInfo',
+    ]),
+    ...mapGetters(['isSelfProfile'])
   },
   methods: {
     ...mapMutations([
@@ -91,10 +104,12 @@ export default {
       'setEditorW',
       'setConsoleH',
       'setCurInstanceDetail',
-      'setPrep',
+      'setAllPrep',
+      'setCurTab',
       'setInstancesCode',
       'setInstanceSetting',
       'setAllInstanceExtLinks',
+      'resetInstanceState',
     ]),
     async init() {
       this.loaded = false
@@ -150,8 +165,9 @@ export default {
           } = res.data
           const { instanceCode, instanceExtLinks, headTags } =
             JSON.parse(codeContent)
-          this.setCurInstanceDetail({ username, id, title, tags, save: true })
-          this.setPrep([htmlStyle, cssStyle, jsStyle])
+          this.setCurInstanceDetail({ username, id, title, tags, saved: true })
+          this.setAllPrep([htmlStyle, cssStyle, jsStyle])
+          this.setCurTab(htmlStyle)
           this.setInstancesCode(instanceCode)
           this.setInstanceSetting({ name: 'headTags', value: headTags })
           this.setAllInstanceExtLinks(instanceExtLinks)
@@ -169,6 +185,26 @@ export default {
   components: {
     Instance,
     InstanceLoader,
+  },
+  beforeRouteLeave(to, from, next) {
+    if (
+      from.name === 'Work' &&
+      this.isSelfProfile &&
+      this.curInstanceDetail.saved === false
+    ) {
+      this.$alert({
+        content: '你对当前实例做出的修改将不会被保存',
+        okColor: 'error',
+        okText: '退出',
+      }).then((isLogout) => {
+        if (isLogout) {
+          new IframeHandler().clearIframe()
+        }
+        next(isLogout)
+      })
+    } else {
+      next(true)
+    }
   },
 }
 </script>
