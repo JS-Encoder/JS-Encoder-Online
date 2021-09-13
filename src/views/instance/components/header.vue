@@ -6,20 +6,23 @@
       </router-link>
     </div>
     <div class="instance-name flex-sh pointer d-flex flex-ai">
-      <span class="inblock text-small">新建实例</span>
-      <v-btn icon small @click="setVisibleDialogName('instanceConfig')" v-if="!isNewWork">
+      <div class="d-flex flex-clo">
+        <span class="text-small">{{isNewWork?'新建实例':curInstanceDetail.title}}</span>
+        <span class="text-xs author" @click="goToUserProfile" v-if="!isNewWork">{{curInstanceDetail.username}}</span>
+      </div>
+      <v-btn icon small @click="setVisibleDialogName('instanceConfig')" v-if="!isNewWork&&isSelfProfile">
         <v-icon>mdi-pencil-outline</v-icon>
+      </v-btn>
+      <v-btn icon small v-if="!isNewWork&&!isSelfProfile">
+        <v-icon>mdi-label-multiple-outline</v-icon>
       </v-btn>
     </div>
     <v-spacer></v-spacer>
     <div class="d-flex flex-ai">
       <div class="btn-opts">
         <v-btn color="#2a53cd" :disabled="disableSave" class="radius-2" small depressed @click="saveInstance"
-          :loading="saveInstanceLoading" v-if="!hideSave">
-          <v-icon left dark>
-            mdi-cloud-upload
-          </v-icon>
-          保存
+          :loading="saveInstanceLoading" v-if="isSelfProfile || isNewWork">
+          <v-icon left dark>mdi-cloud-upload</v-icon>保存
         </v-btn>
         <v-btn small color="info" class="radius-2" depressed @click="like" :loading="likeLoading"
           :disabled="!loginState" v-if="!hideLike">
@@ -46,19 +49,16 @@ export default {
   },
   computed: {
     ...mapState(['loginState', 'loginInfo', 'curInstanceDetail']),
-    ...mapGetters(['instanceContent']),
+    ...mapGetters(['instanceContent', 'isSelfProfile']),
     isNewWork() {
       return this.$route.name === 'NewWork'
     },
     hideLike() {
       const isNewWork = this.isNewWork
-      return isNewWork
+      return isNewWork || this.isSelfProfile
     },
     disableSave() {
       return !this.loginState || this.curInstanceDetail.saved
-    },
-    hideSave() {
-      return false
     },
   },
   methods: {
@@ -98,9 +98,9 @@ export default {
         const res = await this.$http.saveWork(reqData)
         if (res.state) {
           this.$message.success('实例保存成功！')
-          this.setCurInstanceDetail({ saved: false })
+          this.setCurInstanceDetail({ saved: true })
           // 重定向到正式实例页面
-          if (!isNewWork) {
+          if (isNewWork) {
             this.$router
               .replace(`/work/${loginInfo.username}/${res.data}`)
               .catch((err) => {})
@@ -113,6 +113,11 @@ export default {
         console.log(err)
       }
       this.saveInstanceLoading = false
+    },
+    goToUserProfile() {
+      // 跳转到当前实例用户首页
+      const username = this.curInstanceDetail.username
+      this.$router.push(`/user/${username}`)
     },
     like() {
       this.likeLoading = true
@@ -143,6 +148,13 @@ export default {
   .instance-name {
     color: $light-5;
     margin-left: 20px;
+    .author {
+      margin-top: -2px;
+      color: $light-7;
+      &:hover {
+        color: $light-2;
+      }
+    }
   }
   .btn-opts {
     margin-right: 15px;

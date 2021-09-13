@@ -306,6 +306,9 @@ export default {
     DownloadDialog,
     ShortcutDialog,
   },
+  beforeRouteLeave (to, from, next) {
+    new IframeHandler().clearIframe()
+  }
 }
 </script>
 
