@@ -4,7 +4,7 @@
       <v-avatar size="100" class="avatar" color="primary">
         <v-img :src="qiNiuImgLink+curUserDetail.avatar" v-if="curUserDetail.avatar"></v-img>
         <span class="white--text text-h4" v-else>{{curUserDetail.nickname|preNickname}}</span>
-        <router-link to="/settings" v-if="isSelf">
+        <router-link to="/settings" v-if="isSelfProfile">
           <v-btn fab class="edit-btn" x-small title="设置">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
@@ -12,7 +12,7 @@
         <v-btn fab class="edit-btn" x-small title="取消关注" v-else-if="isMyFollow" color="#777777">
           <v-icon>mdi-account-remove</v-icon>
         </v-btn>
-        <v-btn fab class="edit-btn" x-small title="关注" v-else color="primary">
+        <v-btn fab class="edit-btn" x-small title="关注" v-else-if="!isMyFollow&&loginState" color="primary">
           <v-icon>mdi-account-plus</v-icon>
         </v-btn>
       </v-avatar>
@@ -32,7 +32,7 @@
     <div class="user-views" v-show="showTabItems">
       <v-row class="user-tabs" no-gutters justify="center">
         <v-col md="7" sm="8" cols="12">
-          <v-tabs class="tab-list" v-model="curTabName" center-active show-arrows grow>
+          <v-tabs ref="tabs" class="tab-list" v-model="curTabName" center-active show-arrows grow>
             <v-tab class="tab" v-for="item in tabList" :key="item.route" @click="switchTabs(item)"
               :href="`#${item.route}`">
               <span class="text-md">{{item.name}}</span>
@@ -41,14 +41,15 @@
           </v-tabs>
         </v-col>
         <v-col cols="2" class="col-space"></v-col>
-        <v-col md="2" sm="3" cols="11" class="d-flex flex-ai" v-show="showSort">
+        <v-spacer></v-spacer>
+        <v-col md="2" sm="3" cols="11" class="flex-ai" style="display:flex" v-show="showSort">
           <span class="flex-sh sort-title" v-show="showSort">排序：</span>
           <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="sortBy" hide-details
-            v-show="showSort">
+            v-show="showSort" @change="switchRoute()">
           </v-select>
         </v-col>
         <!-- <v-col cols="1" class="col-space"></v-col> -->
-        <v-col md="1" sm="1" cols="1" class="d-flex flex-ai" v-show="isSelfWorks">
+        <v-col md="1" sm="1" cols="1" class="add-work flex-ai" v-show="isSelfWorks">
           <v-spacer></v-spacer>
           <v-tooltip bottom color="info">
             <template v-slot:activator="{ on, attrs }">
@@ -63,15 +64,21 @@
         </v-col>
       </v-row>
       <div class="tab-content">
-        <router-view v-show="showTabItems"></router-view>
+        <router-view v-if="showTabItems" :key="$route.fullPath" :page="page" :sortBy="sortBy"
+          @setPageConn="setPageConn"></router-view>
+      </div>
+      <div class="page-opt d-flex flex-jcc">
+        <v-btn class="before-btn" @click="switchPage(-1)" :disabled="isFirstPage">上一页</v-btn>
+        <v-btn color="primary" class="after-btn" @click="switchPage(1)" :disabled="isLastPage">下一页</v-btn>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState, mapGetters } from 'vuex'
 import { qiNiuImgLink } from '@utils/publicData'
+import * as p2b from '@utils/paramsToBase64'
 export default {
   data() {
     return {
@@ -105,15 +112,22 @@ export default {
         followers: 0,
         cycleBin: 0,
       },
-      sortList: ['喜爱度', '更新日期', '创建时间'],
-      sortBy: '更新日期',
+      sortList: [
+        { text: '创建时间', value: 0 },
+        { text: '更新日期', value: 1 },
+        { text: '喜爱度', value: 2 },
+      ],
+      page: 1,
+      sortBy: 0,
       showSort: true,
       showTabItems: false,
+      isFirstPage: false,
+      isLastPage: false,
     }
   },
   async created() {
     await this.getUserInfo()
-    if (this.isSelf) {
+    if (this.isSelfProfile) {
       this.tabList.push({
         name: '回收站',
         route: 'CycleBin',
@@ -129,9 +143,11 @@ export default {
     } = this.curUserDetail
     this.num = { works, liked, followers, following, cycleBin }
     this.showTabItems = true
+    this.callSlider()
   },
   computed: {
-    ...mapState(['loginInfo', 'curUserDetail']),
+    ...mapState(['loginInfo', 'loginState', 'curUserDetail']),
+    ...mapGetters(['isSelfProfile']),
     curTabName: {
       get() {
         return this.$route.name
@@ -140,26 +156,37 @@ export default {
         return val
       },
     },
-    isSelf() {
-      // 是不是自己的页面
-      return this.loginInfo.username === this.curUserDetail.username
-    },
     isMyFollow() {
       return this.curUserDetail.myFollow
     },
     isSelfWorks() {
-      return this.curTabName !== 'Works'
-    },
-  },
-  watch: {
-    curTabName(name) {
-      this.showSort = ['Works', 'Liked'].includes(name)
+      return this.curTabName !== 'Works' && this.isSelfProfile
     },
   },
   methods: {
     ...mapMutations(['setCurUserDetail', 'clearCurUserDetail']),
     switchTabs(item) {
-      this.$router.push({ name: item.route }).catch((err) => err)
+      // 切换tab更新查询信息
+      this.page = 1
+      this.sortBy = 0
+      this.showSort = ['Works', 'Liked'].includes(item.route)
+      this.switchRoute(item.route)
+    },
+    switchRoute(name) {
+      // 切换路由，如果没有name就只更新query查询信息
+      const f = { page: this.page }
+      this.showSort && (f.sortBy = this.sortBy)
+      name = name || this.$route.name
+      const routeObj = { name, query: { f: p2b.encode(f) } }
+      this.$router.push(routeObj).catch((err) => err)
+    },
+    switchPage(changeNum) {
+      this.page += changeNum
+      this.switchRoute()
+    },
+    setPageConn(isFirstPage, isLastPage) {
+      this.isFirstPage = isFirstPage
+      this.isLastPage = isLastPage
     },
     async getUserInfo() {
       // 获取当前用户个人信息
@@ -212,6 +239,10 @@ export default {
           console.log(err)
           this.$message.error('获取用户个人信息失败!')
         })
+    },
+    callSlider() {
+      // 显示tabs slider
+      this.$refs.tabs.onResize()
     },
   },
   components: {},
@@ -295,6 +326,15 @@ export default {
             color: inherit;
           }
         }
+      }
+    }
+    .add-work {
+      display: flex;
+    }
+    .page-opt {
+      margin-top: 50px;
+      .before-btn {
+        margin-right: 15px;
       }
     }
   }
