@@ -28,7 +28,7 @@ const instance = {
     state.instanceCode[content.mode] = content.code
   },
   setInstancesCode: (state, codeObj) => {
-    state.instanceCode = codeObj
+    state.instanceCode = Object.assign({}, codeObj)
   },
   setInstanceSetting: (state, attr) => {
     state.instanceSetting[attr.name] = attr.value
@@ -68,6 +68,29 @@ const instance = {
   },
   setCurInstanceDetail: (state, detail) => {
     state.curInstanceDetail = Object.assign({}, state.curInstanceDetail, detail)
+  },
+  resetInstanceState: (state) => {
+    // 重置部分instance属性至初始状态
+    state.instanceSetting = {
+      delayTime: 500,
+      autoExecute: true,
+      autoComplete: true,
+      lint: true,
+      lineWrap: true,
+      indent: {
+        replace: false,
+        width: 2,
+      },
+      font: {
+        family: 'Consolas',
+        size: 14,
+      },
+      headTags: ''
+    }
+    state.compiledCode = ''
+    state.consoleH = 150
+    state.consoleInfo = []
+    state.consoleInfoCount = { error: 0, warn: 0, info: 0 }
   }
 }
 
