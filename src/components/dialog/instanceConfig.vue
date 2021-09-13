@@ -4,7 +4,7 @@
       <v-card-title>
         <span class="title-sm">实例设置</span>
       </v-card-title>
-      <v-card-text>
+      <v-card-text style="padding-bottom:0">
         <v-form class="form d-flex flex-clo" ref="form">
           <span class="form-item-title">实例标题</span>
           <v-text-field class="form-item-input" solo v-model="form.title" label="填写实例标题..." background-color="info"
@@ -24,7 +24,7 @@
           </v-combobox>
         </v-form>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions style="padding-bottom:20px">
         <v-btn class="save-btn" color="primary" @click="saveConfig" :loading="loading" block>保存</v-btn>
       </v-card-actions>
     </v-card>
@@ -34,16 +34,6 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 export default {
-  props: {
-    title: {
-      type: String,
-      default: '',
-    },
-    tags: {
-      type: Array,
-      default: () => [],
-    },
-  },
   data() {
     return {
       name: 'instanceConfig',
@@ -56,9 +46,7 @@ export default {
         title: [(v) => !!v || '请填写实例标题！'],
         tags: [
           (v) => {
-            console.log(v)
             for (let i = v.length - 1; i >= 0; i--) {
-              console.log(v[i].length)
               if (v[i].length > 15) {
                 return '每个标签长度不能大于15！'
               }
@@ -72,13 +60,14 @@ export default {
     }
   },
   created() {
+    const { title, tags } = this.curInstanceDetail
     this.form = {
-      title: this.title,
-      tags: this.tags,
+      title,
+      tags: tags ? tags.split(',') : [],
     }
   },
   computed: {
-    ...mapState(['visibleDialogName']),
+    ...mapState(['visibleDialogName', 'curInstanceDetail']),
   },
   watch: {
     visibleDialogName(name) {
@@ -86,19 +75,32 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['setVisibleDialogName']),
+    ...mapMutations(['setVisibleDialogName', 'setCurInstanceDetail']),
     validate() {
       return this.$refs.form.validate()
     },
-    saveConfig() {
-      if (this.validate()) {
-        this.loading = true
-        setTimeout(() => {
-          this.loading = false
+    async saveConfig() {
+      if (!this.validate()) return void 0
+      this.loading = true
+      try {
+        const { title, tags } = this.form
+        const res = await this.$http.configWork({
+          exampleId: this.curInstanceDetail.id,
+          label: tags.toString(),
+          exampleName: title,
+        })
+        if (res.state) {
           this.setVisibleDialogName('')
-          this.$message.success({ msg: '实例设置修改成功！' })
-        }, 3000)
+          this.setCurInstanceDetail({ title, tags: tags.toString() })
+          this.setVisibleDialogName('')
+          this.$message.success('实例设置修改成功！')
+        } else {
+          this.$message.success('实例设置修改失败！')
+        }
+      } catch (err) {
+        console.log(err)
       }
+      this.loading = false
     },
     tagsChange(list) {
       const len = list.length
