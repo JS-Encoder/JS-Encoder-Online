@@ -4,13 +4,9 @@
       <div class="skeleton-list-item" v-for="(item, index) in 12" :key="index" v-show="loading">
         <instance-skeleton :self="true"></instance-skeleton>
       </div>
-      <div class="work-list-item" v-for="item in workList" :key="item" v-show="!loading">
-        <self-instance-card></self-instance-card>
+      <div class="work-list-item" v-for="item in workList" :key="item.exampleId" v-show="!loading">
+        <self-instance-card :info="item" :initData="init"></self-instance-card>
       </div>
-    </div>
-    <div class="page-opt d-flex flex-jcc" v-if="workList.length">
-      <v-btn class="before-btn" @click="switchPage(-1)" :disabled="p<=1">上一页</v-btn>
-      <v-btn color="primary" class="after-btn" @click="switchPage(1)">下一页</v-btn>
     </div>
     <div class="create-tip d-flex flex-jcc" v-else>
       <div class="tip-content d-flex flex-clo flex-ai">
@@ -18,69 +14,75 @@
         <span class="text-describe">赶快为社区贡献优质实例吧！</span>
         <router-link to="/newWork">
           <v-btn color="primary">
-            <v-icon left>mdi-plus</v-icon>
-            新建实例
+            <v-icon left>mdi-plus</v-icon>新建实例
           </v-btn>
         </router-link>
       </div>
     </div>
-    <instance-config @setWorkInfo="setWorkInfo" :workInfo="workInfo"></instance-config>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import InstanceSkeleton from '@components/skeleton/instanceSkeleton'
 import SelfInstanceCard from '@components/selfInstanceCard'
-import InstanceConfig from '@components/dialog/instanceConfig'
 import * as p2b from '@utils/paramsToBase64'
 export default {
+  props: {
+    sortBy: {
+      type: Number,
+      default: 0,
+    },
+  },
   data() {
     return {
-      p: 1,
-      workList: [],
+      workList: [0],
       loading: true,
-      workInfo: {
-        title: '',
-        tags: [],
-      },
     }
   },
   created() {
-    // this.workList = Array.from({ length: 12 }, (_, i) => i + 12)
-    // let f = this.$route.query.f
-    // if (f) {
-    //   f = p2b.decode(f)
-    //   const p = parseInt(f.p)
-    //   this.p = p > 1 ? p : 1
-    // } else {
-    //   this.p = 1
-    // }
-    this.search()
+    this.init()
+  },
+  computed: {
+    ...mapState(['curUserDetail']),
   },
   methods: {
-    switchPage(changeNum) {
-      const f = { p: (this.p += changeNum) }
-      this.$router.push({
-        path: 'works',
-        query: { f: p2b.encode(f) },
-      })
-      this.search()
+    init() {
+      let page = 1
+      let sortBy = 0
+      let f = this.$route.query.f
+      if (f) {
+        ;({ page, sortBy } = p2b.decode(f))
+        page = parseInt(page)
+        sortBy = parseInt(sortBy)
+      }
+      this.search(page, sortBy)
     },
-    search(p) {
-      p = p || this.p
+    async search(page, sortBy) {
       this.loading = true
-      setTimeout(() => {
-        this.loading = false
-      }, 5000)
-    },
-    setWorkInfo(workInfo) {
-      this.workInfo = workInfo
+      try {
+        const { state, data } = await this.$http.searchWorks({
+          currentPage: page,
+          orderCondition: sortBy,
+          username: this.curUserDetail.username,
+        })
+        if (state) {
+          const { isFirstPage, isLastPage, list } = data
+          this.workList = list
+          this.$emit('setPageConn', isFirstPage, isLastPage)
+          this.$message.success('查询成功！')
+        } else {
+          this.$message.error('查询失败！')
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      this.loading = false
     },
   },
   components: {
     InstanceSkeleton,
     SelfInstanceCard,
-    InstanceConfig,
   },
 }
 </script>
@@ -92,12 +94,6 @@ export default {
     display: grid;
     grid-gap: 30px;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  }
-  .page-opt {
-    margin-top: 50px;
-    .before-btn {
-      margin-right: 15px;
-    }
   }
   .create-tip {
     padding: 50px 0 150px 0;
