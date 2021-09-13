@@ -25,6 +25,10 @@ Vue.filter('preNickname', function (nickname) {
   return nickname.substr(0, 2)
 })
 
+Vue.filter('formatNumber', function (num) {
+  return num >= 1e3 ? (num / 1e3).toFixed(1) + 'k' : num
+})
+
 new Vue({
   router,
   store,
@@ -37,6 +41,6 @@ window.addEventListener('storage', function (e) {
   sessionStorage.setItem(e.key, e.oldValue)
 })
 
-window.onbeforeunload = function(){
+window.onbeforeunload = function () {
   cookie.del('AUTH_TOKEN')
 }
