@@ -1,9 +1,7 @@
 <template>
   <v-card class="instance-card">
-    <v-img
-      src="https://assets.codepen.io/3364143/internal/screenshots/pens/ZEpxeYm.default.png?fit=cover&format=auto&ha=true&height=540&quality=75&v=2&version=1612345891&width=960"
-      class="instance-card-img white--text align-end" gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)">
-      <div class="img-screen pointer d-flex flex-ai flex-jcc">
+    <v-img :src="`http://firstbird.asia/${info.img}`" class="instance-card-img">
+      <div class="img-screen pointer d-flex flex-ai flex-jcc" @click="viewInstance">
         <v-icon>mdi-eye</v-icon>
       </div>
     </v-img>
@@ -11,22 +9,24 @@
       <v-menu transition="none" :close-on-content-click="false" offset-y open-delay="500" close-delay="200"
         :open-on-hover="true" top>
         <template v-slot:activator="{ on, attrs }">
-          <v-avatar size="40" class="pointer" v-bind="attrs" v-on="on" color="primary">
-            <!-- <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John"> -->
-            <span class="white--text text-h7">li</span>
+          <v-avatar size="40" class="pointer" v-bind="attrs" v-on="on" color="primary" @click.native="viewUserProfile">
+            <v-img :src="qiNiuImgLink+info.userPicture" v-if="info.userPicture"></v-img>
+            <span class="white--text text-h7" v-else>{{info.name|preNickname}}</span>
           </v-avatar>
         </template>
-        <user-card></user-card>
+        <user-card :avatar="info.userPicture" :myFollow="info.myFollow" :username="info.username" :nickname="info.name"
+          :about="info.description"></user-card>
       </v-menu>
       <div class="instance-info d-flex flex-clo pointer">
-        <span class="text-sm" title="123">瀑布流特效1111111111111111111111111111111111111111111111</span>
-        <span class="text-xs text-describe">By lliiooiill</span>
+        <span class="text-sm" :title="info.exampleName">{{info.exampleName}}</span>
+        <span class="text-xs author" @click="viewUserProfile">{{info.name}}</span>
       </div>
       <v-spacer></v-spacer>
-      <v-btn icon class="icon-like">
+      <v-btn icon :class="info.myFavorites?'icon-like-active':'icon-like'" :loading="likeLoading"
+        @click="like">
         <v-icon>mdi-heart</v-icon>
       </v-btn>
-      <span class="liked-num text-xs">12.2k</span>
+      <span class="liked-num text-xs">{{info.favorites|formatNumber}}</span>
       <v-btn icon class="icon-share" @click="shareLink">
         <v-icon>mdi-share-variant</v-icon>
       </v-btn>
@@ -35,17 +35,61 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import UserCard from '@components/userCard'
 import { copyToClip } from '@utils/tools'
+import { qiNiuImgLink } from '@utils/publicData'
+import env from '@service/env'
 export default {
-  props: {},
+  props: {
+    info: Object,
+  },
   data() {
-    return {}
+    return {
+      qiNiuImgLink,
+      likeLoading: false,
+    }
+  },
+  computed: {
+    ...mapState(['loginState', 'loginInfo']),
+    isSelfWork() {
+      return this.info.username === this.loginInfo.username
+    },
   },
   methods: {
     shareLink() {
-      copyToClip('123')
-      this.$message.success({ msg: '链接已复制到剪切板！' })
+      const { username, exampleId } = this.info
+      copyToClip(`${env.client}/work/${username}/${exampleId}`)
+      this.$message.success('链接已复制到剪切板！')
+    },
+    viewInstance() {
+      const { username, exampleId } = this.info
+      this.$router.push({
+        path: `/work/${username}/${exampleId}`,
+      })
+    },
+    viewUserProfile() {
+      // 查看用户主页
+      this.$router.push({
+        path: `/user/${this.info.username}`,
+      })
+    },
+    async like() {
+      const { myFavorites, exampleId } = this.info
+      this.likeLoading = true
+      try {
+        // 根据当前是否已喜欢来判定调用喜欢还是取消喜欢接口
+        const api = this.$http
+        const req = myFavorites ? api.delLikeWork : api.addLikeWork
+        const res = req({ username: this.loginInfo.username, exampleId })
+        if (res.state) {
+          this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
+          this.info.myFavorites = !myFavorites
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      this.likeLoading = false
     },
   },
   components: {
@@ -82,6 +126,12 @@ export default {
       display: block;
       @include text-ellipsis;
     }
+    .author {
+      color: $light-7;
+      &:hover {
+        color: $light-2;
+      }
+    }
   }
   .liked-num {
     margin-right: 5px;
@@ -90,6 +140,9 @@ export default {
   .icon-like,
   .icon-share {
     color: $light-7;
+  }
+  .icon-like-active {
+    color: $red-1;
   }
   .icon-like {
     &:hover {

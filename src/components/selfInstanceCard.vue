@@ -10,8 +10,8 @@
         <span class="text-sm" :title="info.exampleName">{{info.exampleName}}</span>
       </div>
       <v-spacer></v-spacer>
-      <v-btn icon :class="info.myFavorites?'icon-like-active':'icon-like'" :disabled="!loginState||isSelfProfile"
-        :loading="likeLoading">
+      <v-btn icon :class="info.myFavorites?'icon-like-active':'icon-like'" 
+        :loading="likeLoading" @click="like">
         <v-icon>mdi-heart</v-icon>
       </v-btn>
       <span class="liked-num text-xs">{{info.favorites|formatNumber}}</span>
@@ -28,8 +28,8 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-btn icon @click="shareLink" v-else>
-        <v-icon>mdi-share-variant</v-icon>分享
+      <v-btn icon @click="shareLink" class="icon-share" v-else>
+        <v-icon>mdi-share-variant</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -91,7 +91,7 @@ export default {
             exampleId: this.info.exampleId,
           })
           if (delRes.state) {
-            this.$emit('initData')
+            this.$emit('search')
             this.$message.success('实例删除成功！')
           } else {
             this.$message.error('实例删除失败！')
@@ -186,8 +186,15 @@ export default {
     color: $light-4;
   }
   .icon-like,
-  .icon-more {
+  .icon-more,
+  .icon-share {
     color: $light-7;
+  }
+  .icon-share {
+    margin-left: 5px;
+    &:hover {
+      color: $pink-1;
+    }
   }
   .icon-like-active {
     color: $red-1;
