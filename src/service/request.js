@@ -7,24 +7,28 @@ import qs from 'qs'
 import store from '@store'
 import cookie from '@utils/cookie'
 import message from '@plugins/message'
+import router from '../router'
 
 axios.defaults.timeout = 60 * 1000
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 axios.defaults.headers.put['Content-Type'] = 'multipart/form-data;charset=UTF-8'
+axios.defaults.headers.delete['Content-Type'] = 'multipart/form-data;charset=UTF-8'
 
 axios.interceptors.request.use(async config => {
   // config.cancelToken = new axios.CancelToken(cancel => {
   //   store.commit('cancelRequest/pushToken', { cancelToken: cancel })
   // })
-  if (store.state.loginState) {
+  console.log(config)
+  const loginState = store.state.loginState
+  if (loginState) {
     const token = cookie.get('AUTH_TOKEN')
     if (token) {
       config.headers.token = token
     }
+  } else if (config.requireAuth && !loginState) {
+    return Promise.reject({ response: { status: 401 } })
   }
-
   return config
-
 }, error => {
   return Promise.reject(error)
 })
@@ -45,6 +49,7 @@ axios.interceptors.response.use(
          * 在登录成功后返回当前页面，这一步需要在登录页操作
          */
         case 401:
+          message.info('请登录后再进行相关操作！')
           router.replace({
             name: 'Login',
             query: {
@@ -97,7 +102,7 @@ export function get (url, params = {}, config = {}) {
       resolve(res.data)
     }).catch(err => {
       message.error('啊哦~服务器出了点问题😭！')
-      reject(err.data)
+      reject(err)
     })
   })
 }
@@ -116,7 +121,7 @@ export function post (url, params = {}, config = {}) {
       })
       .catch(err => {
         message.error('啊哦~服务器出了点问题😭！')
-        reject(err.data)
+        reject(err)
       })
   })
 }
@@ -133,7 +138,7 @@ export function put (url, params, config = {}) {
       })
       .catch(err => {
         message.error('啊哦~服务器出了点问题😭！')
-        reject(err.data)
+        reject(err)
       })
   })
 }
@@ -144,13 +149,13 @@ export function del (url, params, config = {}) {
     for (let key in params) {
       formData.append(key, params[key])
     }
-    axios.delete(url, formData, config)
+    axios.delete(`${url}?${qs.stringify(params)}`, config)
       .then(res => {
         resolve(res.data);
       })
       .catch(err => {
         message.error('啊哦~服务器出了点问题😭！')
-        reject(err.data)
+        reject(err)
       })
   })
 }
