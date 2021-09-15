@@ -6,29 +6,110 @@
       <v-icon class="pointer" @click="showTip=false">mdi-close</v-icon>
     </v-card>
     <div class="cycle-bin-list">
-      <!-- <v-skeleton-loader type="list-item-two-line"></v-skeleton-loader> -->
-      <v-card elevation="0" color="#272727" class="instance d-flex flex-ai" v-for="item in 10" :key="item">
+      <v-skeleton-loader type="list-item-two-line" v-show="loading" v-for="item in 10" :key="item"></v-skeleton-loader>
+      <v-card elevation="0" color="#272727" class="instance d-flex flex-ai" v-show="!loading" v-for="item in list"
+        :key="item.exampleId">
         <div class="d-flex flex-clo">
-          <span class="instance-title">瀑布流布局</span>
-          <span class="delete-time text-describe text-sm">删除日期：2021-8-23</span>
+          <span class="instance-title">{{item.exampleName}}</span>
+          <span class="delete-time text-describe text-sm">删除日期：{{item.updateTime}}</span>
         </div>
         <v-spacer></v-spacer>
-        <v-btn color="#333333" class="restore-btn">恢复</v-btn>
-        <v-btn color="error" class="delete-btn">永久删除</v-btn>
+        <v-btn color="#333333" class="restore-btn" @click="restore(item.exampleId)" :loading="restoreLoading">恢复</v-btn>
+        <v-btn color="error" class="delete-btn" @click="perDelete(item.exampleId)" :loading="deleteLoading">永久删除</v-btn>
       </v-card>
+    </div>
+    <div class="cycle-tip" v-show="showNothing">
+      <div class="d-flex flex-clo flex-jcc flex-ai">
+        <span class="title-xl">🗑</span>
+        <span class="text-describe text-sm">回收站空空如也</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data() {
     return {
       showTip: true,
       loading: true,
+      deleteLoading: false,
+      restoreLoading: false,
+      list: [],
+      showNothing: false,
     }
   },
-  methods: {},
+  created() {
+    // 检测用户是否具有访问该页面的权限
+    if (
+      !this.loginState ||
+      this.curUserDetail.username !== this.loginInfo.username
+    ) {
+      // this.$router.replace({ name: '404' })
+    }
+    this.getRecycle()
+  },
+  computed: {
+    ...mapState(['loginState', 'curUserDetail', 'loginInfo']),
+  },
+  methods: {
+    async getRecycle() {
+      this.loading = true
+      try {
+        const res = await this.$http.searchCycleBin()
+        if (res.state) {
+          this.list = res.data
+          this.showNothing = res.data.length === 0
+          this.$message.success('查询成功！')
+        } else {
+          this.$message.error('查询失败！')
+        }
+      } catch (err) {}
+      this.loading = false
+    },
+    async restore(exampleId) {
+      this.restoreLoading = true
+      try {
+        const res = await this.$http.resumeDelWork({
+          username: this.loginInfo.username,
+          exampleId,
+        })
+        if (res.state) {
+          this.$message.success('恢复成功！')
+          this.getRecycle()
+        } else {
+          this.$message.error('恢复失败！')
+        }
+      } catch (err) {}
+      this.restoreLoading = false
+    },
+    async perDelete(exampleId) {
+      const confRes = await this.$alert({
+        content: '该实例永久删除后将不可恢复！',
+        okText: '确认并继续',
+        okColor: 'error',
+      })
+      if (confRes) {
+        this.deleteLoading = true
+        try {
+          const res = await this.$http.permanentDelWork({
+            username: this.loginInfo.username,
+            exampleId,
+          })
+          if (res.state) {
+            this.$message.success('永久删除成功！')
+            this.getRecycle()
+          } else {
+            this.$message.error('永久删除失败！')
+          }
+        } catch (err) {
+          console.log(err)
+        }
+        this.deleteLoading = false
+      }
+    },
+  },
   components: {},
 }
 </script>
@@ -43,6 +124,7 @@ export default {
 </style>
 <style lang="scss" scoped>
 #cycleBin {
+  padding-bottom: 100px;
   .cycle-bin-tip {
     padding: 15px;
     margin-top: 25px;
@@ -59,6 +141,9 @@ export default {
         margin-right: 15px;
       }
     }
+  }
+  .cycle-tip {
+    margin: 50px 0 100px;
   }
 }
 </style>
