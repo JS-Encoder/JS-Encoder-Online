@@ -7,6 +7,11 @@ import localStore from '@utils/local-storage'
 
 Vue.use(VueRouter)
 
+/**
+ * meta
+ * hideHAF 隐藏header和footer
+ * requireAuth 登录后才能进入该页面
+ */
 const routes = [
   {
     path: '/',
@@ -36,7 +41,7 @@ const routes = [
   {
     path: '/explore',
     name: 'Explore',
-    component: () => import('@views/explore')
+    component: () => import('@views/explore'),
   },
   {
     path: '/features',
@@ -46,7 +51,8 @@ const routes = [
   {
     path: '/feedback',
     name: 'Feedback',
-    component: () => import('@views/feedback')
+    component: () => import('@views/feedback'),
+    meta: { requireAuth: true }
   },
   {
     path: '/user/:id',
@@ -77,7 +83,8 @@ const routes = [
       {
         path: 'cycleBin',
         name: 'CycleBin',
-        component: () => import('@views/user/cycle-bin')
+        component: () => import('@views/user/cycle-bin'),
+        meta: { requireAuth: true }
       },
     ]
   },
@@ -86,21 +93,25 @@ const routes = [
     name: 'Settings',
     component: () => import('@views/settings'),
     redirect: '/settings/profile',
+    meta: { requireAuth: true },
     children: [
       {
         path: 'profile',
         name: 'Profile',
         component: () => import('@views/settings/profile'),
+        meta: { requireAuth: true }
       },
       {
         path: 'code',
         name: 'Code',
         component: () => import('@views/settings/code'),
+        meta: { requireAuth: true }
       },
       {
         path: 'account',
         name: 'Account',
         component: () => import('@views/settings/account'),
+        meta: { requireAuth: true }
       }
     ]
   },
@@ -108,7 +119,7 @@ const routes = [
     path: '/newWork',
     name: 'NewWork',
     component: () => import('@views/instance'),
-    meta: { hideHAF: true } // 隐藏header和footer
+    meta: { hideHAF: true }
   },
   {
     path: '/work/:username/:instanceID',
@@ -126,10 +137,10 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes,
 })
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _, next) => {
   // 每次跳转页面取消之前的请求
   // try {
   //   store.state.cancelRequest.cancelTokenArr.forEach((cancelToken) => {
@@ -198,10 +209,10 @@ router.beforeEach(async (to, from, next) => {
         }
       }
     } else {
-      login()
+      await login()
     }
   } else {
-    login()
+    await login()
   }
   next()
 })
@@ -233,15 +244,26 @@ async function login () {
           avatar,
         })
         message.success('登录成功！')
+      } else {
+        message.error('登录失败！')
       }
     } catch (err) {
       console.log(err)
-      message.error('啊哦！服务器出了点问题😭')
     }
   }
 }
 
-router.afterEach((to, from, next) => {
+router.beforeResolve((to, from, next) => {
+  const loginState = store.state.loginState
+  if (to.meta.requireAuth && !loginState) {
+    Vue.prototype.$message.info('登录以访问该页面！')
+    next('/login')
+  } else {
+    next()
+  }
+})
+
+router.afterEach((to, _) => {
   if (to.name === 'Home') {
     // 清除浏览器地址栏中的参数
     history.replaceState({}, '', '/')
