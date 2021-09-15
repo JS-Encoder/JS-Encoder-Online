@@ -82,6 +82,9 @@ export default {
         codeArea.codemirror.focus()
       }
     },
+    instanceCode() {
+      this.code = this.codeContent
+    },
     curTab() {
       // 当编辑窗口改变时更新光标在底部信息栏显示的位置
       if (!this.showCodeArea) return void 0
