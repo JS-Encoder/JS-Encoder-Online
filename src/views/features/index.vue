@@ -34,6 +34,7 @@
 <script>
 import localStorage from '@utils/local-storage'
 export default {
+  name: 'Features',
   data() {
     return {
       loading: true,

@@ -53,6 +53,7 @@
 <script>
 import regexpList from '@utils/regexp'
 export default {
+  name: 'SignUp',
   data() {
     return {
       showPwd: false,

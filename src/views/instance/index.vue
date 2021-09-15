@@ -23,6 +23,7 @@ import '@assets/css/show-hint.css'
 import '@assets/css/tern.css'
 import '@assets/themes/default.css'
 export default {
+  name: 'Work',
   data() {
     return {
       loaded: false,

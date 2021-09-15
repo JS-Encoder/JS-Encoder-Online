@@ -16,6 +16,7 @@ import Header from '@components/header.vue'
 import Footer from '@components/footer.vue'
 import Snackbar from '@components/snackbar.vue'
 export default {
+  name: 'App',
   data() {
     return {
       bgcClass: '',
@@ -38,7 +39,7 @@ export default {
     },
     hideHAF() {
       return this.$route.meta.hideHAF
-    }
+    },
   },
   watch: {
     path() {

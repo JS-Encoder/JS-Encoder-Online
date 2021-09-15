@@ -52,6 +52,7 @@ import oauthCONFIG from '@utils/oauthConfig'
 import baseUrl from '@service/env'
 import qs from 'qs'
 export default {
+  name: "Login",
   data() {
     return {
       showPwd: false,
@@ -111,6 +112,7 @@ export default {
               }
             }
             this.$message.success('登录成功！')
+            this.$router.replace(`/user/${username}`)
           } else {
             this.$message.error('登录失败，用户名/邮箱或密码错误！')
           }

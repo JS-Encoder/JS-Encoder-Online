@@ -25,6 +25,7 @@
 import regexpList from '@utils/regexp'
 import cookie from '@utils/cookie'
 export default {
+  name: 'ForgetPwd',
   data() {
     return {
       form: {

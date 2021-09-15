@@ -20,6 +20,7 @@ import InstanceSkeleton from '@components/skeleton/instanceSkeleton'
 import InstanceCard from '@components/instanceCard'
 import * as p2b from '@utils/paramsToBase64'
 export default {
+  name: 'Liked',
   data() {
     return {
       p: 1,

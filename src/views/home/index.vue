@@ -21,6 +21,7 @@
 <script>
 import loginVerify from '@components/dialog/loginVerify'
 export default {
+  name: 'Home',
   data() {
     return {}
   },

@@ -27,6 +27,7 @@ import { mapState } from 'vuex'
 import regexpList from '@utils/regexp'
 import cookie from '@utils/cookie'
 export default {
+  name: 'resetPwd',
   data() {
     return {
       showPwd: false,

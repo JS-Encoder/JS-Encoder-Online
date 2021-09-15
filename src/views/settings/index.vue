@@ -40,6 +40,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 export default {
+  name: 'Settings',
   data() {
     return {
       menuList: [

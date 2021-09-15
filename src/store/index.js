@@ -13,7 +13,7 @@ export default new Vuex.Store({
   state: {
     ...instanceStates,
     ...userStates,
-    visibleDialogName: '' // 全局显示的 dialog name
+    visibleDialogName: '', // 全局显示的 dialog name
   },
   mutations: {
     ...instanceMutations,
