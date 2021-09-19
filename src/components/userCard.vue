@@ -1,32 +1,28 @@
 <template>
   <v-card class="user-card d-flex no-select">
     <div class="avatar">
-      <v-avatar size="50" class="pointer" color="primary">
-        <img :src="qiNiuImgLink+avatar" v-if="avatar" alt="John">
+      <v-avatar size="50" class="pointer" color="primary" @click="viewUserProfile">
+        <img :src="qiNiuImgLink+avatar" v-if="avatar" :alt="nickname">
         <span class="white--text text-h6" v-else>{{nickname|preNickname}}</span>
       </v-avatar>
       <v-spacer></v-spacer>
     </div>
     <div class="user-info flex-1 d-flex">
       <div class="d-flex flex-clo info-text">
-        <span class="nickname text-md">{{nickname}}</span>
-        <span class="about text-xs">{{about}}</span>
+        <span class="nickname text-md pointer" @click="viewUserProfile">{{nickname}}</span>
+        <span class="about text-xs">{{about||'ta还没想好怎么描述自己...'}}</span>
       </div>
       <div v-if="!isSelf" class="btn-opt">
-        <v-btn color="#3c3c3c" v-if="myFollow">
-          <v-icon left>mdi-plus</v-icon>取消关注
-        </v-btn>
-        <v-btn color="primary" v-else>
-          <v-icon left>mdi-plus</v-icon>关注
-        </v-btn>
+        <v-btn color="#3C3C3C" v-if="myFollow" @click="unFollow" width="90" :loading="loading">取消关注</v-btn>
+        <v-btn color="primary" v-else @click="follow" width="90" :loading="loading">关注</v-btn>
       </div>
     </div>
   </v-card>
 </template>
 
 <script>
-import { qiNiuImgLink } from '@utils/publicData'
 import { mapState } from 'vuex'
+import { qiNiuImgLink } from '@utils/publicData'
 export default {
   props: {
     avatar: String,
@@ -38,6 +34,7 @@ export default {
   data() {
     return {
       qiNiuImgLink,
+      loading: false,
     }
   },
   computed: {
@@ -46,8 +43,55 @@ export default {
       return this.loginInfo.username === this.username
     },
   },
-  methods: {},
-  components: {},
+  methods: {
+    async follow() {
+      if (!this.loginState) {
+        this.$message.info('请登录后再进行相关操作！')
+        return void 0
+      }
+      this.loading = true
+      try {
+        const res = await this.$http.addFollow({
+          username: this.loginInfo.username,
+          followUsername: this.username,
+        })
+        if (res.state) {
+          this.$message.success('关注成功！')
+          this.$emit('setFollow', true)
+        } else {
+          this.$message.error('关注失败！')
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      this.loading = false
+    },
+    async unFollow() {
+      if (!this.loginState) {
+        this.$message.info('请登录后再进行相关操作！')
+        return void 0
+      }
+      this.loading = true
+      try {
+        const res = await this.$http.delFollow({
+          username: this.loginInfo.username,
+          followUsername: this.username,
+        })
+        if (res.state) {
+          this.$message.success('取消关注成功！')
+          this.$emit('setFollow', false)
+        } else {
+          this.$message.error('取消关注失败！')
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      this.loading = false
+    },
+    viewUserProfile() {
+      this.$router.push(`/user/${this.username}`)
+    },
+  },
 }
 </script>
 
@@ -70,11 +114,11 @@ export default {
       .about {
         margin-top: 5px;
         display: block;
-        color: #f8f8f8;
+        color: #eeeeee;
         @include text-ellipsis;
       }
     }
-    .btn-opt{
+    .btn-opt {
       margin-top: 5px;
     }
   }
