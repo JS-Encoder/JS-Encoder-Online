@@ -16,34 +16,34 @@ function copyToClip (content) {
  * @param {String} dataURI 
  * @returns {Promise}
  */
-function getImgMainColor (dataURL) {
-  const img = new Image()
-  img.src = dataURL
-  return new Promise((resolve) => {
-    img.onload = () => {
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 0, 0, 150, 150)
-      const data = ctx.getImageData(0, 0, 150, 150).data
-      const colorList = data.reduce((accumulator, _, index) => {
-        if (index % 4 === 0 && data[index + 3] !== 0) {
-          let rgb = `${data[index]},${data[index + 1]},${data[index + 2]}`
-          accumulator[rgb] = (accumulator[rgb] + 1) || 1
-        }
-        return accumulator
-      }, {})
-      let maxKey = ''
-      let maxVal = 0
-      for (let key in colorList) {
-        if (colorList[key] > maxVal) {
-          maxVal = colorList[key]
-          maxKey = key
-        }
-      }
-      resolve(maxKey)
-    }
-  })
-}
+// function getImgMainColor (dataURL) {
+//   const img = new Image()
+//   img.src = dataURL
+//   return new Promise((resolve) => {
+//     img.onload = () => {
+//       const canvas = document.createElement('canvas')
+//       const ctx = canvas.getContext('2d')
+//       ctx.drawImage(img, 0, 0, 150, 150)
+//       const data = ctx.getImageData(0, 0, 150, 150).data
+//       const colorList = data.reduce((accumulator, _, index) => {
+//         if (index % 4 === 0 && data[index + 3] !== 0) {
+//           let rgb = `${data[index]},${data[index + 1]},${data[index + 2]}`
+//           accumulator[rgb] = (accumulator[rgb] + 1) || 1
+//         }
+//         return accumulator
+//       }, {})
+//       let maxKey = ''
+//       let maxVal = 0
+//       for (let key in colorList) {
+//         if (colorList[key] > maxVal) {
+//           maxVal = colorList[key]
+//           maxKey = key
+//         }
+//       }
+//       resolve(maxKey)
+//     }
+//   })
+// }
 
 /**
  * 防抖函数
@@ -159,7 +159,6 @@ function isProd () {
 
 export {
   copyToClip,
-  getImgMainColor,
   debounce,
   throttle,
   escapeRegExp,
