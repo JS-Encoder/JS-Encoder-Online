@@ -6,7 +6,7 @@
         <span class="tip">{{tip}}</span>
       </div>
     </div>
-    <instance v-else @init="init"></instance>
+    <instance v-else></instance>
   </div>
 </template>
 
@@ -15,6 +15,7 @@ import { mapState, mapMutations, mapGetters } from 'vuex'
 import Instance from './components/instance.vue'
 import InstanceLoader from './components/loader.vue'
 import IframeHandler from '@utils/editor/handleInstanceView'
+import localStore from '@utils/local-storage'
 /* css */
 import '@assets/css/codemirror.css'
 import '@assets/css/codemirror-dialog.css'
@@ -33,12 +34,10 @@ export default {
       rendered: false,
     }
   },
-  created() {
+  mounted() {
+    IframeHandler.clearIframe()
     this.resetInstanceState()
-  },
-  async mounted() {
-    await this.init()
-    this.rendered = true
+    this.init()
   },
   watch: {
     clientWidth(newW, oldW) {
@@ -85,6 +84,7 @@ export default {
       this.setIframeH(iframeH + avgH)
       this.setConsoleH(consoleH + avgH)
     },
+    $route() {},
   },
   computed: {
     ...mapState([
@@ -96,7 +96,7 @@ export default {
       'loginState',
       'loginInfo',
     ]),
-    ...mapGetters(['isSelfProfile'])
+    ...mapGetters(['isSelfProfile', 'isSelfInstance']),
   },
   methods: {
     ...mapMutations([
@@ -109,17 +109,18 @@ export default {
       'setCurTab',
       'setInstancesCode',
       'setInstanceSetting',
+      'setAllInstanceSetting',
       'setAllInstanceExtLinks',
       'resetInstanceState',
     ]),
     async init() {
+      this.rendered = false
       this.loaded = false
       await this.initInstanceInfo()
-      if (!this.rendered) {
-        await this.calcSize()
-      }
+      await this.calcSize()
       // 完成后隐藏全页面的加载动画
       this.loaded = true
+      this.rendered = true
     },
     async calcSize() {
       this.tip = '实例页面加载中'
@@ -149,7 +150,19 @@ export default {
     },
     async initInstanceInfo() {
       const route = this.$route
-      if (route.name !== 'Work') return void 0
+      const settings = JSON.parse(localStore.get('JSE_PERSONAL_SETTINGS'))
+      if (route.name !== 'Work') {
+        if (this.loginState && settings) {
+          const { prep, code, indent, font, headTags } = settings
+          this.setAllPrep(prep)
+          this.setCurTab(prep[0])
+          this.setInstancesCode(code)
+          this.setInstanceSetting({ name: 'indent', value: indent })
+          this.setInstanceSetting({ name: 'font', value: font })
+          this.setInstanceSetting({ name: 'headTags', value: headTags })
+        }
+        return void 0
+      }
       const { username, instanceID: exampleId } = route.params
       this.tip = '正在请求实例信息'
       try {
@@ -163,23 +176,39 @@ export default {
             htmlStyle,
             cssStyle,
             jsStyle,
+            name: nickname,
+            myFavorites,
           } = res.data
           const { instanceCode, instanceExtLinks, headTags } =
             JSON.parse(codeContent)
-          this.setCurInstanceDetail({ username, id, title, tags, saved: true })
+          this.setCurInstanceDetail({
+            username,
+            nickname,
+            id,
+            title,
+            tags,
+            liked: myFavorites,
+            saved: true,
+          })
           this.setAllPrep([htmlStyle, cssStyle, jsStyle])
           this.setCurTab(htmlStyle)
           this.setInstancesCode(instanceCode)
           this.setInstanceSetting({ name: 'headTags', value: headTags })
           this.setAllInstanceExtLinks(instanceExtLinks)
+          if (this.isSelfInstance && settings) {
+            const { indent, font } = settings
+            this.setInstanceSetting({ name: 'indent', value: indent })
+            this.setInstanceSetting({ name: 'font', value: font })
+          }
           this.$message.success('获取实例信息成功！')
         } else {
           this.$message.error('获取实例信息失败！')
-          this.$router.replace({ name: '404' })
+          this.$router.go(-1)
         }
       } catch (err) {
         console.log(err)
-        this.$router.replace({ name: '404' })
+        this.$message.error('实例不存在!')
+        this.$router.replace('/404')
       }
     },
   },
@@ -199,12 +228,14 @@ export default {
         okText: '退出',
       }).then((isLogout) => {
         if (isLogout) {
-          new IframeHandler().clearIframe()
+          IframeHandler.clearIframe()
+          this.resetInstanceState()
         }
         next(isLogout)
       })
     } else {
-      next(true)
+      IframeHandler.clearIframe()
+      next()
     }
   },
 }
