@@ -1,15 +1,15 @@
 <template>
   <div id="fullScreenBar" class="borbox">
-    <div class="scale-box flex flex-ai flex-jcc">
-      <span class="proportion">{{scale * 5}}%</span>
-      <v-slider v-model="scale" :show-tooltip="false" step="5" ticks min="5" max="100" hide-details>
+    <div class="scale-box d-flex flex-ai flex-jcc">
+      <span class="proportion">{{scale}}%</span>
+      <v-slider v-model="scale" :show-tooltip="false" step="25" min="25" max="500" hide-details>
       </v-slider>
     </div>
-    <div class="opt-list flex">
-      <div class="opt flex flex-ai flex-jcc" @click="refresh">
+    <div class="opt-list d-flex">
+      <div class="opt d-flex flex-ai flex-jcc" @click="refresh">
         <i class="icon iconfont icon-zhongzhi"></i>
       </div>
-      <div class="opt flex flex-ai flex-jcc" @click="exitFullScreen">
+      <div class="opt d-flex flex-ai flex-jcc" @click="exitFullScreen">
         <i class="icon iconfont icon-suoxiao"></i>
       </div>
     </div>
@@ -26,26 +26,36 @@ export default {
       scale: 100,
     }
   },
+  watch: {
+    scale(newScale) {
+      this.changeView(newScale)
+    },
+  },
   methods: {
     refresh() {
       this.$emit('runCode')
+      setTimeout(() => {
+        console.log('scale')
+        this.changeView(this.scale)
+      }, 500)
     },
     exitFullScreen() {
       const iframe = this.$props.getIframeBody()
       const style = iframe.contentWindow.document.body.style
-      style.transformOrigin = '0 0'
-      style.transform = 'scale(1)'
+      style.transformOrigin = this.transformOrigin
+      style.transform = this.transform
       this.$emit('exitFullScreen', false)
     },
-  },
-  watch: {
-    scale(newScale) {
+    changeView(newScale) {
       const iframe = this.$props.getIframeBody()
       const style = iframe.contentWindow.document.body.style
       newScale /= 100
-      !style.transformOrigin && (style.transformOrigin = 'top left')
-      style.width = `calc(100vw/${newScale})`
+      this.transformOrigin = style.transformOrigin
+      this.transform = style.transform
+      this.width = style.width
+      style.transformOrigin = 'top left'
       style.transform = `scale(${newScale})`
+      style.width = `calc(100vw/${newScale})`
     },
   },
 }
