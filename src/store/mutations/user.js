@@ -20,6 +20,9 @@ const user = {
       detail[key] = ''
     }
     state.curUserDetail = Object.assign({}, detail)
+  },
+  setFollowState: (state, isFollow) => {
+    state.curUserDetail.isMyFollow = isFollow
   }
 }
 

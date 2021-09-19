@@ -14,6 +14,7 @@ export default new Vuex.Store({
     ...instanceStates,
     ...userStates,
     visibleDialogName: '', // 全局显示的 dialog name
+    hasNewFeatures: false // 是否提示用户有新的特性
   },
   mutations: {
     ...instanceMutations,
@@ -21,6 +22,9 @@ export default new Vuex.Store({
     setVisibleDialogName (state, newName) {
       state.visibleDialogName = newName
     },
+    setHasNewFeatures (state, has) {
+      state.hasNewFeatures = has
+    }
   },
   actions: {
   },
@@ -36,8 +40,12 @@ export default new Vuex.Store({
     },
     isSelfProfile (state) {
       // 判断当前访问的是否为自己的主页
-      const { loginState, loginInfo, curUserDetail } = state
-      return loginState && loginInfo.username === curUserDetail.username
+      const { loginState, loginInfo: { username }, curUserDetail: { username: curUsername } } = state
+      return loginState && username === curUsername
+    },
+    isSelfInstance (state) {
+      const { loginState, loginInfo: { username }, curInstanceDetail: { username: curUsername } } = state
+      return loginState && username === curUsername
     }
   }
 })
