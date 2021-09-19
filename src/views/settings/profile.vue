@@ -6,14 +6,13 @@
         <span class="text-sm text-describe">从你的设备上选取一张 JPG 或 PNG 图片作为新的头像。</span>
         <div class="item-content d-flex flex-ai">
           <v-avatar size="150" color="primary">
-            <img :src="imgUrl" v-if="form.avatar || imgBgc" />
+            <img :src="imgUrl" v-if="form.avatar" />
             <span class="white--text text-h3" v-else>{{form.nickname|preNickname}}</span>
           </v-avatar>
           <v-btn color="info" class="upload-btn">
             <a @change="chooseFile" class="upload-a" href="javascript:;">
               <input class="upload-input" ref="fileInput" type="file" accept="image/png,image/jpg,image/jpeg"
-                multiple="multiple" />
-              上传头像
+                multiple="multiple" />上传头像
             </a>
           </v-btn>
         </div>
@@ -54,7 +53,6 @@
 import { mapState, mapMutations } from 'vuex'
 import regexpList from '@utils/regexp'
 import Cropper from '@components/cropper'
-import { getImgMainColor } from '@utils/tools'
 import cookie from '@utils/cookie'
 import * as qiNiu from '@utils/qiNiu'
 import { qiNiuImgLink } from '@utils/publicData'
@@ -63,7 +61,6 @@ export default {
     return {
       qiNiuImgLink,
       imgUrl: '',
-      imgBgc: '',
       form: {
         avatar: '',
         nickname: '',
@@ -162,10 +159,6 @@ export default {
       this.imgUrl = image
       this.cropConf.cropUrl = ''
       this.cropDialogVisible = false
-      // 获取图片主色调
-      getImgMainColor(image).then((res) => {
-        this.imgBgc = res
-      })
     },
     closeCrop() {
       this.clearInputFiles()
@@ -190,17 +183,23 @@ export default {
           contactEmail: email,
           name: nickname,
           userPicture: imgKey || avatar,
-          backgroundColor: this.imgBgc,
+          oldImg: imgKey ? avatar : '',
         }
         const res = await this.$http.updateUserInfo(userInfo)
         if (res.state) {
           this.$message.success('个人设置保存成功！')
           // 用户信息更新成功之后更新前端数据
-          this.setCurUserDetail({ nickname, about, email, avatar: imgKey })
-          this.setLoginInfoItem({ key: 'avatar', val: imgKey })
-          this.form.avatar = imgKey
-          this.imgUrl = qiNiuImgLink + imgKey
-          this.imgBgc = ''
+          this.setCurUserDetail({
+            nickname,
+            about,
+            email,
+            avatar: imgKey,
+          })
+          if (imgKey) {
+            this.setLoginInfoItem({ key: 'avatar', val: imgKey })
+            this.form.avatar = imgKey
+            imgKey && (this.imgUrl = qiNiuImgLink + imgKey)
+          }
         }
       } catch (err) {
         console.log(err)
@@ -209,8 +208,9 @@ export default {
       this.loading = false
     },
     async uploadAvatar() {
-      // 通过imgBgc判断用户有没有上传新头像，如果没有就没必要上传了
-      if (!this.imgBgc) return void 0
+      // 如果imgUrl既不是空也不是http开头，说明换了新头像
+      const imgUrl = this.imgUrl
+      if (imgUrl === '' || /^http/.test(imgUrl)) return void 0
       let token = cookie.get('QI_NIU_TOKEN')
       // 如果没有token需要获取七牛云token
       if (!token) {
