@@ -69,8 +69,16 @@ const instance = {
   setCurInstanceDetail: (state, detail) => {
     state.curInstanceDetail = Object.assign({}, state.curInstanceDetail, detail)
   },
+  setIframeInit: (state, isInit) => {
+    state.iframeInit = isInit
+  },
   resetInstanceState: (state) => {
     // 重置部分instance属性至初始状态
+    state.instanceCode = {
+      HTML: '',
+      CSS: '',
+      JavaScript: '',
+    }
     state.instanceSetting = {
       delayTime: 500,
       autoExecute: true,

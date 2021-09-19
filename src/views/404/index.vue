@@ -3,7 +3,9 @@
     <div class="not-found-content d-flex flex-clo flex-ai">
       <img class="not-found-img" src="http://picstore.lliiooiill.cn/404.svg" alt="">
       <span class="title-xl">哦。。。页面哪儿去了？</span>
-      <v-btn dark color="primary" class="go-home-btn" href="/">返回首页</v-btn>
+      <router-link to="/">
+        <v-btn dark color="primary" class="go-home-btn">返回首页</v-btn>
+      </router-link>
     </div>
   </div>
 </template>

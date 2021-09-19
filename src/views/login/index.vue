@@ -134,7 +134,7 @@ export default {
         state: csrfT,
       })
       cookie.set('CSRF_TOKEN', csrfT, 60 * 10)
-      window.open(`https://gitee.com/oauth/authorize?${requireStr}`, '_self')
+      window.open(`https://gitee.com/oauth/authorize?${requireStr}scope=user_info`, '_self')
     },
   },
   components: {},

@@ -50,6 +50,7 @@ export default {
       'visibleDialogName',
       'instanceExtLinks',
       'instanceCode',
+      'instanceSetting',
       'prep',
     ]),
   },
@@ -65,7 +66,8 @@ export default {
       const links = this.instanceExtLinks
       const prep = this.prep
       const dwPrep = this.preCompile
-      const downloader = new Downloader(code, links, prep, dwPrep)
+      const headTags = this.instanceSetting.headTags
+      const downloader = new Downloader(code, links, prep, headTags, dwPrep)
       downloader.handle(this.type)
     },
   },

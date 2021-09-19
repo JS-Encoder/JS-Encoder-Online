@@ -13,7 +13,7 @@
           <span class="form-item-title">实例标签</span>
           <span class="text-describe">添加或修改实例标签，标签最多三个，每个标签长度小于15</span>
           <v-combobox class="form-item-input" v-model="form.tags" :items="tagList" background-color="info" clearable
-            multiple chips solo label="选择标签..." hide-selected :disable-lookup="form.tags.length>=3" @change="tagsChange"
+            multiple chips solo label="添加实例标签..." hide-selected :disable-lookup="form.tags.length>=3" @change="tagsChange"
             :rules="rules.tags">
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip v-bind="attrs" color="#1a1a1a" :input-value="selected" close @click="select"
@@ -55,7 +55,7 @@ export default {
           },
         ],
       },
-      tagList: ['CSS', 'HTML', 'JS', 'cd'],
+      tagList: [],
       loading: false,
     }
   },

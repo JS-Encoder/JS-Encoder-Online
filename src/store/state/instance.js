@@ -53,12 +53,15 @@ const instance = {
   /* 当前实例详情 */
   curInstanceDetail: {
     username: '',
+    nickname: '',
     title: '',
     tags: '',
     liked: false,
     id: '',
     saved: true // 当前实例是否被保存了
   },
+
+  iframeInit: false // iframe是否被初始化过
 }
 
 export default instance

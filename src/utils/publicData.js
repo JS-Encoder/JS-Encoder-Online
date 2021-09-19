@@ -1,6 +1,8 @@
 /**
  * 存储常用的静态公共数据
  */
+const isProd = ['production', 'prod'].includes(process.env.NODE_ENV)
+
 const fontFamList = [
   'Consolas',
   'Monaco',
@@ -25,7 +27,7 @@ const defPrepOpts = {
 // 上传文件等后缀名列表
 const limitMimeType = ['html', 'css', 'js', 'md', 'pug', 'sass', 'scss', 'less', 'styl', 'ts', 'coffee']
 
-const qiNiuImgLink = 'http://images.lliiooiill.cn/'
+const qiNiuImgLink = isProd?'http://images.lliiooiill.cn/':'http://images.firstbird.asia/'
 
 export {
   fontFamList,

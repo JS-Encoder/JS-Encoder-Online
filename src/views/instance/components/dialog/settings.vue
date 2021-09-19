@@ -81,7 +81,7 @@ export default {
     }
   },
   created() {
-    this.settings = this.instanceSetting
+    this.settings = JSON.parse(JSON.stringify(this.instanceSetting))
   },
   computed: {
     ...mapState(['visibleDialogName', 'instanceSetting']),

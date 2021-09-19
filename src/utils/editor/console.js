@@ -50,7 +50,7 @@ export default class Console {
             break
           }
           case 'clear': {
-            this.clear()
+            Console.clear()
             break
           }
           case 'assert': {
@@ -93,8 +93,8 @@ export default class Console {
   /**
    * 清除控制台所有日志
    */
-  clear () {
-    const consoleInfo = this.consoleInfo
+  static clear () {
+    const consoleInfo = this.instance.consoleInfo
     consoleInfo.splice(0, consoleInfo.length, '')
     consoleInfo.pop()
   }
@@ -126,11 +126,6 @@ export default class Console {
     let result
     this.console.log(cmd)
     try {
-      // if (/^(let|const)+( )/.test(cmd)) {
-      //   result = this.window.eval(cmd)
-      // } else {
-      //   result = this.window.exeJSEncoderConsoleCmd(cmd)
-      // }
       if (cmd === 'window' || cmd === 'console') {
         this.consoleInfo.push({
           type: 'error',

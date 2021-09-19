@@ -18,15 +18,12 @@ axios.interceptors.request.use(async config => {
   // config.cancelToken = new axios.CancelToken(cancel => {
   //   store.commit('cancelRequest/pushToken', { cancelToken: cancel })
   // })
-  console.log(config)
   const loginState = store.state.loginState
   if (loginState) {
     const token = cookie.get('AUTH_TOKEN')
     if (token) {
       config.headers.token = token
     }
-  } else if (config.requireAuth && !loginState) {
-    return Promise.reject({ response: { status: 401 } })
   }
   return config
 }, error => {

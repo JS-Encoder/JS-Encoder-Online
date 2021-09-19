@@ -155,7 +155,7 @@ export default {
     setTimeout(() => {
       const codeArea = this.$refs.cmdArea
       codeArea.refresh()
-    }, 3200)
+    })
   },
   computed: {
     ...mapState(['iframeH', 'consoleH', 'consoleSettings', 'consoleInfo']),

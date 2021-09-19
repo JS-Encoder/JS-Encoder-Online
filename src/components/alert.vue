@@ -9,7 +9,7 @@
           <v-btn @click="cancel" v-if="showCancel">
             {{cancelText}}
           </v-btn>
-          <v-btn @click="ok" :color="okColor">
+          <v-btn @click="ok" :color="okColor" :loading="loading">
             {{okText}}
           </v-btn>
         </v-card-actions>
@@ -65,6 +65,7 @@ export default {
   data() {
     return {
       visible: true,
+      loading: false,
     }
   },
   methods: {

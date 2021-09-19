@@ -13,6 +13,7 @@ module.exports = {
   parallel: require('os').cpus().length > 1,
   pwa: {},
   devServer: {
+    historyApiFallback: { index: '/index.html' },
     proxy: {
       '/api': {
         target: baseUrl.server,
