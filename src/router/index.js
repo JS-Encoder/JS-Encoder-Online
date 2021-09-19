@@ -263,10 +263,15 @@ router.beforeResolve((to, from, next) => {
   }
 })
 
-router.afterEach((to, _) => {
+router.afterEach((to, from) => {
   if (to.name === 'Home') {
     // 清除浏览器地址栏中的参数
     history.replaceState({}, '', '/')
+  }
+  // 退出用户主页时清除用户信息
+  const allowList = ['Works', 'Liked', 'Following', 'Followers', 'CycleBin', 'User']
+  if (allowList.includes(from.name) && !allowList.includes(to.name)) {
+    store.commit('clearCurUserDetail')
   }
   window.scrollTo(0, 0)
 })
