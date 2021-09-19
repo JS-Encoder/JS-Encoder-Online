@@ -6,21 +6,23 @@
       <v-icon class="pointer" @click="showTip=false">mdi-close</v-icon>
     </v-card>
     <div class="cycle-bin-list">
-      <v-skeleton-loader type="list-item-two-line" v-show="loading" v-for="item in 10" :key="item"></v-skeleton-loader>
-      <v-card elevation="0" color="#272727" class="instance d-flex flex-ai" v-show="!loading" v-for="item in list"
-        :key="item.exampleId">
+      <v-skeleton-loader type="list-item-two-line" v-show="loading" v-for="item in 12" :key="item"></v-skeleton-loader>
+      <v-card elevation="0" color="#272727" class="instance flex-ai" v-show="!loading"
+        v-for="(item, index) in list" :key="item.exampleId">
         <div class="d-flex flex-clo">
           <span class="instance-title">{{item.exampleName}}</span>
           <span class="delete-time text-describe text-sm">删除日期：{{item.updateTime}}</span>
         </div>
         <v-spacer></v-spacer>
-        <v-btn color="#333333" class="restore-btn" @click="restore(item.exampleId)" :loading="restoreLoading">恢复</v-btn>
-        <v-btn color="error" class="delete-btn" @click="perDelete(item.exampleId)" :loading="deleteLoading">永久删除</v-btn>
+        <v-btn color="#333333" class="restore-btn" @click="restore(item.exampleId,index)"
+          :loading="restoreLoading&&curIndex===index">恢复</v-btn>
+        <v-btn color="error" class="delete-btn" @click="perDelete(item.exampleId,index)"
+          :loading="deleteLoading&&curIndex===index">永久删除</v-btn>
       </v-card>
     </div>
     <div class="cycle-tip" v-show="showNothing">
       <div class="d-flex flex-clo flex-jcc flex-ai">
-        <span class="title-xl">🗑</span>
+        <span class="icon-cycle">🗑</span>
         <span class="text-describe text-sm">回收站空空如也</span>
       </div>
     </div>
@@ -36,6 +38,7 @@ export default {
       loading: true,
       deleteLoading: false,
       restoreLoading: false,
+      curIndex: null,
       list: [],
       showNothing: false,
     }
@@ -46,7 +49,7 @@ export default {
       !this.loginState ||
       this.curUserDetail.username !== this.loginInfo.username
     ) {
-      // this.$router.replace({ name: '404' })
+      this.$router.replace('/404')
     }
     this.getRecycle()
   },
@@ -57,10 +60,12 @@ export default {
     async getRecycle() {
       this.loading = true
       try {
-        const res = await this.$http.searchCycleBin()
-        if (res.state) {
-          this.list = res.data
-          this.showNothing = res.data.length === 0
+        const { state, data } = await this.$http.searchCycleBin()
+        if (state) {
+          this.list = data
+          this.showNothing = data.length === 0
+          this.$emit('setPageConn', true, true)
+          this.$emit('updateNum', 'cycleBin', data.length)
           this.$message.success('查询成功！')
         } else {
           this.$message.error('查询失败！')
@@ -68,8 +73,9 @@ export default {
       } catch (err) {}
       this.loading = false
     },
-    async restore(exampleId) {
+    async restore(exampleId, index) {
       this.restoreLoading = true
+      this.curIndex = index
       try {
         const res = await this.$http.resumeDelWork({
           username: this.loginInfo.username,
@@ -82,15 +88,17 @@ export default {
           this.$message.error('恢复失败！')
         }
       } catch (err) {}
+      this.curIndex = null
       this.restoreLoading = false
     },
-    async perDelete(exampleId) {
+    async perDelete(exampleId, index) {
       const confRes = await this.$alert({
         content: '该实例永久删除后将不可恢复！',
         okText: '确认并继续',
         okColor: 'error',
       })
       if (confRes) {
+        this.curIndex = index
         this.deleteLoading = true
         try {
           const res = await this.$http.permanentDelWork({
@@ -106,6 +114,7 @@ export default {
         } catch (err) {
           console.log(err)
         }
+        this.curIndex = null
         this.deleteLoading = false
       }
     },
@@ -135,6 +144,7 @@ export default {
     grid-gap: 15px;
     grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
     .instance {
+      display: flex;
       padding: 10px;
       margin-bottom: 15px;
       .restore-btn {
@@ -144,6 +154,9 @@ export default {
   }
   .cycle-tip {
     margin: 50px 0 100px;
+    .icon-cycle {
+      font-size: 48px;
+    }
   }
 }
 </style>

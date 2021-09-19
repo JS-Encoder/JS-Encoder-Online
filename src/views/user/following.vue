@@ -1,61 +1,94 @@
 <template>
   <div id="following">
-    <div class="following-list">
+    <div class="following-list" v-show="!nothing">
       <div class="skeleton-list-item" v-for="(item, index) in 20" :key="index" v-show="loading">
         <follow-skeleton></follow-skeleton>
       </div>
-      <div class="following-list-item" v-for="item in followingList" :key="item" v-show="!loading">
-        <follow-card :following="true"></follow-card>
+      <div class="following-list-item" v-for="(item, index) in followingList" :key="item.username" v-show="!loading">
+        <follow-card :cardIndex="index" @setFollow="setFollow" :userInfo="item" @search="init"></follow-card>
       </div>
     </div>
-    <div class="page-opt d-flex flex-jcc">
-      <v-btn class="before-btn" @click="switchPage(-1)" :disabled="p<=1">上一页</v-btn>
-      <v-btn color="primary" class="after-btn" @click="switchPage(1)">下一页</v-btn>
+    <div class="following-tip flex-jcc" v-show="showNothingTip">
+      <div class="tip-content d-flex flex-clo flex-ai" v-if="isSelfProfile">
+        <span class="text-describe">你还没关注过任何人...</span>
+        <span class="text-describe">不如探索一番，没准儿真会有你感兴趣的？</span>
+        <router-link to="/explore">
+          <v-btn color="primary">
+            <v-icon left>mdi-cloud-search-outline</v-icon>去探索
+          </v-btn>
+        </router-link>
+      </div>
+      <div class="tip-content d-flex flex-clo flex-ai" v-else>
+        <span class="title-lg">🍃</span>
+        <span class="title-sm text-describe">这里空空如也...</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 import FollowSkeleton from '@components/skeleton/followSkeleton'
 import FollowCard from '@components/followCard'
+import * as p2b from '@utils/paramsToBase64'
 export default {
+  name: 'Following',
   data() {
     return {
-      p: 1,
       followingList: [],
       loading: true,
+      nothing: true,
+      showNothingTip: false,
     }
   },
   created() {
-    this.followingList = Array.from({ length: 20 }, (_, i) => i + 20)
-    let p = this.$route.query.p
-    if (p) {
-      p = parseInt(p)
-      this.p = p > 1 ? p : 1
-    } else {
-      this.p = 1
-    }
-    this.search()
+    this.init()
+  },
+  computed: {
+    ...mapState(['curUserDetail']),
+    ...mapGetters(['isSelfProfile']),
   },
   methods: {
-    switchPage(changeNum) {
-      this.$router.push({
-        path: 'following',
-        query: { p: (this.p += changeNum) },
-      })
-      this.search()
+    init() {
+      let page = 1
+      let f = this.$route.query.f
+      if (f) {
+        ;({ page } = p2b.decode(f))
+        page = parseInt(page)
+      }
+      this.search(page)
     },
-    search(p) {
-      p = p || this.p
+    async search(page) {
       this.loading = true
-      setTimeout(() => {
-        this.loading = false
-      }, 5000)
+      this.nothing = false
+      try {
+        const { state, data } = await this.$http.searchFollowings({
+          currentPage: page,
+          username: this.curUserDetail.username,
+        })
+        if (state) {
+          const { isFirstPage, isLastPage, list, total } = data
+          this.nothing = list.length === 0
+          this.showNothingTip = list.length === 0
+          this.followingList = list
+          this.$emit('setPageConn', isFirstPage, isLastPage)
+          this.$emit('updateNum', 'following', total)
+          this.$message.success('查询成功！')
+        } else {
+          this.$message.error('查询失败！')
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      this.loading = false
+    },
+    setFollow(isFollow, index) {
+      this.followingList[index].myFollow = isFollow
     },
   },
   components: {
-    'follow-skeleton': FollowSkeleton,
-    'follow-card': FollowCard,
+    FollowSkeleton,
+    FollowCard,
   },
 }
 </script>
@@ -71,6 +104,18 @@ export default {
     margin-top: 50px;
     .before-btn {
       margin-right: 15px;
+    }
+  }
+  .following-tip {
+    display: flex;
+    padding: 50px 0 150px 0;
+    .tip-content {
+      background-color: $deep-4;
+      padding: 25px 50px;
+      border-radius: 5px;
+      span {
+        margin-bottom: 10px;
+      }
     }
   }
 }

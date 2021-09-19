@@ -1,21 +1,30 @@
 <template>
   <div id="liked">
-    <div class="liked-list">
+    <div class="liked-list" v-show="!nothing">
       <div class="skeleton-list-item" v-for="(item, index) in 12" :key="index" v-show="loading">
         <instance-skeleton></instance-skeleton>
       </div>
-      <div class="liked-list-item" v-for="item in likedList" :key="item" v-show="!loading">
-        <instance-card></instance-card>
+      <div class="liked-list-item" v-for="(item, index) in likedList" :key="item.exampleId" v-show="!loading">
+        <instance-card :info="item" :cardIndex="index" @setFollow="setFollow" @setFav="setFav" @search="init">
+        </instance-card>
       </div>
     </div>
-    <div class="page-opt d-flex flex-jcc">
-      <v-btn class="before-btn" @click="switchPage(-1)" :disabled="p<=1">上一页</v-btn>
-      <v-btn color="primary" class="after-btn" @click="switchPage(1)">下一页</v-btn>
+    <div class="liked-tip flex-jcc" v-show="showNothingTip">
+      <div class="tip-content d-flex flex-clo flex-ai" v-if="isSelfProfile">
+        <span class="heart">💓</span>
+        <span class="title-lg">也许</span>
+        <span class="title-sm">你还没有找到你喜欢的？</span>
+      </div>
+      <div class="tip-content d-flex flex-clo flex-ai" v-else>
+        <span class="title-lg">🍃</span>
+        <span class="title-sm text-describe">这里空空如也...</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 import InstanceSkeleton from '@components/skeleton/instanceSkeleton'
 import InstanceCard from '@components/instanceCard'
 import * as p2b from '@utils/paramsToBase64'
@@ -23,43 +32,68 @@ export default {
   name: 'Liked',
   data() {
     return {
-      p: 1,
       likedList: [],
       loading: true,
+      nothing: true,
+      showNothingTip: false,
     }
   },
   created() {
-    this.likedList = Array.from({ length: 12 }, (_, i) => i + 12)
-    let f = this.$route.query.f
-    if (f) {
-      f = p2b.decode(f)
-      const p = parseInt(f.p)
-      this.p = p > 1 ? p : 1
-    } else {
-      this.p = 1
-    }
-    this.search()
+    this.init()
+  },
+  computed: {
+    ...mapState(['curUserDetail', 'loginInfo']),
+    ...mapGetters(['isSelfProfile']),
   },
   methods: {
-    switchPage(changeNum) {
-      const f = { p: (this.p += changeNum) }
-      this.$router.push({
-        path: 'liked',
-        query: { f: p2b.encode(f) },
-      })
-      this.search()
+    init() {
+      let page = 1
+      let sortBy = 0
+      let f = this.$route.query.f
+      if (f) {
+        ;({ page, sortBy } = p2b.decode(f))
+        page = parseInt(page)
+        sortBy = parseInt(sortBy)
+      }
+      this.search(page, sortBy)
     },
-    search(p) {
-      p = p || this.p
+    async search(page, sortBy) {
       this.loading = true
-      setTimeout(() => {
-        this.loading = false
-      }, 5000)
+      this.nothing = false
+      try {
+        const { state, data } = await this.$http.searchLiked({
+          currentPage: page,
+          orderCondition: sortBy,
+          username: this.curUserDetail.username,
+        })
+        if (state) {
+          const { isFirstPage, isLastPage, list, total } = data
+          this.nothing = list.length === 0
+          this.showNothingTip = list.length === 0
+          this.likedList = list
+          this.$emit('setPageConn', isFirstPage, isLastPage)
+          this.$emit('updateNum', 'liked', total)
+          this.$message.success('查询成功！')
+        } else {
+          this.$message.error('查询失败！')
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      this.loading = false
+    },
+    setFollow(isFollow, index) {
+      this.likedList[index].myFollow = isFollow
+    },
+    setFav(isFav, index) {
+      const item = this.likedList[index]
+      item.myFavorites = isFav
+      item.favorites += isFav ? 1 : -1
     },
   },
   components: {
-    'instance-skeleton': InstanceSkeleton,
-    'instance-card': InstanceCard,
+    InstanceSkeleton,
+    InstanceCard,
   },
 }
 </script>
@@ -76,6 +110,22 @@ export default {
     margin-top: 50px;
     .before-btn {
       margin-right: 15px;
+    }
+  }
+  .liked-tip {
+    display: flex;
+    padding: 50px 0 150px 0;
+    .tip-content {
+      background-color: $deep-4;
+      padding: 25px 50px;
+      border-radius: 5px;
+      color: $light-4;
+      span {
+        margin-bottom: 10px;
+      }
+      .heart {
+        font-size: 48px;
+      }
     }
   }
 }
