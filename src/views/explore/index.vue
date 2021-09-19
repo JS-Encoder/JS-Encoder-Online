@@ -23,53 +23,41 @@
           <v-col lg="4" md="4" sm="6" cols="12">
             <span>预处理：</span>
             <v-select :items="prepList" clearable solo :menu-props="{ offsetY: true }" v-model="searchForm.prep"
-              hide-details @change="search">
+              hide-details @change="newSearch">
             </v-select>
-            <!-- <v-combobox v-model="searchForm.tags" :items="tagList" clearable multiple chips solo hide-selected
-              label="选择标签..." hide-details>
-              <template v-slot:selection="{ attrs, item, select, selected }">
-                <v-chip v-bind="attrs" :input-value="selected" close @click="select" @click:close="removeTag(item)">
-                  <strong>{{ item }}</strong>
-                </v-chip>
-              </template>
-            </v-combobox> -->
           </v-col>
           <v-col lg="4" md="4" sm="6" cols="12">
             <span>排序：</span>
             <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="searchForm.sort" item-text="text"
-              item-value="value" hide-details @change="search">
+              item-value="value" hide-details @change="newSearch">
             </v-select>
           </v-col>
         </v-row>
       </div>
-      <div class="find-tip flex-jcc" v-show="init&&nothing&&!instanceList.length">
+      <div class="find-tip flex-jcc" v-show="showNothingTip">
         <div class="tip-content d-flex flex-clo flex-ai">
           <span class="emoji">🧐</span>
           <span class="text-describe">哎呀，什么都没找到诶~~</span>
           <span class="text-describe">但我想，也许你可以为这里开拓一片新天地？</span>
         </div>
       </div>
-      <div class="init-tip flex-jcc" v-show="!init">
+      <!-- <div class="init-tip flex-jcc" v-show="!init">
         <div class="d-flex flex-jcc text-describe">
           <span>请在搜索框输入关键字寻找你想要的实例</span>
         </div>
-      </div>
-      <div v-show="init&&!nothing">
+      </div> -->
+      <div v-show="!nothing">
         <div class="explore-instance-list">
-          <div class="explore-list-item" v-for="item in instanceList" :key="item.exampleId">
-            <instance-card :info="item"></instance-card>
+          <div class="explore-list-item" v-for="(item, index) in instanceList" :key="item.exampleId">
+            <instance-card :info="item" :cardIndex="index" @setFollow="setFollow" @setFav="setFav"></instance-card>
           </div>
           <div class="skeleton-list-item" v-for="(item, index) in 12" :key="index" v-show="listLoading">
             <instance-skeleton></instance-skeleton>
           </div>
         </div>
-        <div class="view-more flex-jcc" v-show="!isLastPage&&instanceList.length">
-          <v-btn color="info" x-large @click="searchMore">
-            <v-icon left>mdi-eye-outline</v-icon>查看更多
-          </v-btn>
-        </div>
-        <div class="no-more-tip flex-jcc" v-show="isLastPage&&instanceList.length">
-          <span class="text-describe text-sm">别划了，真的一个也没有了😥</span>
+        <div class="page-opt flex-jcc" v-show="!isFirstPage||!isLastPage">
+          <v-btn class="before-btn" @click="switchPage(-1)" :disabled="isFirstPage">上一页</v-btn>
+          <v-btn color="primary" class="after-btn" @click="switchPage(1)" :disabled="isLastPage">下一页</v-btn>
         </div>
       </div>
     </div>
@@ -82,6 +70,7 @@ import InstanceCard from '@components/instanceCard'
 import GoToTop from '@components/goToTop'
 import { defPrepOpts } from '@utils/publicData'
 import { judgeMode } from '@utils/editor/judgeMode'
+import * as p2b from '@utils/paramsToBase64'
 export default {
   name: 'Explore',
   data() {
@@ -95,15 +84,17 @@ export default {
       searchForm: {
         keyword: '',
         prep: '',
-        sort: 0,
+        sort: 2,
       },
+      page: 1,
       instanceList: [],
       nothing: false,
+      showNothingTip: false,
       searchLoading: false,
       showFilter: false,
       listLoading: false,
-      page: 1,
       isLastPage: false,
+      isFirstPage: false,
       init: false,
     }
   },
@@ -112,28 +103,61 @@ export default {
     for (let key in defPrepOpts) {
       prepList.push(...defPrepOpts[key])
     }
+    this.initData()
   },
   methods: {
-    // removeTag(item) {
-    //   const form = this.searchForm
-    //   form.tags.splice(form.tags.indexOf(item), 1)
-    //   form.tags = [...form.tags]
-    // },
-    searchMore() {
-      this.page++
+    initData() {
+      let page = 1
+      let sort = 2
+      let prep = ''
+      let keyword = ''
+      let f = this.$route.query.f
+      if (f) {
+        const {
+          page: fPage,
+          sort: fSort,
+          prep: fPrep,
+          keyword: fKeyword,
+        } = p2b.decode(f)
+        page = parseInt(fPage)
+        sort = parseInt(fSort)
+        keyword = fKeyword
+        prep = fPrep
+        console.log(p2b.decode(f))
+      }
+      this.searchForm = { sort, prep, keyword }
+      this.page = page
       this.getInstance()
+    },
+    newSearch() {
+      // 重新从第一页开始搜索
+      this.page = 1
+      this.switchRoute()
+    },
+    switchPage(changeNum) {
+      this.page += changeNum
+      this.switchRoute()
+    },
+    switchRoute() {
+      // 切换路由，如果没有name就只更新query查询信息
+      const f = p2b.encode({ ...this.searchForm, page: this.page })
+      if (this.$route.query.f === f) {
+        this.getInstance()
+      } else {
+        const routeObj = { name: 'Explore', query: { f } }
+        this.$router.push(routeObj).catch((err) => err)
+      }
     },
     search() {
       this.$refs.searchField.blur()
       // 每次改变条件或点击按钮查询都清空列表再查
       this.instanceList = []
-      this.page = 1
-      this.getInstance()
+      this.switchRoute()
     },
     async getInstance() {
       try {
         const { keyword, sort, prep } = this.searchForm
-        if (keyword === '') return void 0
+        // if (keyword === '') return void 0
         this.searchLoading = true
         this.listLoading = true
         this.nothing = false
@@ -141,7 +165,7 @@ export default {
         const prepKey = judgeMode(prep)
         const res = await this.$http.searchWorksByContent({
           currentPage: this.page,
-          queryContent: keyword,
+          queryContent: keyword || '',
           orderCondition: sort,
           htmlStyle: prepKey === 'HTML' ? prep : '',
           cssStyle: prepKey === 'CSS' ? prep : '',
@@ -149,9 +173,11 @@ export default {
         })
         if (res.state) {
           this.$message.success('查询成功！')
-          const { list, isLastPage } = res.data
+          const { list, isLastPage, isFirstPage } = res.data
           this.nothing = list.length === 0
-          this.instanceList.push(...list)
+          this.showNothingTip = list.length === 0
+          this.instanceList = list
+          this.isFirstPage = isFirstPage
           this.isLastPage = isLastPage
         } else {
           this.nothing = true
@@ -163,18 +189,31 @@ export default {
       this.searchLoading = false
       this.listLoading = false
     },
+    setFollow(isFollow, index) {
+      this.instanceList[index].myFollow = isFollow
+    },
+    setFav(isFav, index) {
+      const item = this.instanceList[index]
+      item.myFavorites = isFav
+      item.favorites += isFav ? 1 : -1
+    },
   },
   components: {
     InstanceSkeleton,
     InstanceCard,
     GoToTop,
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteUpdate(to, from, next) {
+    next()
+    this.instanceList = []
+    this.getInstance()
+  },
+  beforeRouteLeave(to, from, next) {
     if (from.name === 'Explore' && to.name !== 'Work') {
       this.$destroy()
     }
     next()
-  }
+  },
 }
 </script>
 <style lang="scss">
@@ -221,16 +260,13 @@ export default {
       margin-top: 30px;
       display: grid;
       grid-gap: 30px;
-      .skeleton-list-item {
-      }
     }
-    .view-more {
-      display: flex;
-      margin-top: 35px;
-    }
-    .no-more-tip {
-      padding: 50px 0;
-      display: flex;
+  }
+  .page-opt {
+    display: flex;
+    margin-top: 50px;
+    .before-btn {
+      margin-right: 15px;
     }
   }
 }
