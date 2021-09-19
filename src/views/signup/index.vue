@@ -234,6 +234,7 @@ export default {
 }
 @include screenXS {
   #sign-up {
+    padding: 50px 10px 100px 10px;
     .auth-input {
       padding-top: 0;
     }
@@ -241,6 +242,7 @@ export default {
 }
 @include screenSM {
   #sign-up {
+    padding: 50px 10px 100px 10px;
     .sign-up-content {
       width: 480px;
     }
