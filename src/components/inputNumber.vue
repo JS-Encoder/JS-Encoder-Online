@@ -1,5 +1,5 @@
 <template>
-  <v-text-field @blur="onBlur" dense flat solo background-color="info" @keypress="onKeypress" v-model="value"
+  <v-text-field @blur="onBlur" dense flat solo background-color="info" @keypress="onKeypress" v-model="inputVal"
     class="v-input-number" :hide-details="hideDetails">
     <template v-slot:prepend-inner>
       <v-btn icon class="icon-btn" @click="subtract">
@@ -32,16 +32,29 @@ export default {
     },
     hideDetails: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
-    return {}
+    return {
+      inputVal: '',
+    }
+  },
+  mounted() {
+    this.inputVal = this.value
+  },
+  watch: {
+    inputVal(newVal) {
+      this.emitEvent(newVal)
+    },
   },
   methods: {
+    emitEvent(val) {
+      this.$emit('input', val)
+    },
     onBlur() {
-      let num = parseInt(this.value, 10)
-      this.value = Number.isNaN(num) || num < this.min ? this.min : num
+      let num = parseInt(this.inputVal, 10)
+      this.inputVal = Number.isNaN(num) || num < this.min ? this.min : num
     },
     onKeypress(e) {
       const keyCode = e.keyCode
@@ -53,14 +66,14 @@ export default {
       }
 
       // 如果输入的第一位是0，输入的下一个字符会自动覆盖0
-      if (this.value == '0') this.value = ''
+      if (this.inputVal == '0') this.inputVal = ''
     },
     subtract() {
-      if (this.value < this.min + this.step) return void 0
-      this.value -= this.step
+      if (this.inputVal < this.min + this.step) return void 0
+      this.inputVal -= this.step
     },
     add() {
-      this.value += this.step
+      this.inputVal += this.step
     },
   },
   components: {},
