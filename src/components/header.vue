@@ -1,12 +1,12 @@
 <template>
-  <div id="header" class="d-flex">
+  <div id="header">
     <v-btn icon class="menu-icon" height="50" width="50" @click="showNav = !showNav">
       <v-icon>mdi-menu</v-icon>
     </v-btn>
-    <v-navigation-drawer v-model="showNav" absolute temporary>
+    <v-navigation-drawer v-model="showNav" absolute temporary style="height:100vh">
       <v-list>
         <v-list-item link v-for="item in navList" :key="item.name" @click="navJumpTo(item)">
-          <v-badge v-if="item.text==='新特性' && showBadge" dot color="primary">
+          <v-badge v-if="item.text==='新特性' && hasNewFeatures" dot color="primary">
             <v-list-item-title>{{item.text}}</v-list-item-title>
           </v-badge>
           <v-list-item-title v-else>{{item.text}}</v-list-item-title>
@@ -23,7 +23,7 @@
     <nav class="d-flex flex-1 no-select pointer">
       <v-btn v-for="(item, index) in navList" :key="index" class="nav-item rounded-0" @click="navJumpTo(item)" depressed
         :plain="curRouteName !== item.name" tile>
-        <v-badge v-if="item.text==='新特性' && showBadge" dot color="primary">
+        <v-badge v-if="item.text==='新特性' && hasNewFeatures" dot color="primary">
           {{item.text}}
         </v-badge>
         <span v-else>{{item.text}}</span>
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 import HeaderAccount from './headerAccount.vue'
 import localStorage from '@utils/local-storage'
 
@@ -61,35 +62,34 @@ export default {
         },
       ],
       showNav: false,
-      showBadge: true,
     }
   },
-  created() {
+  mounted() {
     this.judgeShowBadge()
   },
+  computed: {
+    ...mapState(['hasNewFeatures']),
+    curRouteName() {
+      return this.$route.name
+    },
+  },
   methods: {
+    ...mapMutations(['setHasNewFeatures']),
     navJumpTo(navItem) {
       if (navItem.text === 'GitHub') {
         window.open('https://github.com/Longgererer/JS-Encoder-Online')
       } else {
-        this.$router
-          .push({
-            name: navItem.name,
-          })
-          .catch(() => {})
+        this.$router.push({ name: navItem.name }).catch(() => {})
       }
     },
     judgeShowBadge() {
       // 获取JS Encoder最新版本号，如果和本地localStorage存储的一致，则表示用户已读，不显示徽章
       this.$http.repoLatestV().then((res) => {
         const latestV = res.tag_name
-        this.showBadge = latestV !== localStorage.get('latestViewVersion')
+        this.setHasNewFeatures(
+          latestV !== localStorage.get('latestViewVersion')
+        )
       })
-    },
-  },
-  computed: {
-    curRouteName() {
-      return this.$route.name
     },
   },
   components: {
@@ -102,6 +102,11 @@ export default {
 #header {
   height: 70px;
   padding: 0 30px;
+  position: relative;
+  // top: 0;
+  z-index: 1;
+  display: flex;
+  // backdrop-filter: blur(10px);
   .menu-icon {
     display: none;
   }
@@ -141,6 +146,9 @@ export default {
       align-items: center;
       justify-content: center;
     }
+  }
+  ::v-deep.v-overlay {
+    bottom: -100vh;
   }
 }
 
