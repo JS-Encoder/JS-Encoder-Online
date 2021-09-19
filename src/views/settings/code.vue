@@ -12,18 +12,26 @@
       <span class="item-title title-xs">默认初始代码</span>
       <div v-for="(value, key, index) in prepList" :key="index" class="d-flex flex-clo code-area">
         <span class="code-area-title">{{form.prep[index]}}</span>
-        <v-textarea solo :label="`${form.prep[index]} code...`" background-color="info" rows="3"
+        <v-textarea :style="fontStyle" solo :label="`${form.prep[index]} code...`" background-color="info" rows="3"
           v-model="form.code[key]" hide-details>
+        </v-textarea>
+      </div>
+    </div>
+    <div class="code-item code-def-code d-flex flex-clo">
+      <span class="item-title title-xs">默认 head</span>
+      <div class="code-area">
+        <v-textarea :style="fontStyle" solo label="输入你想在 <head> 中添加的标签如 <meta...>" background-color="info" rows="3"
+          v-model="form.headTags" hide-details>
         </v-textarea>
       </div>
     </div>
     <div class="code-item code-def-indent d-flex flex-clo">
       <span class="item-title title-xs">代码缩进</span>
-      <v-checkbox v-model="form.indent.replace" label="用等宽空格替换Tab"></v-checkbox>
+      <v-checkbox v-model="form.indent.replace" label="用等宽空格替换Tab" @change="setIndentReplace"></v-checkbox>
       <div class="d-flex flex-ai">
         <span class="sub-title">缩进数</span>
         <v-slider v-model="form.indent.width" color="primary" thumb-label ticks="always" step="2" :max="8" hide-details
-          @change="updateIndentSpaces">
+          @change="setIndentWidth">
         </v-slider>
       </div>
     </div>
@@ -48,7 +56,7 @@
         </codemirror>
       </div>
     </div>
-    <v-btn block x-large color="primary">保存</v-btn>
+    <v-btn block x-large color="primary" @click="save">保存</v-btn>
   </div>
 </template>
 
@@ -58,7 +66,7 @@ import { codemirror } from 'vue-codemirror'
 import '@assets/themes/default.css'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/lib/codemirror.css'
-
+import localStore from '@utils/local-storage'
 export default {
   data() {
     return {
@@ -86,8 +94,14 @@ export default {
           family: fontFamList[0],
           size: 16,
         },
+        headTags: '',
       },
     }
+  },
+  created() {
+    // 根据本地存储配置初始化表单
+    const settings = JSON.parse(localStore.get('JSE_PERSONAL_SETTINGS'))
+    settings && (this.form = settings)
   },
   mounted() {
     this.initEditor()
@@ -103,12 +117,12 @@ export default {
   },
   methods: {
     initEditor() {
-      const form = this.form
+      const { width, replace } = this.form.indent
       this.codeOptions = {
-        indentSpaces: form.indent.width,
+        tabSize: width,
         mode: 'text/javascript',
         theme: 'default',
-        indentWithTabs: !form.indent.replace,
+        indentWithTabs: !replace,
         readOnly: 'nocursor',
         matchBrackets: false,
         scrollPastEnd: false,
@@ -117,11 +131,19 @@ export default {
       }
       this.editorCode = `function sum(a, b){\n\tconst res = a + b;\n\treturn res;\n}\nconsole.log(sum(1, 2))`
     },
-    updateIndentSpaces(indentSpaces) {
-      this.codeOptions.indentSpaces = indentSpaces
+    setIndentWidth(width) {
+      this.codeOptions.tabSize = width
+    },
+    setIndentReplace(replace) {
+      this.codeOptions.indentWithTabs = !replace
     },
     refreshEditor() {
       this.$refs.editor.refresh()
+    },
+    save() {
+      const settings = this.form
+      localStore.set('JSE_PERSONAL_SETTINGS', JSON.stringify(settings))
+      this.$message.success('编码设置保存成功！')
     },
   },
   components: {
