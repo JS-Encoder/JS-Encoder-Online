@@ -1,11 +1,11 @@
 <template>
   <v-app id="app" :class="bgcClass" :style="curBgcStyle">
-    <jse-header v-if="!hideHAF" />
+    <jse-header v-show="!hideHAF" />
     <section class="app-content" :class="hideHAF?'app-full-screen':''">
-      <router-view />
+      <router-view :key="routerKey" />
       <jse-snackbar />
     </section>
-    <jse-footer v-if="!hideHAF" />
+    <jse-footer v-show="!hideHAF" />
   </v-app>
 </template>
 
@@ -21,6 +21,14 @@ export default {
     return {
       bgcClass: '',
       curBgcStyle: {},
+      routerKey: 0,
+    }
+  },
+  provide() {
+    return {
+      changeRouterKey: () => {
+        this.routerKey++
+      },
     }
   },
   mounted() {
@@ -57,10 +65,7 @@ export default {
       this.curBgcStyle = {}
       let path = this.path
       const list = ['home', 'features', 'feedback']
-      if (/^user/.test(path)) {
-        this.bgcClass = 'user-bgc'
-        this.curBgcStyle.backgroundImage = `linear-gradient(rgba(${this.curUserDetail.bgc},0.7) -50px,rgb(26,26,26) 300px)`
-      } else if (list.includes(path)) {
+      if (list.includes(path)) {
         this.bgcClass = `bgc-animation bgc-before ${path}-bgc`
       }
     },
@@ -80,6 +85,7 @@ export default {
   font-family: $font;
   background-color: $deep-5;
   position: relative;
+  background-attachment: fixed;
   @include setTransition(all, 0.3s, ease);
   .app-content {
     min-height: calc(100vh - 70px);
@@ -91,24 +97,23 @@ export default {
 .bgc-animation {
   background-position: 50% 0;
   background-size: 200% !important;
-  @include animation(background-fade, 0.5s, 0.3s, ease, forwards);
+  // @include animation(background-fade, 0.5s, 0.3s, ease, forwards);
 }
 .bgc-before {
   &::before {
     content: '';
     width: 100%;
     height: 100%;
-    backdrop-filter: blur(200px);
     position: absolute;
   }
 }
 .home-bgc {
   background-image: linear-gradient(
     135deg,
-    $primary-1 0,
-    $deep-2 10%,
-    $deep-5 15%,
-    $deep-6 25%
+    #2050a1 -50px,
+    #1c347c 20%,
+    #1a1925 45%,
+    $deep-6
   ) !important;
   &:before {
     background-color: rgba(25, 128, 255, 0.1);
@@ -119,7 +124,7 @@ export default {
     135deg,
     $deep-1 0,
     $deep-2 15%,
-    $deep-5 35%
+    $deep-4 35%
   ) !important;
   &:before {
     background-color: rgba(60, 60, 60, 0.1);
