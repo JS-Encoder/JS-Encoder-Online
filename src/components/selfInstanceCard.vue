@@ -10,8 +10,7 @@
         <span class="text-sm" :title="info.exampleName">{{info.exampleName}}</span>
       </div>
       <v-spacer></v-spacer>
-      <v-btn icon :class="info.myFavorites?'icon-like-active':'icon-like'" 
-        :loading="likeLoading" @click="like">
+      <v-btn icon :class="info.myFavorites?'icon-like-active':'icon-like'" :loading="likeLoading" @click="like">
         <v-icon>mdi-heart</v-icon>
       </v-btn>
       <span class="liked-num text-xs">{{info.favorites|formatNumber}}</span>
@@ -43,10 +42,11 @@ import env from '@service/env'
 export default {
   props: {
     info: Object,
+    cardIndex: Number,
   },
   data() {
     return {
-      qiNiuImgLink: 'http://firstbird.asia/',
+      qiNiuImgLink,
       menuList: [
         {
           name: '分享',
@@ -105,21 +105,31 @@ export default {
       this.$message.success('链接已复制到剪切板！')
     },
     async like() {
+      if (!this.loginState) {
+        this.$message.info('请登录后再进行相关操作！')
+        return void 0
+      } else if (this.isSelfProfile) {
+        this.$message.info('不能对自己的实例点喜欢哦')
+        return void 0
+      }
       const { myFavorites, exampleId } = this.info
       this.likeLoading = true
       try {
         // 根据当前是否已喜欢来判定调用喜欢还是取消喜欢接口
         const api = this.$http
         const req = myFavorites ? api.delLikeWork : api.addLikeWork
-        const res = req({ username: this.loginInfo.username, exampleId })
+        const res = await req({ username: this.loginInfo.username, exampleId })
         if (res.state) {
           this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
-          this.info.myFavorites = !myFavorites
+          this.setFav(!myFavorites)
         }
       } catch (err) {
         console.log(err)
       }
       this.likeLoading = false
+    },
+    setFav(isFav) {
+      this.$emit('setFav', isFav, this.cardIndex)
     },
     viewInstance() {
       const { username, exampleId } = this.info

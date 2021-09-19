@@ -1,6 +1,6 @@
 <template>
   <v-card class="instance-card">
-    <v-img :src="`http://firstbird.asia/${info.img}`" class="instance-card-img">
+    <v-img :src="`${qiNiuImgLink}${info.img}`" class="instance-card-img">
       <div class="img-screen pointer d-flex flex-ai flex-jcc" @click="viewInstance">
         <v-icon>mdi-eye</v-icon>
       </div>
@@ -9,21 +9,21 @@
       <v-menu transition="none" :close-on-content-click="false" offset-y open-delay="500" close-delay="200"
         :open-on-hover="true" top>
         <template v-slot:activator="{ on, attrs }">
-          <v-avatar size="40" class="pointer" v-bind="attrs" v-on="on" color="primary" @click.native="viewUserProfile">
-            <v-img :src="qiNiuImgLink+info.userPicture" v-if="info.userPicture"></v-img>
+          <v-avatar size="40" class="pointer" v-bind="attrs" v-on="on" :color="info.userPicture?'':'primary'"
+            @click.native="viewUserProfile">
+            <v-img :src="qiNiuImgLink+info.userPicture" v-if="info.userPicture" :alt="info.name"></v-img>
             <span class="white--text text-h7" v-else>{{info.name|preNickname}}</span>
           </v-avatar>
         </template>
         <user-card :avatar="info.userPicture" :myFollow="info.myFollow" :username="info.username" :nickname="info.name"
-          :about="info.description"></user-card>
+          :about="info.description" @setFollow="setFollow"></user-card>
       </v-menu>
       <div class="instance-info d-flex flex-clo pointer">
         <span class="text-sm" :title="info.exampleName">{{info.exampleName}}</span>
         <span class="text-xs author" @click="viewUserProfile">{{info.name}}</span>
       </div>
       <v-spacer></v-spacer>
-      <v-btn icon :class="info.myFavorites?'icon-like-active':'icon-like'" :loading="likeLoading"
-        @click="like">
+      <v-btn icon :class="info.myFavorites?'icon-like-active':'icon-like'" :loading="likeLoading" @click="like">
         <v-icon>mdi-heart</v-icon>
       </v-btn>
       <span class="liked-num text-xs">{{info.favorites|formatNumber}}</span>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import UserCard from '@components/userCard'
 import { copyToClip } from '@utils/tools'
 import { qiNiuImgLink } from '@utils/publicData'
@@ -43,6 +43,7 @@ import env from '@service/env'
 export default {
   props: {
     info: Object,
+    cardIndex: Number,
   },
   data() {
     return {
@@ -52,6 +53,7 @@ export default {
   },
   computed: {
     ...mapState(['loginState', 'loginInfo']),
+    ...mapGetters(['isSelfProfile']),
     isSelfWork() {
       return this.info.username === this.loginInfo.username
     },
@@ -64,32 +66,48 @@ export default {
     },
     viewInstance() {
       const { username, exampleId } = this.info
-      this.$router.push({
-        path: `/work/${username}/${exampleId}`,
-      })
+      this.$router.push(`/work/${username}/${exampleId}`)
     },
     viewUserProfile() {
-      // 查看用户主页
-      this.$router.push({
-        path: `/user/${this.info.username}`,
-      })
+      this.$router.push(`/user/${this.info.username}`)
     },
     async like() {
+      if (!this.loginState) {
+        this.$message.info('请登录后再进行相关操作！')
+        return void 0
+      } else if (this.isSelfWork) {
+        this.$message.info('不能对自己的实例点喜欢哦')
+        return void 0
+      }
       const { myFavorites, exampleId } = this.info
       this.likeLoading = true
       try {
         // 根据当前是否已喜欢来判定调用喜欢还是取消喜欢接口
         const api = this.$http
         const req = myFavorites ? api.delLikeWork : api.addLikeWork
-        const res = req({ username: this.loginInfo.username, exampleId })
+        const res = await req({ username: this.loginInfo.username, exampleId })
         if (res.state) {
+          if (
+            this.isSelfProfile &&
+            myFavorites &&
+            this.$route.name === 'Liked'
+          ) {
+            this.$emit('search')
+          } else {
+            this.setFav(!myFavorites)
+          }
           this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
-          this.info.myFavorites = !myFavorites
         }
       } catch (err) {
         console.log(err)
       }
       this.likeLoading = false
+    },
+    setFollow(isFollow) {
+      this.$emit('setFollow', isFollow, this.cardIndex)
+    },
+    setFav(isFav) {
+      this.$emit('setFav', isFav, this.cardIndex)
     },
   },
   components: {
