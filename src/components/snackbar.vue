@@ -1,9 +1,11 @@
 <template>
   <div class="message-box d-flex flex-clo">
-    <v-alert v-for="(opts, index) in alertPool" dense border="left" :type="opts.type" :key="index"
-      transition="scale-transition">
-      <span>{{opts.msg}}</span>
-    </v-alert>
+    <transition-group name="list-complete">
+      <v-alert v-for="opts in alertPool" dense border="left" :type="opts.type" :key="opts.id"
+        class="list-complete-item">
+        <span>{{opts.msg}}</span>
+      </v-alert>
+    </transition-group>
   </div>
 </template>
 
@@ -26,5 +28,17 @@ export default {
   min-width: 300px;
   max-width: 460px;
   transform: translateX(-50%);
+}
+.list-complete-item {
+  width: 100%;
+  transition: all 0.3s;
+}
+.list-complete-enter,
+.list-complete-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.list-complete-leave-active {
+  position: absolute;
 }
 </style>
