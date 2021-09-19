@@ -3,7 +3,7 @@
     <div class="is-login pointer" v-if="loginState">
       <v-menu transition="slide-y-transition" bottom offset-y right>
         <template v-slot:activator="{ on, attrs }">
-          <v-avatar :size="dense?30:40" class="avatar" v-bind="attrs" v-on="on" color="primary">
+          <v-avatar :size="dense?30:40" class="avatar" v-bind="attrs" v-on="on" :color="loginInfo.avatar?'':'primary'">
             <v-img :src="qiNiuImgLink+loginInfo.avatar" v-if="loginInfo.avatar"></v-img>
             <span class="white--text text-h7" v-else>{{loginInfo.nickname|preNickname}}</span>
           </v-avatar>
@@ -35,6 +35,7 @@ import { mapState, mapMutations } from 'vuex'
 import localStore from '@utils/local-storage'
 import { qiNiuImgLink } from '@utils/publicData'
 import cookie from '@utils/cookie'
+import IframeHandler from '@utils/editor/handleInstanceView'
 export default {
   props: {
     dense: {
@@ -42,6 +43,7 @@ export default {
       default: false,
     },
   },
+  inject: ['changeRouterKey'],
   data() {
     return {
       qiNiuImgLink,
@@ -73,24 +75,42 @@ export default {
     ...mapState(['loginState', 'loginInfo']),
   },
   methods: {
-    ...mapMutations(['setLoginInfo', 'setLoginState']),
+    ...mapMutations(['setLoginInfo', 'setLoginState', 'resetInstanceState']),
     handleMenu(val) {
       switch (val) {
         case 'user': {
           this.$router
-            .push({
-              name: 'User',
-              params: {
-                id: this.loginInfo.username,
-              },
-            })
+            .push(`/user/${this.loginInfo.username}`)
             .catch((err) => {})
           break
         }
         case 'newWork': {
-          this.$router.push({
-            name: 'NewWork',
-          })
+          /**
+           * 在新建实例或实例详情页面点击新建实例
+           * 需要触发App的changeRouterKey方法改变key强制刷新路由
+           * 并且需要清除iframe的绑定和实例部分配置
+           */
+          switch (this.$route.name) {
+            case 'NewWork': {
+              this.$router.push({ name: 'NewWork' }).catch((err) => {
+                this.changeRouterKey()
+                IframeHandler.clearIframe()
+                this.resetInstanceState()
+              })
+              break
+            }
+            case 'Work': {
+              this.$router.push({ name: 'NewWork' }).then(() => {
+                this.changeRouterKey()
+                IframeHandler.clearIframe()
+                this.resetInstanceState()
+              })
+              break
+            }
+            default: {
+              this.$router.push({ name: 'NewWork' }).catch((err) => {})
+            }
+          }
           break
         }
         case 'settings': {
@@ -124,7 +144,6 @@ export default {
       }
     },
   },
-  components: {},
 }
 </script>
 
@@ -133,12 +152,12 @@ export default {
   .user-menu-list {
     color: $light-5 !important;
     @include setTransition(color, 0.3s, ease);
+    &:hover {
+      color: $light-1 !important;
+    }
     .icon {
       color: inherit;
       margin-right: 15px;
-    }
-    &:hover {
-      color: $light-1 !important;
     }
   }
 }
