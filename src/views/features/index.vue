@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import localStorage from '@utils/local-storage'
 export default {
   name: 'Features',
@@ -45,6 +46,7 @@ export default {
     this.getRelease()
   },
   methods: {
+    ...mapMutations(['setHasNewFeatures']),
     getRelease() {
       // 获取仓库版本列表和详情
       this.$http.repoRelease().then((res) => {
@@ -52,6 +54,7 @@ export default {
         this.release = res
         // 将用户看到的最新版本存入localStorage中
         localStorage.set('latestViewVersion', res[0].tag_name)
+        this.setHasNewFeatures(false)
       })
     },
     jumpTo(url) {
@@ -70,7 +73,7 @@ export default {
     @include animation(fade-bottom, 0.3s, 0.3s, ease, forwards);
   }
 }
-@include screenLG {
+@include PC {
   #features {
     min-height: 100vh;
     .feature-list {
