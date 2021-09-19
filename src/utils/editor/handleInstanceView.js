@@ -1,10 +1,6 @@
 import store from '@store'
-import Loader from '../loader'
-const loader = new Loader()
 
-/**
- * 处理实例iframe的代码执行
- */
+// 处理实例iframe的代码执行
 class IframeHandler {
   constructor(iframe) {
     if (!IframeHandler.instance) {
@@ -35,24 +31,15 @@ class IframeHandler {
       const linkStr = `<script src="${JSLinks[i]}"></script>\n`
       extJS += linkStr
     }
-    const compiledCode = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    let head = `
     ${headTags}
     ${extCss}
     ${extJS}
-    <title></title>
     <style>
     ${CSSCode}
     </style>
-    <body>
-    ${HTMLCode}
-    </body>
-    </html>
-    `
+    `.trim()
+    const compiledCode = this.jointHTML(head, HTMLCode)
     iDoc.open()
     iDoc.write(compiledCode)
     iDoc.close()
@@ -63,7 +50,12 @@ class IframeHandler {
           this.renderFlowchart()
         }
         resolve(() => {
-          store.commit('setCompiledCode', compiledCode)
+          // 为了让截图中的文字不产生变化，在编译后的代码中加上默认文字样式
+          head = `
+          <style>body{font-family:"Microsoft YaHei";}</style>
+          ${head}
+          `.trim()
+          store.commit('setCompiledCode', this.jointHTML(head, HTMLCode))
           this.insertScript(JSCode)
         })
       }
@@ -81,9 +73,7 @@ class IframeHandler {
     doc.body.appendChild(script)
   }
 
-  /**
-   * 渲染markdown中的数学公式
-   */
+  // 渲染markdown中的数学公式
   async renderMathFormula () {
     const iBody = this.iframe.contentWindow.document.body
     let KaTeX
@@ -104,9 +94,7 @@ class IframeHandler {
     })
   }
 
-  /**
-   * 渲染markdown中的流程图
-   */
+  // 渲染markdown中的流程图
   renderFlowchart () {
     const iframeWindow = this.iframe.contentWindow
     const flows = iframeWindow.document.querySelectorAll('.language-flow')
@@ -120,7 +108,26 @@ class IframeHandler {
       iframeWindow.flowchart.parse(code).drawSVG(`flow${i}`)
     }
   }
-  clearIframe () {
+
+  // 拼接html代码
+  jointHTML (head, body) {
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    ${head}
+    </head>
+    <body>
+    ${body}
+    </body>
+    </html>
+    `.trim()
+  }
+
+  static clearIframe () {
     IframeHandler.instance = null
   }
 }

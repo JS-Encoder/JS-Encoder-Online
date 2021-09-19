@@ -8,12 +8,14 @@ export default class InstanceDownloader {
    * @param {Object} code 代码集合
    * @param {Object} links 外部链接
    * @param {Array} prep 预处理
+   * @param {String} headTags 头部标签
    * @param {Boolean} dwPrep 是否下载未编译版本
    */
-  constructor(code, links, prep, dwPrep) {
+  constructor(code, links, prep, headTags, dwPrep) {
     this.code = code
     this.links = links
     this.prep = prep
+    this.headTags = headTags
     this.dwPrep = dwPrep
   }
 
@@ -26,6 +28,7 @@ export default class InstanceDownloader {
     const prep = this.prep
     const { cssLinks, JSLinks } = this.links
     const dwPrep = this.dwPrep
+    const headTags = this.headTags
     let HTMLCode,
       CSSCode,
       JSCode,
@@ -49,7 +52,7 @@ export default class InstanceDownloader {
       extJS += linkStr
     }
     if (type === 'single') {
-      this.single({ HTMLCode, CSSCode, JSCode }, { extCss, extJS })
+      this.single({ HTMLCode, CSSCode, JSCode }, { extCss, extJS }, headTags)
       if (dwPrep) {
         const typeObj = this.judgePrep()
         typeObj.html && this.download(HTML, `index.${typeObj.html}`)
@@ -57,7 +60,7 @@ export default class InstanceDownloader {
         typeObj.js && this.download(JavaScript, `index.${typeObj.js}`)
       }
     } else if (type === 'multiple') {
-      this.multiple({ HTMLCode, CSSCode, JSCode }, { extCss, extJS })
+      this.multiple({ HTMLCode, CSSCode, JSCode }, { extCss, extJS }, headTags)
     }
   }
 
@@ -66,7 +69,7 @@ export default class InstanceDownloader {
    * @param {Object} code 代码集合
    * @param {Object} links 外部链接字符串集合
    */
-  single (code, links) {
+  single (code, links, headTags) {
     const { HTMLCode, CSSCode, JSCode } = code
     const { extCss = '', extJS = '' } = links
     const htmlCode = `<!DOCTYPE html>
@@ -74,17 +77,17 @@ export default class InstanceDownloader {
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    ${headTags}
     ${extCss}
     ${extJS}
     <title></title>
     <style>
     ${CSSCode}
     </style>
+    </head>
     <body>
     ${HTMLCode}
-    <script>
-    ${JSCode}
-    </script>
+    <script>${JSCode}</script>
     </body>
     </html>
     `
@@ -96,7 +99,7 @@ export default class InstanceDownloader {
    * @param {Object} code 代码集合
    * @param {Object} links 外部链接字符串集合
    */
-  multiple (code, links) {
+  multiple (code, links, headTags) {
     const { HTML, CSS, JavaScript } = this.code
     const { HTMLCode, CSSCode, JSCode } = code
     const { extCss, extJS } = links
@@ -104,15 +107,17 @@ export default class InstanceDownloader {
     const zipFolder = zip.folder('code')
     const htmlCode = `
     <!DOCTYPE html>
-    <html lang="en">                           
+    <html lang="en">
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    ${headTags}
     ${extCss}
     ${extJS}
     <link rel="stylesheet" href="./index.css">
     <script src="./index.js"><\/script>
     <title></title>
+    </head>
     <body>
     ${HTMLCode}
     </body>
