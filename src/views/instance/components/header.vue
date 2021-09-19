@@ -6,28 +6,41 @@
       </router-link>
     </div>
     <div class="instance-name flex-sh pointer d-flex flex-ai">
-      <div class="d-flex flex-clo">
+      <div class="d-flex flex-end">
         <span class="text-small">{{isNewWork?'新建实例':curInstanceDetail.title}}</span>
-        <span class="text-xs author" @click="goToUserProfile" v-if="!isNewWork">{{curInstanceDetail.username}}</span>
+        <span class="text-xs author" @click="goToUserProfile" v-if="!isNewWork">By {{curInstanceDetail.nickname}}</span>
       </div>
-      <v-btn icon small @click="setVisibleDialogName('instanceConfig')" v-if="!isNewWork&&isSelfProfile">
+      <v-btn icon small @click="setVisibleDialogName('instanceConfig')" v-if="!isNewWork&&isSelfInstance">
         <v-icon>mdi-pencil-outline</v-icon>
       </v-btn>
-      <v-btn icon small v-if="!isNewWork&&!isSelfProfile">
-        <v-icon>mdi-label-multiple-outline</v-icon>
-      </v-btn>
+      <v-menu :close-on-content-click="false" offset-y open-delay="200" close-delay="200" bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon small v-bind="attrs" v-on="on" v-if="!isNewWork&&!isSelfInstance" :disabled="tags.length===0">
+            <v-icon>mdi-label-multiple-outline</v-icon>
+          </v-btn>
+        </template>
+        <v-card color="info" style="padding: 10px">
+          <v-chip v-for="(item,index) in tags" :key="index" small style="margin: 0 5px">{{item}}</v-chip>
+        </v-card>
+      </v-menu>
     </div>
     <v-spacer></v-spacer>
     <div class="d-flex flex-ai">
       <div class="btn-opts">
         <v-btn color="#2a53cd" :disabled="disableSave" class="radius-2" small depressed @click="saveInstance"
-          :loading="saveInstanceLoading" v-if="isSelfProfile || isNewWork">
+          :loading="saveInstanceLoading" v-if="isSelfInstance || isNewWork">
           <v-icon left dark>mdi-cloud-upload</v-icon>保存
         </v-btn>
-        <v-btn small color="info" class="radius-2" depressed @click="like" :loading="likeLoading"
-          :disabled="!loginState" v-if="!hideLike">
-          <v-icon left small color="red">mdi-heart</v-icon>喜爱
-        </v-btn>
+        <div v-if="!hideLike">
+          <v-btn small color="info" class="radius-2" depressed @click="like" :loading="likeLoading"
+            :disabled="!loginState" v-show="curInstanceDetail.liked">
+            <v-icon left small color="red">mdi-heart</v-icon>取消喜爱
+          </v-btn>
+          <v-btn small color="info" class="radius-2" depressed @click="like" :loading="likeLoading"
+            :disabled="!loginState" v-show="!curInstanceDetail.liked">
+            <v-icon left small color="gray">mdi-heart</v-icon>喜爱
+          </v-btn>
+        </div>
       </div>
       <header-account dense></header-account>
     </div>
@@ -41,21 +54,27 @@ import { mapMutations, mapState, mapGetters } from 'vuex'
 import HeaderAccount from '@components/headerAccount.vue'
 import InstanceConfig from '@components/dialog/instanceConfig.vue'
 export default {
+  inject: ['changeRouterKey'],
   data() {
     return {
       saveInstanceLoading: false,
       likeLoading: false,
+      tags: [],
     }
+  },
+  created() {
+    const tags = this.curInstanceDetail.tags
+    this.tags = tags ? tags.split(',') : []
   },
   computed: {
     ...mapState(['loginState', 'loginInfo', 'curInstanceDetail']),
-    ...mapGetters(['instanceContent', 'isSelfProfile']),
+    ...mapGetters(['instanceContent', 'isSelfInstance']),
     isNewWork() {
       return this.$route.name === 'NewWork'
     },
     hideLike() {
       const isNewWork = this.isNewWork
-      return isNewWork || this.isSelfProfile
+      return isNewWork || this.isSelfInstance
     },
     disableSave() {
       return !this.loginState || this.curInstanceDetail.saved
@@ -81,7 +100,6 @@ export default {
         headTags,
       })
       const reqData = {
-        username: loginInfo.username,
         exampleName: isNewWork ? '新建实例' : instance.title,
         ispublic: instance.ispublic,
         label: instance.tags,
@@ -103,8 +121,9 @@ export default {
           if (isNewWork) {
             this.$router
               .replace(`/work/${loginInfo.username}/${res.data}`)
-              .catch((err) => {})
-            this.$emit('initInstanceData')
+              .then(() => {
+                this.changeRouterKey()
+              })
           }
         } else {
           this.$message.error('实例保存失败！')
@@ -119,8 +138,22 @@ export default {
       const username = this.curInstanceDetail.username
       this.$router.push(`/user/${username}`)
     },
-    like() {
+    async like() {
+      const { liked: myFavorites, id: exampleId } = this.curInstanceDetail
       this.likeLoading = true
+      try {
+        // 根据当前是否已喜欢来判定调用喜欢还是取消喜欢接口
+        const api = this.$http
+        const req = myFavorites ? api.delLikeWork : api.addLikeWork
+        const res = await req({ username: this.loginInfo.username, exampleId })
+        if (res.state) {
+          this.setCurInstanceDetail({ liked: !myFavorites })
+          this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      this.likeLoading = false
     },
   },
   components: {
@@ -149,7 +182,8 @@ export default {
     color: $light-5;
     margin-left: 20px;
     .author {
-      margin-top: -2px;
+      margin-left: 5px;
+      margin-right: 10px;
       color: $light-7;
       &:hover {
         color: $light-2;

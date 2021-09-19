@@ -1,7 +1,7 @@
 <template>
   <div id="instance">
     <div class="instance-content">
-      <instance-header @initInstanceData="initInstanceData"></instance-header>
+      <instance-header></instance-header>
       <div class="main-body d-flex">
         <sidebar class="flex-sh"></sidebar>
         <div class="d-flex flex-1 area">
@@ -80,7 +80,6 @@ export default {
       publicPath: process.env.BASE_URL,
       isChildrenMounted: false,
       iframeFullScreen: false,
-      iframeInit: false,
       consoleInfo: [],
       isCompiling: false,
       cursorPos: { col: 1, ln: 1 },
@@ -95,7 +94,7 @@ export default {
       // 一开始就初始化console并执行代码
       new IframeConsole(this.$refs.iframeBox)
       this.runCode().then(() => {
-        this.iframeInit = true
+        this.setIframeInit(true)
       })
     })
   },
@@ -113,6 +112,7 @@ export default {
       'instanceSetting',
       'instanceExtLinks',
       'consoleSettings',
+      'iframeInit',
     ]),
     isMD() {
       return this.prep[0] === 'Markdown'
@@ -136,10 +136,8 @@ export default {
       'setConsoleInfo',
       'setConsoleInfoCount',
       'setCurInstanceDetail',
+      'setIframeInit',
     ]),
-    initInstanceData() {
-      this.$emit('init')
-    },
     viewResize(e) {
       // 用鼠标拖动分割线改变编辑器和预览窗口的宽度
       // 拖动时需要在iframe上显示一个遮罩层，否则鼠标滑动到iframe中会影响拖动事件监听
@@ -191,7 +189,7 @@ export default {
           // iframe.contentWindow.location.reload()
           const consoleSettings = this.consoleSettings
           if (consoleSettings.clear) {
-            docConsole.clear()
+            IframeConsole.clear()
             this.setConsoleInfo([])
           }
           await new Promise((resolve) => {
@@ -306,9 +304,6 @@ export default {
     DownloadDialog,
     ShortcutDialog,
   },
-  beforeRouteLeave (to, from, next) {
-    new IframeHandler().clearIframe()
-  }
 }
 </script>
 
