@@ -2,9 +2,9 @@ import { get, post, put, del } from './request'
 
 const api = {
   /* 获取仓库版本列表 */
-  repoRelease: () => get('/githubApi/repos/Longgererer/JS-Encoder/releases'),
+  repoRelease: () => get('/githubApi/repos/Longgererer/JS-Encoder-Online/releases'),
   /* 获取仓库最高版本 */
-  repoLatestV: () => get('/githubApi/repos/Longgererer/JS-Encoder/releases/latest'),
+  repoLatestV: () => get('/githubApi/repos/Longgererer/JS-Encoder-Online/releases/latest'),
   /* cdn 列表 */
   searchCDNList: (params) => get('/cdnJS', params),
 
@@ -49,40 +49,40 @@ const api = {
   /* 发送反馈 */
   sendFeedback: (params) => post('/api/feedback/addFeedback', params),
 
-  //!/* 根据实例名或者标签查询实例 */
+  /* 根据实例名或者标签查询实例 */
   searchWorksByContent: (params) => get('/api/query/queryExample', params),
 
-  //!/* 查询实例列表 */
+  /* 查询实例列表 */
   searchWorks: (params) => get('/api/query/getExample', params),
-  //!/* 查看喜爱实例列表 */
+  /* 查看喜爱实例列表 */
   searchLiked: (params) => get('/api/query/getFavorites', params),
-  //!/* 查询粉丝列表 */
-  searchFollowers: (params) => get('/api/search/getFan', params),
-  //!/* 查询关注列表 */
-  searchFollowings: (params) => get('/api/search/getFollow', params),
-  //!/* 查询回收站列表 */
-  searchCycleBin: (params) => { },
+  /* 查询粉丝列表 */
+  searchFollowers: (params) => get('/api/query/getFan', params),
+  /* 查询关注列表 */
+  searchFollowings: (params) => get('/api/query/getFollow', params),
+  /* 查询回收站列表 */
+  searchCycleBin: (params) => get('/api/query/getRecycle', params),
 
-  //!/* 添加关注 */
-  addFollow: (params) => put('/api/user/addFollow', params),
-  //!/* 取消关注 */
-  delFollow: (params) => put('/api/user/cancelFollow', params),
+  /* 添加关注 */
+  addFollow: (params) => post('/api/user/addFollow', params),
+  /* 取消关注 */
+  delFollow: (params) => del('/api/user/cancelFollow', params),
 
-  //!/* 添加喜爱实例 */
+  /* 添加喜爱实例 */
   addLikeWork: (params) => post('/api/example/addFavorites', params),
-  //!/* 取消喜爱实例 */
+  /* 取消喜爱实例 */
   delLikeWork: (params) => post('/api/example/cancelFavorites', params),
   /* 创建或保存实例 */
   saveWork: (params) => post('/api/example/createExample', params),
   /* 获取实例详情 */
   getWork: (params) => get('/api/content/getContent', params),
-  //!/* 删除实例 */
+  /* 删除实例 */
   delWork: (params) => del('/api/example/', params),
   /* 更新实例设置 */
   configWork: (params) => put('/api/example/', params),
-  //!/* 永久删除实例 */
+  /* 永久删除实例 */
   permanentDelWork: (params) => del('/api/example/delete', params),
-  //!/* 恢复实例 */
+  /* 恢复实例 */
   resumeDelWork: (params) => post('/api/example/resume', params),
 }
 
