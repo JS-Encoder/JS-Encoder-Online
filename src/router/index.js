@@ -195,6 +195,7 @@ router.beforeEach(async (to, _, next) => {
                 sessionStorage.removeItem('TMP_OAUTH_TOKEN')
                 // 临时的第三方登录TMP_REMEMBER_ME
                 sessionStorage.setItem('TMP_REMEMBER_ME', true)
+                history.replaceState({}, '', '/')
                 message.success('登录成功！')
               } else {
                 message.error('登录失败！')
@@ -205,7 +206,7 @@ router.beforeEach(async (to, _, next) => {
             }
           }
         } catch (err) {
-          message.error('啊哦~服务器出了点问题😭')
+          console.log(err)
         }
       }
     } else {
@@ -224,7 +225,7 @@ async function login () {
   const rememberMe = localStore.get('REMEMBER_ME')
   const oauthRememberMe = sessionStorage.getItem('TMP_REMEMBER_ME')
   const loginState = store.state.loginState
-  if (!loginState && (rememberMe !== 'false' || oauthRememberMe)) {
+  if (!loginState && (rememberMe === 'true' || oauthRememberMe)) {
     try {
       const res = await api.verifyLogin()
       if (res.state) {
@@ -274,6 +275,24 @@ router.afterEach((to, from) => {
     store.commit('clearCurUserDetail')
   }
   window.scrollTo(0, 0)
+})
+
+// 捕获路由报错，避免因为浏览器缓存问题导致用户访问更新前的文件
+router.onError((err) => {
+  const pattern = /Loading chunk (\d)+ failed/g;
+  const isChunkLoadFailed = err.message.match(pattern);
+  if (isChunkLoadFailed) {
+    let chunkBool = sessionStorage.getItem('chunkError');
+    let nowTimes = Date.now();
+    if (chunkBool === null || chunkBool && nowTimes - parseInt(chunkBool) > 60000) {//路由跳转报错,href手动跳转
+      sessionStorage.setItem('chunkError', 'reload');
+      const targetPath = router.history.pending.fullPath;
+      window.location.href = window.location.origin + targetPath;
+    } else if (chunkBool === 'reload') { //手动跳转后依然报错,强制刷新
+      sessionStorage.setItem('chunkError', Date.now());
+      window.location.reload(true);
+    }
+  }
 })
 
 export default router

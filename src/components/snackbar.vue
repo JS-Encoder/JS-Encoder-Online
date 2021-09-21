@@ -1,7 +1,7 @@
 <template>
   <div class="message-box d-flex flex-clo">
     <transition-group name="list-complete">
-      <v-alert v-for="opts in alertPool" dense border="left" :type="opts.type" :key="opts.id"
+      <v-alert dense border="left" v-for="opts in alertPool" :type="opts.type" :key="opts.id"
         class="list-complete-item">
         <span>{{opts.msg}}</span>
       </v-alert>

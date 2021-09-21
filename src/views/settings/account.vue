@@ -8,19 +8,19 @@
           <i class="icon iconfont icon-github title-lg"></i>
           <span>GitHub</span>
           <v-spacer></v-spacer>
-          <v-btn text color="error" v-if="curUserDetail.githubId" @click="unbindTip('github')" :loading="githubLoading"
-            disabled>解除绑定
+          <v-btn color="error" text disabled v-if="curUserDetail.githubId" :loading="githubLoading"
+            @click="unbindTip('github')">解除绑定
           </v-btn>
-          <v-btn text color="primary" v-else @click="bindGithub" :loading="githubLoading" disabled>绑定账户</v-btn>
+          <v-btn color="primary" text disabled v-else :loading="githubLoading" @click="bindGithub">绑定账户</v-btn>
         </div>
         <div class="d-flex flex-ai third-list">
           <i class="icon iconfont icon-gitee title-lg"></i>
           <span>Gitee</span>
           <v-spacer></v-spacer>
-          <v-btn text color="error" v-if="curUserDetail.giteeId" @click="unbindTip('gitee')" :loading="giteeLoading">
+          <v-btn color="error" text v-if="curUserDetail.giteeId" :loading="giteeLoading" @click="unbindTip('gitee')">
             解除绑定
           </v-btn>
-          <v-btn text color="primary" v-else @click="bindGitee" :loading="giteeLoading">绑定账户</v-btn>
+          <v-btn color="primary" text v-else :loading="giteeLoading" @click="bindGitee">绑定账户</v-btn>
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@
       <span class="item-title title-xs">删除账户</span>
       <span class="text-sm text-describe">请注意！这样会删除你的账户和里面的所有信息，该操作无法恢复！</span>
       <div class="item-content">
-        <v-btn color="error" class="col-6" x-large>删除账户</v-btn>
+        <v-btn class="col-6" color="error" x-large>删除账户</v-btn>
       </div>
     </div>
     <modify-bind-email></modify-bind-email>
@@ -122,7 +122,7 @@ export default {
     },
   },
   components: {
-    ModifyBindEmail
+    ModifyBindEmail,
   },
 }
 </script>

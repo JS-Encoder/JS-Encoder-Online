@@ -79,7 +79,7 @@ function throttle (func, delay) {
     let self = this
     if (now > start + delay) {
       func.apply(self, params)
-      start = nowF
+      start = now
     }
   }
 }

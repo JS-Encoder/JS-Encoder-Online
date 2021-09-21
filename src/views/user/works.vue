@@ -1,10 +1,10 @@
 <template>
   <div id="works">
     <div class="work-list" v-show="!nothing">
-      <div class="skeleton-list-item" v-for="(item, index) in 12" :key="index" v-show="loading">
+      <div class="skeleton-list-item" v-show="loading" v-for="(item, index) in 12" :key="index">
         <instance-skeleton :self="true"></instance-skeleton>
       </div>
-      <div class="work-list-item" v-for="(item, index) in workList" :key="item.exampleId" v-show="!loading">
+      <div class="work-list-item" v-show="!loading" v-for="(item, index) in workList" :key="item.exampleId">
         <self-instance-card :info="item" :cardIndex="index" @setFav="setFav" @search="init"></self-instance-card>
       </div>
     </div>
@@ -63,6 +63,7 @@ export default {
     async search(page, sortBy) {
       this.loading = true
       this.nothing = false
+      this.$emit('setPageConn', true, true)
       try {
         const { state, data } = await this.$http.searchWorks({
           currentPage: page,

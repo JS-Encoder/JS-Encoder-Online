@@ -1,18 +1,19 @@
 <template>
   <div id="markdownTools" class="borbox">
     <div class="tools-list d-flex flex-sh">
-      <div v-for="(icon, name) in tools" :key="name" class="tool borbox d-flex flex-jcc flex-ai flex-sh"
+      <div class="tool borbox d-flex flex-jcc flex-ai flex-sh" v-for="(icon, name) in tools" :key="name"
         @click="handleToolsCmd(name)">
         <i class="icon iconfont" :class="icon" v-if="name!=='title'"></i>
-        <el-dropdown v-if="name==='title'" class="dropdown-menu d-flex flex-ai flex-jcc" placement="top-start"
-          trigger="click">
-          <i class="icon iconfont" :class="icon" style="font-size:20px"></i>
-          <el-dropdown-menu class="menu" slot="dropdown" placement="bottom">
-            <el-dropdown-item v-for="index in 6" :key="index" @click.native="addTitle(index)">
+        <v-menu class="filter-dropdown" bottom offset-y v-if="name==='title'">
+          <template v-slot:activator="{ attrs, on }">
+            <i class="icon iconfont icon-title d-flex flex-ai flex-jcc" v-bind="attrs" v-on="on" :class="icon"></i>
+          </template>
+          <v-list>
+            <v-list-item dense link v-for="index in 6" :key="index" @click.native="addTitle(index)">
               H{{index}}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
     </div>
   </div>
@@ -117,6 +118,11 @@ export default {
       }
       i {
         font-size: 20px;
+      }
+      .icon-title {
+        display: block;
+        width: 100%;
+        height: 100%;
       }
     }
   }

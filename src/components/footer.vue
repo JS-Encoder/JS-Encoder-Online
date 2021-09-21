@@ -1,5 +1,5 @@
 <template>
-  <div id="footer" class="no-select">
+  <div id="footer" class="no-select" v-once>
     <div class="footer-content d-flex">
       <div class="side-info flex-1">
         <div class="logo d-flex flex-ai">
@@ -27,7 +27,7 @@
 export default {
   data() {
     return {
-      footerMenu: [
+      footerMenu: Object.freeze([
         {
           title: '产品',
           children: [
@@ -71,7 +71,7 @@ export default {
             },
           ],
         },
-      ],
+      ]),
     }
   },
   methods: {
@@ -113,7 +113,6 @@ export default {
       }
     },
   },
-  components: {},
 }
 </script>
 

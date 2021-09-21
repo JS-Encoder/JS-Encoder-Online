@@ -19,31 +19,31 @@
             :rules="rules.nickname">
           </v-text-field>
           <v-row>
-            <v-col sm="8" cols="12" style="padding-bottom: 0">
-              <v-text-field ref="emailField" class="email-field" label="邮箱" outlined color="primary"
-                v-model="form.email" :rules="rules.email">
+            <v-col style="padding-bottom: 0" sm="8" cols="12">
+              <v-text-field class="email-field" ref="emailField" label="邮箱" outlined color="primary"
+                v-model="form.email" :rules="rules.email" :error-messages="errors.email">
                 <template slot="append">
-                  <v-btn :disabled="!isEmailRight||emailOpts.sended" color="primary" class="send-email-btn"
-                    @click.stop="sendAuthCode" absolute :loading="emailOpts.authCodeLoading">{{emailOpts.emailText}}
+                  <v-btn class="send-email-btn" color="primary" absolute :disabled="!isEmailRight||emailOpts.sended"
+                    @click.stop="sendAuthCode" :loading="emailOpts.authCodeLoading">{{emailOpts.emailText}}
                   </v-btn>
                 </template>
               </v-text-field>
             </v-col>
-            <v-col sm="4" cols="12" class="auth-input">
-              <v-text-field label="验证码" :disabled="!isEmailRight" outlined color="primary" v-model="form.authCode"
-                :rules="rules.authCode">
+            <v-col class="auth-input" sm="4" cols="12">
+              <v-text-field label="验证码" outlined color="primary" v-model="form.authCode" :disabled="!isEmailRight"
+                :rules="rules.authCode" :error-messages="errors.authCode">
               </v-text-field>
             </v-col>
           </v-row>
-          <v-text-field label="密码" autocomplete="new-password" :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd" outlined color="primary"
-            hint="密码必须包含字母数字和下划线且长度为6-12" v-model="form.password" :rules="rules.password">
+          <v-text-field label="密码" outlined color="primary" hint="密码必须包含字母数字和下划线且长度为6-12" autocomplete="new-password"
+            v-model="form.password" :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd" :rules="rules.password">
           </v-text-field>
-          <v-text-field label="重复密码" autocomplete="new-password" :append-icon="showRePwd ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="showRePwd ? 'text' : 'password'" @click:append="showRePwd = !showRePwd" outlined color="primary"
-            v-model="form.rePassword" :rules="rules.rePassword" :disabled="!isPwdRight">
+          <v-text-field label="重复密码" outlined color="primary" autocomplete="new-password" v-model="form.rePassword"
+            :append-icon="showRePwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showRePwd ? 'text' : 'password'"
+            :rules="rules.rePassword" :disabled="!isPwdRight" @click:append="showRePwd = !showRePwd">
           </v-text-field>
-          <v-btn @click="signUp" block x-large color="primary" :loading="signUpLoading">注册</v-btn>
+          <v-btn block x-large color="primary" :loading="signUpLoading" @click="signUp">注册</v-btn>
         </v-form>
       </div>
     </div>
@@ -186,6 +186,7 @@ export default {
           const { state, msg } = res
           if (state) {
             this.$message.success('注册成功！')
+            this.$router.replace('/login')
           } else {
             switch (msg) {
               case 0: {
@@ -200,6 +201,10 @@ export default {
                 this.errors.username = ['该用户名已被注册！']
                 break
               }
+              case 3: {
+                this.errors.email = ['该邮箱已被注册！']
+                break
+              }
             }
           }
         } catch (err) {
@@ -209,7 +214,9 @@ export default {
       }
     },
   },
-  components: {},
+  beforeDestroy() {
+    clearInterval(this.emailOpts.emailSendTimer)
+  },
 }
 </script>
 

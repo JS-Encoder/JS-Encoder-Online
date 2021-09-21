@@ -6,22 +6,22 @@
       </div>
       <div class="feedback-content d-flex flex-clo">
         <v-form ref="form">
-          <v-text-field autocomplete="off" label="标题" background-color="info" solo v-model="form.title"
-            :rules="rules.title" required>
+          <v-text-field autocomplete="off" label="标题" background-color="info" solo required v-model="form.title"
+            :rules="rules.title">
           </v-text-field>
-          <v-textarea label="说说你的想法..." background-color="info" solo v-model="form.content" maxlength="200"
-            counter="200" rows="8" no-resize :rules="rules.content" required></v-textarea>
+          <v-textarea label="说说你的想法..." background-color="info" solo maxlength="200" counter="200" rows="8" no-resize
+            required v-model="form.content" :rules="rules.content"></v-textarea>
         </v-form>
       </div>
       <div class="feedback-footer d-flex flex-jcb">
         <div class="exp">
-          <v-btn-toggle v-model="form.emoji" tile group borderless active-class="selected-exp">
+          <v-btn-toggle tile group borderless active-class="selected-exp" v-model="form.emoji">
             <v-btn v-for="(exp, index) in expList" :key="index" class="">
               <span class="title-xs">{{exp}}</span>
             </v-btn>
           </v-btn-toggle>
         </div>
-        <v-btn color="primary" @click="submitSuggestion" :loading="loading">提交建议</v-btn>
+        <v-btn color="primary" :loading="loading" @click="submitSuggestion">提交建议</v-btn>
       </div>
     </div>
   </div>
@@ -32,7 +32,7 @@ export default {
   name: 'Feedback',
   data() {
     return {
-      expList: ['😁', '😊', '😐', '😕', '😡'],
+      expList: Object.freeze(['😁', '😊', '😐', '😕', '😡']),
       form: {
         title: '',
         content: '',
@@ -83,7 +83,6 @@ export default {
       this.$refs.form.reset()
     },
   },
-  components: {},
 }
 </script>
 

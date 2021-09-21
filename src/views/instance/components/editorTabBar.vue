@@ -1,14 +1,14 @@
 <template>
   <div id="editorTabBar" class="d-flex no-select">
     <div class="tab-list d-flex flex-1" ref="tabList">
-      <div v-for="(item, index) in prep" :key="index" class="editor-tab d-flex flex-jcc flex-ai"
+      <div class="editor-tab d-flex flex-jcc flex-ai" v-for="(item, index) in prep" :key="index"
         :class="curTab === item ? 'active-tab' : ''" @click="setCurTab(item)">
         <i class="icon iconfont" :class="iconMap[item]"></i>{{ item }}
       </div>
     </div>
     <div class="tools d-flex flex-sh">
-      <div class="d-flex flex-ai flex-jcc" v-if="curTab === 'Markdown'" @click="setMdToolbarVisible(!mdToolbarVisible)"
-        :class="mdToolbarVisible?'active':''">
+      <div class="d-flex flex-ai flex-jcc" v-if="curTab === 'Markdown'" :class="{'active':mdToolbarVisible}"
+        @click="setMdToolbarVisible(!mdToolbarVisible)">
         <i class="icon iconfont icon-gongju1"></i>
       </div>
     </div>
@@ -21,7 +21,7 @@ import WheelDirective from '@utils/editor/wheelDirective'
 export default {
   data() {
     return {
-      iconMap: {
+      iconMap: Object.freeze({
         HTML: 'icon-html',
         Markdown: 'icon-markdown',
         Pug: 'icon-pug',
@@ -33,7 +33,7 @@ export default {
         JavaScript: 'icon-javascript',
         TypeScript: 'icon-typescript',
         CoffeeScript: 'icon-coffeescript',
-      },
+      }),
     }
   },
   mounted() {

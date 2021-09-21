@@ -16,7 +16,6 @@ const user = {
     githubId: '',
     email: ''
   }
-  /* 进入其他用户主页显示的详细信息 */
 }
 
 export default user

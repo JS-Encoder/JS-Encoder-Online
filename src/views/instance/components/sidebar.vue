@@ -1,9 +1,9 @@
 <template>
   <div id="sidebar" class="borbox">
     <div class="tool-list">
-      <v-tooltip right color="info" transition="scroll-x-transition" v-for="(item, index) in menuList" :key="index">
+      <v-tooltip color="info" transition="scroll-x-transition" right v-for="(item, index) in menuList" :key="index">
         <template v-slot:activator="{ on, attrs }">
-          <div class="tool d-flex flex-ai flex-jcc" @click="setVisibleDialogName(item.name)" v-bind="attrs" v-on="on">
+          <div class="tool d-flex flex-ai flex-jcc" v-bind="attrs" v-on="on" @click="setVisibleDialogName(item.name)">
             <i class="icon iconfont" :class="item.icon"></i>
           </div>
         </template>
@@ -18,7 +18,7 @@ import { mapMutations } from 'vuex'
 export default {
   data() {
     return {
-      menuList: [
+      menuList: Object.freeze([
         {
           text: '预处理语言',
           name: 'prep',
@@ -49,13 +49,12 @@ export default {
           name: 'shortcut',
           icon: 'icon-kuaijiejian1',
         },
-      ],
+      ]),
     }
   },
   methods: {
     ...mapMutations(['setVisibleDialogName']),
-  },
-  components: {},
+  }
 }
 </script>
 

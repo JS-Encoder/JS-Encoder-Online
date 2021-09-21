@@ -2,15 +2,15 @@
  * 将预处理语言编译成html，css和javascript
  */
 
-import Loader from '../loader'
 import { externalLinks } from '../cdn'
+import Loader from '../loader'
+const loader = new Loader()
 
 const publicPath = process.env.BASE_URL
 const cdn = {
   typeScript: 'https://cdn.jsdelivr.net/npm/browserified-typescript@0.3.0/index.js',
   coffeeScript: 'https://cdn.jsdelivr.net/npm/coffeescript@2.5.1/lib/coffeescript-browser-compiler-legacy/coffeescript.js'
 }
-const loader = new Loader()
 
 /**
  * 将script插入head以引入外部js

@@ -1,15 +1,15 @@
 <template>
-  <v-overlay v-model="visible" class="global-alert">
-    <v-dialog :style="{'z-index':zIndex}" dark persistent v-model="visible" :max-width="maxWidth" :width="width">
+  <v-overlay class="global-alert" v-model="visible">
+    <v-dialog dark persistent v-model="visible" :style="{'z-index':zIndex}" :max-width="maxWidth" :width="width">
       <v-card>
         <v-card-title class="text-h5" v-if="title">{{title}}</v-card-title>
         <v-card-text>{{content}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="cancel" v-if="showCancel">
+          <v-btn v-if="showCancel" @click="cancel">
             {{cancelText}}
           </v-btn>
-          <v-btn @click="ok" :color="okColor" :loading="loading">
+          <v-btn :color="okColor" :loading="loading" @click="ok">
             {{okText}}
           </v-btn>
         </v-card-actions>
@@ -81,7 +81,6 @@ export default {
       this.visible = false
     },
   },
-  components: {},
 }
 </script>
 

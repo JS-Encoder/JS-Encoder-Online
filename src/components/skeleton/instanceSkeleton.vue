@@ -12,11 +12,6 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {}
-  },
-  methods: {},
-  components: {},
 }
 </script>
 

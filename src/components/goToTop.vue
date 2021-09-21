@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <v-btn v-show="backTopShow" class="goTop" color="primary" fab small dark @click="$vuetify.goTo(0, 'duration')">
+    <v-btn class="goTop" color="primary" fab small dark v-show="backTopShow" @click="$vuetify.goTo(0, 'duration')">
       <v-icon>mdi-chevron-up</v-icon>
     </v-btn>
   </transition>

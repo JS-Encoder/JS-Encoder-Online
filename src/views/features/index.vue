@@ -61,7 +61,6 @@ export default {
       window.open(url)
     },
   },
-  components: {},
 }
 </script>
 

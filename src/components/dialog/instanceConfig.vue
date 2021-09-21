@@ -1,5 +1,5 @@
 <template>
-  <v-dialog id="instanceConfig" v-model="visible" max-width="500" @click:outside="setVisibleDialogName('')">
+  <v-dialog id="instanceConfig" max-width="500" v-model="visible" @click:outside="setVisibleDialogName('')">
     <v-card>
       <v-card-title>
         <span class="title-sm">实例设置</span>
@@ -7,16 +7,16 @@
       <v-card-text style="padding-bottom:0">
         <v-form class="form d-flex flex-clo" ref="form">
           <span class="form-item-title">实例标题</span>
-          <v-text-field class="form-item-input" solo v-model="form.title" label="填写实例标题..." background-color="info"
+          <v-text-field class="form-item-input" solo label="填写实例标题..." background-color="info" v-model="form.title"
             :rules="rules.title">
           </v-text-field>
           <span class="form-item-title">实例标签</span>
           <span class="text-describe">添加或修改实例标签，标签最多三个，每个标签长度小于15</span>
-          <v-combobox class="form-item-input" v-model="form.tags" :items="tagList" background-color="info" clearable
-            multiple chips solo label="添加实例标签..." hide-selected :disable-lookup="form.tags.length>=3" @change="tagsChange"
-            :rules="rules.tags">
+          <v-combobox class="form-item-input" background-color="info" clearable multiple chips solo label="添加实例标签..."
+            hide-selected v-model="form.tags" :items="tagList" :disable-lookup="form.tags.length>=3" :rules="rules.tags"
+            @change="tagsChange">
             <template v-slot:selection="{ attrs, item, select, selected }">
-              <v-chip v-bind="attrs" color="#1a1a1a" :input-value="selected" close @click="select"
+              <v-chip color="#1a1a1a" close v-bind="attrs" :input-value="selected" @click="select"
                 @click:close="removeTag(item)">
                 <strong>{{ item }}</strong>
               </v-chip>
@@ -25,7 +25,7 @@
         </v-form>
       </v-card-text>
       <v-card-actions style="padding-bottom:20px">
-        <v-btn class="save-btn" color="primary" @click="saveConfig" :loading="loading" block>保存</v-btn>
+        <v-btn class="save-btn" color="primary" block :loading="loading" @click="saveConfig">保存</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -114,7 +114,6 @@ export default {
       form.tags = [...form.tags]
     },
   },
-  components: {},
 }
 </script>
 

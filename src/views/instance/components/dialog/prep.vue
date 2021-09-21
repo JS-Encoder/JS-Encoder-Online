@@ -1,5 +1,5 @@
 <template>
-  <v-dialog id="prep" v-model="visible" max-width="450" @click:outside="setVisibleDialogName('')">
+  <v-dialog id="prep" max-width="450" v-model="visible" @click:outside="setVisibleDialogName('')">
     <v-card>
       <v-card-title>
         <span class="title-xs">预处理语言</span>
@@ -8,9 +8,10 @@
         <div class="d-flex flex-clo prep">
           <div class="prep-item d-flex flex-ai" v-for="(item,index) in prepTitle" :key="index">
             <span class="flex-sh">{{item}}</span>
-            <v-select solo v-model="prepList[index]" :items="defPrepOpts[item]" hide-details background-color="info"
-              @change="prepChange(index)"
-              :menu-props="{ offsetY: true, transition:'slide-y-transition',closeOnClick:true }" dense>
+            <v-select solo hide-details dense background-color="info" v-model="prepList[index]"
+              :items="defPrepOpts[item]"
+              :menu-props="{ offsetY: true, transition:'slide-y-transition',closeOnClick:true }"
+              @change="prepChange(index)">
             </v-select>
           </div>
         </div>
@@ -28,9 +29,9 @@ export default {
     return {
       name: 'prep',
       visible: false,
-      defPrepOpts,
-      prepList: ['HTML', 'CSS', 'JavaScript'],
-      prepTitle: ['HTML', 'CSS', 'JavaScript'],
+      defPrepOpts: Object.freeze(defPrepOpts),
+      prepList: null,
+      prepTitle: Object.freeze(['HTML', 'CSS', 'JavaScript']),
     }
   },
   created() {
@@ -54,7 +55,6 @@ export default {
       }
     },
   },
-  components: {},
 }
 </script>
 

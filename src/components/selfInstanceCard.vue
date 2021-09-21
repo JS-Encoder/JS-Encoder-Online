@@ -1,6 +1,6 @@
 <template>
   <v-card class="self-instance-card">
-    <v-img :src="`${qiNiuImgLink}${info.img}`" class="instance-card-img">
+    <v-img class="instance-card-img" :src="`${qiNiuImgLink}${info.img}`">
       <div class="img-screen pointer d-flex flex-ai flex-jcc" @click="viewInstance">
         <v-icon>mdi-eye</v-icon>
       </div>
@@ -16,18 +16,18 @@
       <span class="liked-num text-xs">{{info.favorites|formatNumber}}</span>
       <v-menu offset-y top v-if="isSelfProfile">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn icon class="icon-more" v-bind="attrs" v-on="on">
+          <v-btn class="icon-more" icon v-bind="attrs" v-on="on">
             <v-icon>mdi-dots-horizontal</v-icon>
           </v-btn>
         </template>
         <v-list class="works-menu">
-          <v-list-item class="works-menu-list" v-for="item in menuList" :key="item.value" link
+          <v-list-item class="works-menu-list" link v-for="item in menuList" :key="item.value"
             @click="handleMenu(item.value)">
             <v-icon class="icon">{{item.icon}}</v-icon>{{item.name}}
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-btn icon @click="shareLink" class="icon-share" v-else>
+      <v-btn class="icon-share" icon v-else @click="shareLink">
         <v-icon>mdi-share-variant</v-icon>
       </v-btn>
     </v-card-actions>
@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       qiNiuImgLink,
-      menuList: [
+      menuList: Object.freeze([
         {
           name: '分享',
           value: 'share',
@@ -58,7 +58,7 @@ export default {
           value: 'delete',
           icon: 'mdi-trash-can',
         },
-      ],
+      ]),
       likeLoading: false,
     }
   },

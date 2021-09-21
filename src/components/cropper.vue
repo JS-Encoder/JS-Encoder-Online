@@ -1,8 +1,8 @@
 <template>
-  <vue-cropper class="cropper" ref="cropper" :src="src" :aspectRatio="option.aspectRatio"
-    :viewMode="option.viewMode" :dragMode="option.dragMode" :cropBoxResizable="option.cropBoxResizable"
-    :img="option.img" :outputSize="option.size" :outputType="option.outputType" :info="true" :full="option.full"
-    :canMove="option.canMove" :canMoveBox="option.canMoveBox" :original="option.original" :autoCrop="option.autoCrop"
+  <vue-cropper class="cropper" ref="cropper" :src="src" :aspectRatio="option.aspectRatio" :viewMode="option.viewMode"
+    :dragMode="option.dragMode" :cropBoxResizable="option.cropBoxResizable" :img="option.img" :outputSize="option.size"
+    :outputType="option.outputType" :info="true" :full="option.full" :canMove="option.canMove"
+    :canMoveBox="option.canMoveBox" :original="option.original" :autoCrop="option.autoCrop"
     :autoCropWidth="option.autoCropWidth" :autoCropHeight="option.autoCropHeight" :fixedBox="option.fixedBox">
   </vue-cropper>
 </template>
@@ -14,8 +14,8 @@ export default {
   props: {
     src: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
   data() {
     return {
@@ -44,12 +44,8 @@ export default {
       },
     }
   },
-  methods: {},
   components: {
-    'vue-cropper': VueCropper,
+    VueCropper,
   },
 }
 </script>
-
-<style scoped>
-</style>

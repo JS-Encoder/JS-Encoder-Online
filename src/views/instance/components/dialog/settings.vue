@@ -24,8 +24,8 @@
           <v-checkbox dense label="用等宽空格替换Tab" hide-details v-model="settings.indent.replace"></v-checkbox>
           <div class="d-flex flex-ai">
             <span class="sub-title text-white">缩进数: {{settings.indent.width}}</span>
-            <v-slider v-model="settings.indent.width" color="primary" thumb-label ticks="always" step="2" :max="8"
-              hide-details>
+            <v-slider color="primary" thumb-label hide-details ticks="always" step="2" v-model="settings.indent.width"
+              :max="8">
             </v-slider>
           </div>
           <span class="lib-title">字体</span>
@@ -42,7 +42,7 @@
             </v-select>
           </div>
           <span class="lib-title">头部标签</span>
-          <v-textarea solo label="输入你想在 <head> 中添加的标签如 <meta...>" class="head-textarea" hide-details
+          <v-textarea class="head-textarea" solo label="输入你想在 <head> 中添加的标签如 <meta...>" hide-details
             background-color="info" rows="3" v-model="settings.headTags">
           </v-textarea>
         </div>

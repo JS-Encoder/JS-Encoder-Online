@@ -1,7 +1,7 @@
 <template>
-  <v-app id="app" :class="bgcClass" :style="curBgcStyle">
+  <v-app id="app" :class="bgcClass">
     <jse-header v-show="!hideHAF" />
-    <section class="app-content" :class="hideHAF?'app-full-screen':''">
+    <section class="app-content" :class="{'app-full-screen':hideHAF}">
       <router-view :key="routerKey" />
       <jse-snackbar />
     </section>
@@ -10,8 +10,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
-
+import { mapMutations } from 'vuex'
 import Header from '@components/header.vue'
 import Footer from '@components/footer.vue'
 import Snackbar from '@components/snackbar.vue'
@@ -20,7 +19,6 @@ export default {
   data() {
     return {
       bgcClass: '',
-      curBgcStyle: {},
       routerKey: 0,
     }
   },
@@ -35,15 +33,8 @@ export default {
     this.setBgc()
   },
   computed: {
-    ...mapState(['curUserDetail']),
-    routeName() {
-      return this.$route.name
-    },
     path() {
       return this.$route.path.replace('/', '') || 'home'
-    },
-    userBgc() {
-      return this.curUserDetail.bgc
     },
     hideHAF() {
       return this.$route.meta.hideHAF
@@ -53,17 +44,13 @@ export default {
     path() {
       this.setBgc()
     },
-    userBgc() {
-      this.setBgc()
-    },
   },
   methods: {
     ...mapMutations(['setLoginInfo', 'setLoginState']),
     setBgc() {
       // 根据路由更换不同的背景
       this.bgcClass = ''
-      this.curBgcStyle = {}
-      let path = this.path
+      const path = this.path
       const list = ['home', 'features', 'feedback']
       if (list.includes(path)) {
         this.bgcClass = `bgc-animation bgc-before ${path}-bgc`
@@ -140,12 +127,6 @@ export default {
   &:before {
     background-color: rgba(194, 24, 91, 0.1);
   }
-}
-.user-bgc {
-  background-image: linear-gradient(
-    rgba(25, 128, 255, 0.3) -50px,
-    $deep-5 300px
-  );
 }
 @include screenLG {
   .app-content {

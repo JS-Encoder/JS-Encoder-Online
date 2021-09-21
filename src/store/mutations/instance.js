@@ -95,7 +95,16 @@ const instance = {
       },
       headTags: ''
     }
-    state.compiledCode = ''
+    state.curInstanceDetail = {
+      username: '',
+      nickname: '',
+      title: '',
+      tags: '',
+      liked: false,
+      id: '',
+      saved: true
+    },
+      state.compiledCode = ''
     state.consoleH = 150
     state.consoleInfo = []
     state.consoleInfoCount = { error: 0, warn: 0, info: 0 }

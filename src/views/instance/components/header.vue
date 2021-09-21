@@ -8,36 +8,36 @@
     <div class="instance-name flex-sh pointer d-flex flex-ai">
       <div class="d-flex flex-end">
         <span class="text-small">{{isNewWork?'新建实例':curInstanceDetail.title}}</span>
-        <span class="text-xs author" @click="goToUserProfile" v-if="!isNewWork">By {{curInstanceDetail.nickname}}</span>
+        <span class="text-xs author" v-if="!isNewWork" @click="goToUserProfile">By {{curInstanceDetail.nickname}}</span>
       </div>
-      <v-btn icon small @click="setVisibleDialogName('instanceConfig')" v-if="!isNewWork&&isSelfInstance">
+      <v-btn icon small v-if="!isNewWork&&isSelfInstance" @click="setVisibleDialogName('instanceConfig')">
         <v-icon>mdi-pencil-outline</v-icon>
       </v-btn>
-      <v-menu :close-on-content-click="false" offset-y open-delay="200" close-delay="200" bottom>
+      <v-menu open-delay="200" close-delay="200" offset-y bottom :close-on-content-click="false">
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon small v-bind="attrs" v-on="on" v-if="!isNewWork&&!isSelfInstance" :disabled="tags.length===0">
             <v-icon>mdi-label-multiple-outline</v-icon>
           </v-btn>
         </template>
         <v-card color="info" style="padding: 10px">
-          <v-chip v-for="(item,index) in tags" :key="index" small style="margin: 0 5px">{{item}}</v-chip>
+          <v-chip style="margin: 0 5px" small v-for="(item,index) in tags" :key="index">{{item}}</v-chip>
         </v-card>
       </v-menu>
     </div>
     <v-spacer></v-spacer>
     <div class="d-flex flex-ai">
       <div class="btn-opts">
-        <v-btn color="#2a53cd" :disabled="disableSave" class="radius-2" small depressed @click="saveInstance"
-          :loading="saveInstanceLoading" v-if="isSelfInstance || isNewWork">
+        <v-btn class="radius-2" color="#2a53cd" small depressed v-if="isSelfInstance || isNewWork"
+          :disabled="disableSave" :loading="saveInstanceLoading" @click="saveInstance">
           <v-icon left dark>mdi-cloud-upload</v-icon>保存
         </v-btn>
         <div v-if="!hideLike">
-          <v-btn small color="info" class="radius-2" depressed @click="like" :loading="likeLoading"
-            :disabled="!loginState" v-show="curInstanceDetail.liked">
+          <v-btn class="radius-2" color="info" small depressed v-show="curInstanceDetail.liked" :loading="likeLoading"
+            :disabled="!loginState" @click="like">
             <v-icon left small color="red">mdi-heart</v-icon>取消喜爱
           </v-btn>
-          <v-btn small color="info" class="radius-2" depressed @click="like" :loading="likeLoading"
-            :disabled="!loginState" v-show="!curInstanceDetail.liked">
+          <v-btn class="radius-2" color="info" small depressed v-show="!curInstanceDetail.liked" :loading="likeLoading"
+            :disabled="!loginState" @click="like">
             <v-icon left small color="gray">mdi-heart</v-icon>喜爱
           </v-btn>
         </div>

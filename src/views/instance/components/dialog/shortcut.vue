@@ -1,12 +1,12 @@
 <template>
-  <v-dialog id="shortcut" v-model="visible" max-width="500" @click:outside="setVisibleDialogName('')"
-    content-class="shortcut-dialog">
+  <v-dialog id="shortcut" max-width="500" content-class="shortcut-dialog" v-model="visible"
+    @click:outside="setVisibleDialogName('')">
     <v-card>
       <v-card-title>
         <span class="title-xs">快捷键</span>
       </v-card-title>
       <v-card-text>
-        <v-tabs v-model="tab" align-with-title height="35">
+        <v-tabs align-with-title height="35" v-model="tab">
           <v-tab>通用</v-tab>
           <v-tab>Markdown</v-tab>
         </v-tabs>
@@ -14,7 +14,7 @@
           <v-tab-item>
             <v-card flat>
               <ul class="shortcut-list">
-                <li v-for="(item, index) in commonListKb" class="d-flex flex-ai" :key="index">
+                <li class="d-flex flex-ai" v-for="(item, index) in commonListKb" :key="index">
                   <div class="key" v-for="(key, i) in item" :key="i">
                     <span v-if="i!==0">＋</span>
                     <kbd>{{key}}</kbd>
@@ -28,7 +28,7 @@
           <v-tab-item>
             <v-card flat>
               <ul class="shortcut-list">
-                <li v-for="(item, index) in mdListKb" class="d-flex flex-ai" :key="index">
+                <li class="d-flex flex-ai" v-for="(item, index) in mdListKb" :key="index">
                   <div class="key" v-for="(key, i) in item" :key="i">
                     <span v-if="i!==0">＋</span>
                     <kbd>{{key}}</kbd>
@@ -53,7 +53,7 @@ export default {
       name: 'shortcut',
       tab: '',
       visible: false,
-      commonListKb: [
+      commonListKb: Object.freeze([
         ['Tab'],
         ['Shift', 'Alt', 'F'],
         ['Ctrl / Cmd', 'Alt'],
@@ -71,8 +71,8 @@ export default {
         ['Ctrl / Cmd', 'F'],
         ['Ctrl / Cmd', 'Shift', 'F'],
         ['Alt', 'G'],
-      ],
-      mdListKb: [
+      ]),
+      mdListKb: Object.freeze([
         ['Ctrl / Cmd', 'B'],
         ['Ctrl / Cmd', 'I'],
         ['Ctrl / Cmd', 'D'],
@@ -84,8 +84,8 @@ export default {
         ['Ctrl / Cmd', 'O'],
         ['Ctrl / Cmd', 'H'],
         ['Ctrl / Cmd', 'Enter'],
-      ],
-      mdListText: [
+      ]),
+      mdListText: Object.freeze([
         '加粗',
         '倾斜',
         '中划线',
@@ -97,8 +97,8 @@ export default {
         '有序列表',
         '横线',
         '列表延伸',
-      ],
-      commonListText: [
+      ]),
+      commonListText: Object.freeze([
         '缩进代码',
         '格式化代码',
         '智能提示',
@@ -116,7 +116,7 @@ export default {
         '代码查询',
         '代码替换',
         '跳至某行',
-      ],
+      ]),
     }
   },
   computed: {
@@ -130,7 +130,6 @@ export default {
   methods: {
     ...mapMutations(['setVisibleDialogName']),
   },
-  components: {},
 }
 </script>
 

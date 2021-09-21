@@ -19,8 +19,7 @@ async function getToken () {
 async function sendImgToQiNiu (dataURL, token) {
   // 清除逗号前面的base64前缀
   dataURL = dataURL.split(',')[1]
-  let imageUrl = ''
-  await axios({
+  const res = await axios({
     method: 'post',
     url: `/qiNiu/putb64/${getBase64Size(dataURL)}`,
     data: dataURL,
@@ -28,10 +27,8 @@ async function sendImgToQiNiu (dataURL, token) {
       'Content-Type': 'application/octet-stream',
       'Authorization': 'UpToken ' + token,
     },
-  }).then((res) => {
-    imageUrl = res
   })
-  return imageUrl
+  return res
 }
 
 /**

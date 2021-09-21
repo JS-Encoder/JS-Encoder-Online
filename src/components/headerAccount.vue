@@ -3,13 +3,13 @@
     <div class="is-login pointer" v-if="loginState">
       <v-menu transition="slide-y-transition" bottom offset-y right>
         <template v-slot:activator="{ on, attrs }">
-          <v-avatar :size="dense?30:40" class="avatar" v-bind="attrs" v-on="on" :color="loginInfo.avatar?'':'primary'">
-            <v-img :src="qiNiuImgLink+loginInfo.avatar" v-if="loginInfo.avatar"></v-img>
+          <v-avatar class="avatar" v-bind="attrs" v-on="on" :size="dense?30:40" :color="loginInfo.avatar?'':'primary'">
+            <v-img v-if="loginInfo.avatar" :src="qiNiuImgLink+loginInfo.avatar"></v-img>
             <span class="white--text text-h7" v-else>{{loginInfo.nickname|preNickname}}</span>
           </v-avatar>
         </template>
         <v-list class="user-menu">
-          <v-list-item v-for="item in menuList" :key="item.value" class="user-menu-list" link
+          <v-list-item class="user-menu-list" link v-for="item in menuList" :key="item.value"
             @click="handleMenu(item.value)">
             <v-icon class="icon">{{item.icon}}</v-icon>
             {{item.name}}
@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       qiNiuImgLink,
-      menuList: [
+      menuList: Object.freeze([
         {
           name: '我的',
           value: 'user',
@@ -68,7 +68,7 @@ export default {
           value: 'logout',
           icon: 'mdi-logout-variant',
         },
-      ],
+      ]),
     }
   },
   computed: {

@@ -7,18 +7,18 @@
         <div class="d-flex flex-1 area">
           <div class="code-area d-flex flex-clo" :style="{ width: `${editorW}px` }">
             <editor-tab-bar></editor-tab-bar>
-            <markdown-tools :getCodeMirror="getCodeMirror" :getIframeBody="getIframeBody"
-              v-if="mdToolbarVisible && curTab === 'Markdown'"></markdown-tools>
-            <editor @runCode="runCode" :ref="'editor' + index" class="flex-1" v-for="(item, index) in prep" :key="index"
-              :codeMode="item" :index="index" @cursorPosChanged="cursorPosChanged" :showCodeArea="item === curTab"
-              v-show="item === curTab"></editor>
+            <markdown-tools v-if="mdToolbarVisible && curTab === 'Markdown'" :getCodeMirror="getCodeMirror"
+              :getIframeBody="getIframeBody"></markdown-tools>
+            <editor class="flex-1" v-show="item === curTab" v-for="(item, index) in prep" :key="index" :codeMode="item"
+              :index="index" :ref="'editor' + index" @cursorPosChanged="cursorPosChanged"
+              :showCodeArea="item === curTab" @runCode="runCode"></editor>
           </div>
-          <div v-if="resizeVisible" class="resize borbox" @mousedown="viewResize"></div>
+          <div class="resize borbox" v-if="resizeVisible" @mousedown="viewResize"></div>
           <div class="view-area d-flex flex-clo" :style="{ width: `${iframeW}px` }">
             <view-tab-bar @fullScreen="changeFullScreenState" @runCode="runCode"></view-tab-bar>
             <div class="iframe-box" :style="{ height: `${iframeH}px` }" :class="iframeFullScreen ? 'full-screen' : ''">
               <div class="iframe-screen no-select" v-show="iframeSVisible"></div>
-              <full-screen-bar :getIframeBody="getIframeBody" @runCode="runCode" v-show="iframeFullScreen"
+              <full-screen-bar v-show="iframeFullScreen" :getIframeBody="getIframeBody" @runCode="runCode"
                 @exitFullScreen="changeFullScreenState"></full-screen-bar>
               <iframe title="Preview"
                 allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media"

@@ -1,14 +1,13 @@
 <template>
-  <v-dialog id="library" v-model="visible" max-width="500" @click:outside="closeDialog"
-    content-class="library-dialog">
+  <v-dialog id="library" max-width="500" content-class="library-dialog" v-model="visible" @click:outside="closeDialog">
     <v-card>
       <v-card-title>
         <span class="title-xs">库</span>
       </v-card-title>
       <v-card-text>
-        <v-card color="error" class="d-flex flex-ai error-tip" v-if="cdnError">
+        <v-card class="d-flex flex-ai error-tip" color="error" v-if="cdnError">
           <div class="d-flex flex-ai">
-            <v-icon small style="margin-right: 5px">mdi-close-circle</v-icon>
+            <v-icon style="margin-right: 5px" small>mdi-close-circle</v-icon>
             <span>获取CDN列表失败</span>
           </div>
           <v-spacer></v-spacer>
@@ -19,23 +18,23 @@
         <div class="d-flex flex-clo">
           <span class="text-md lib-title">外部样式</span>
           <span class="text-xs text-describe">你所添加的外部样式，将按照顺序在本地CSS执行之前依次执行，支持http和https协议链接。</span>
-          <v-autocomplete :items="cssLibList" flat dense solo hide-details background-color="info" label="查找外部样式..."
-            return-object item-text="name" :menu-props="{ offsetY: true, closeOnContentClick: true}"
-            no-data-text="无匹配CDN">
+          <v-autocomplete flat dense solo hide-details background-color="info" label="查找外部样式..." return-object
+            item-text="name" no-data-text="无匹配CDN" :items="cssLibList"
+            :menu-props="{ offsetY: true, closeOnContentClick: true}">
             <template v-slot:item="{ item }">
-              <v-list-item link class="d-flex text-sm" @click="addLink('css', item)">
+              <v-list-item class="d-flex text-sm" link @click="addLink('css', item)">
                 <span style="margin-right:20px" class="flex-1">{{ item.name }}</span>
                 <span class="text-describe flex-sh">V{{ item.version }}</span>
               </v-list-item>
             </template>
           </v-autocomplete>
-          <v-text-field solo dense flat background-color="info" hide-details v-for="(item, index) in showCSSInput"
-            :key="`css${index}`" v-model="cssUseList[index]" class="lib-input-list">
+          <v-text-field class="lib-input-list" solo dense flat background-color="info" hide-details
+            v-model="cssUseList[index]" v-for="(item, index) in showCSSInput" :key="`css${index}`">
             <template v-slot:prepend-inner>
               <div class="pointer d-flex flex-clo" @click.prevent>
-                <v-icon small class="icon" :disabled="index===0" @click="resort(index,'up','css')">mdi-chevron-up
+                <v-icon class="icon" small :disabled="index===0" @click="resort(index,'up','css')">mdi-chevron-up
                 </v-icon>
-                <v-icon small class="icon" :disabled="index===showCSSInput-1" @click="resort(index,'down','css')">
+                <v-icon class="icon" small :disabled="index===showCSSInput-1" @click="resort(index,'down','css')">
                   mdi-chevron-down
                 </v-icon>
               </div>
@@ -46,26 +45,26 @@
               </v-btn>
             </template>
           </v-text-field>
-          <v-btn block color="info" class="add-btn" @click="showCSSInput++">添加外部样式</v-btn>
+          <v-btn class="add-btn" block color="info" @click="showCSSInput++">添加外部样式</v-btn>
           <span class="text-md lib-title">外部脚本</span>
           <span class="text-xs text-describe">你所添加的外部脚本，将按照顺序在本地JavaScript执行之前依次执行，支持http和https协议链接</span>
           <v-autocomplete :items="jsLibList" flat dense solo hide-details background-color="info" label="查找外部样式..."
             return-object item-text="name" :menu-props="{ offsetY: true, closeOnContentClick: true}"
             no-data-text="无匹配CDN">
             <template v-slot:item="{ item }">
-              <v-list-item link class="d-flex text-sm" @click="addLink('js', item)">
+              <v-list-item class="d-flex text-sm" link @click="addLink('js', item)">
                 <span style="margin-right:20px" class="flex-1">{{ item.name }}</span>
                 <span class="text-describe flex-sh">V{{ item.version }}</span>
               </v-list-item>
             </template>
           </v-autocomplete>
-          <v-text-field solo dense flat background-color="info" hide-details v-for="(item, index) in showJSInput"
-            :key="`js${index}`" v-model="jsUseList[index]" class="lib-input-list">
+          <v-text-field class="lib-input-list" solo dense flat background-color="info" hide-details
+            v-for="(item, index) in showJSInput" :key="`js${index}`" v-model="jsUseList[index]">
             <template v-slot:prepend-inner>
               <div class="pointer d-flex flex-clo" @click.prevent>
-                <v-icon small class="icon" :disabled="index===0" @click="resort(index,'up','js')">mdi-chevron-up
+                <v-icon class="icon" small :disabled="index===0" @click="resort(index,'up','js')">mdi-chevron-up
                 </v-icon>
-                <v-icon small class="icon" :disabled="index===showJSInput-1" @click="resort(index,'down','js')">
+                <v-icon class="icon" small :disabled="index===showJSInput-1" @click="resort(index,'down','js')">
                   mdi-chevron-down
                 </v-icon>
               </div>
@@ -76,7 +75,7 @@
               </v-btn>
             </template>
           </v-text-field>
-          <v-btn block color="info" class="add-btn" @click="showJSInput++">添加外部脚本</v-btn>
+          <v-btn class="add-btn" block color="info" @click="showJSInput++">添加外部脚本</v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -90,20 +89,16 @@ export default {
   data() {
     return {
       name: 'library',
-
       /* 全部列表 */
       cssLibList: [],
       jsLibList: [],
       /* 用户应用的cdn列表 */
       cssUseList: [],
       jsUseList: [],
-
       showCSSInput: 1,
       cssLoading: false,
-
       showJSInput: 1,
       visible: false,
-
       cdnError: false,
     }
   },
@@ -131,8 +126,8 @@ export default {
           fields: 'version,fileType',
         })
         .then(({ results }) => {
-          this.cssLibList = results.filter((item) => item.fileType === 'css')
-          this.jsLibList = results.filter((item) => item.fileType === 'js')
+          this.cssLibList = Object.freeze(results.filter((item) => item.fileType === 'css'))
+          this.jsLibList = Object.freeze(results.filter((item) => item.fileType === 'js'))
         })
         .catch((err) => {
           this.cdnError = true
@@ -203,7 +198,6 @@ export default {
       this.setVisibleDialogName('')
     },
   },
-  components: {},
 }
 </script>
 
@@ -232,6 +226,4 @@ export default {
     color: $light-2;
   }
 }
-</style>
-<style lang="scss" scoped>
 </style>

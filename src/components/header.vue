@@ -1,12 +1,12 @@
 <template>
   <div id="header">
-    <v-btn icon class="menu-icon" height="50" width="50" @click="showNav = !showNav">
+    <v-btn class="menu-icon" icon height="50" width="50" @click="showNav = !showNav">
       <v-icon>mdi-menu</v-icon>
     </v-btn>
-    <v-navigation-drawer v-model="showNav" absolute temporary style="height:100vh">
+    <v-navigation-drawer style="height:100vh" absolute temporary v-model="showNav">
       <v-list>
         <v-list-item link v-for="item in navList" :key="item.name" @click="navJumpTo(item)">
-          <v-badge v-if="item.text==='新特性' && hasNewFeatures" dot color="primary">
+          <v-badge color="primary" dot v-if="item.text==='新特性' && hasNewFeatures">
             <v-list-item-title>{{item.text}}</v-list-item-title>
           </v-badge>
           <v-list-item-title v-else>{{item.text}}</v-list-item-title>
@@ -21,9 +21,9 @@
     </router-link>
     <div class="vert-divide-line"></div>
     <nav class="d-flex flex-1 no-select pointer">
-      <v-btn v-for="(item, index) in navList" :key="index" class="nav-item rounded-0" @click="navJumpTo(item)" depressed
-        :plain="curRouteName !== item.name" tile>
-        <v-badge v-if="item.text==='新特性' && hasNewFeatures" dot color="primary">
+      <v-btn class="nav-item rounded-0" depressed v-for="(item, index) in navList" :key="index"
+        :plain="curRouteName !== item.name" tile @click="navJumpTo(item)">
+        <v-badge color="primary" dot v-if="item.text==='新特性' && hasNewFeatures">
           {{item.text}}
         </v-badge>
         <span v-else>{{item.text}}</span>
@@ -44,7 +44,7 @@ import localStorage from '@utils/local-storage'
 export default {
   data() {
     return {
-      navList: [
+      navList: Object.freeze([
         {
           text: '探索',
           name: 'Explore',
@@ -60,7 +60,7 @@ export default {
         {
           text: 'GitHub',
         },
-      ],
+      ]),
       showNav: false,
     }
   },

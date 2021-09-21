@@ -54,26 +54,6 @@ axios.interceptors.response.use(
             }
           })
           break
-        /**
-         * 403 token过期
-         * 登录过期对用户进行提示
-         * 清除本地token和清空vuex中token对象
-         * 跳转登录页面
-         */
-        case 403:
-          // 清除token
-          localStorage.removeItem('token')
-          store.commit('loginSuccess', null)
-          // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面 
-          // setTimeout(() => {
-          //   router.replace({
-          //     name: 'Login',
-          //     query: {
-          //       redirect: router.currentRoute.fullPath
-          //     }
-          //   })
-          // }, 1000)
-          break
         // 404请求不存在
         case 404:
           break

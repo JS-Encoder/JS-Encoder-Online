@@ -1,10 +1,10 @@
 <template>
   <div id="liked">
     <div class="liked-list" v-show="!nothing">
-      <div class="skeleton-list-item" v-for="(item, index) in 12" :key="index" v-show="loading">
+      <div class="skeleton-list-item" v-show="loading" v-for="(item, index) in 12" :key="index">
         <instance-skeleton></instance-skeleton>
       </div>
-      <div class="liked-list-item" v-for="(item, index) in likedList" :key="item.exampleId" v-show="!loading">
+      <div class="liked-list-item" v-show="!loading" v-for="(item, index) in likedList" :key="item.exampleId">
         <instance-card :info="item" :cardIndex="index" @setFollow="setFollow" @setFav="setFav" @search="init">
         </instance-card>
       </div>
@@ -60,6 +60,7 @@ export default {
     async search(page, sortBy) {
       this.loading = true
       this.nothing = false
+      this.$emit('setPageConn', true, true)
       try {
         const { state, data } = await this.$http.searchLiked({
           currentPage: page,

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog id="upload" v-model="visible" max-width="500" @click:outside="setVisibleDialogName('')"
+  <v-dialog id="upload" max-width="500" v-model="visible" @click:outside="setVisibleDialogName('')"
     content-class="upload-dialog">
     <v-card>
       <v-card-title>
@@ -12,20 +12,20 @@
             <span class="text-white">html, md, pug, css, sass, scss, less, styl, js, ts, coffee,</span>
             文件内容将覆盖对应编辑窗口的内容。
           </span>
-          <v-checkbox dense label="分解html文件" hide-details></v-checkbox>
+          <v-checkbox label="分解html文件" dense hide-details></v-checkbox>
           <span class="text-xs text-describe">选中此选项，编辑器将会把 html 文件中的 html,
             css 和 javascript 代码以及外部链接分离，代码会覆盖对应编辑器的代码，外部链接会自动添加到库中。</span>
-          <a title="" href="javascript:;" class="borbox upload d-flex flex-jcc v-btn" @change="chooseFile">
-            <input type="file" class="upload-input" ref="fileInput" multiple="multiple">
+          <a class="borbox upload d-flex flex-jcc v-btn" title="" href="javascript:;" @change="chooseFile">
+            <input class="upload-input" type="file" ref="fileInput" multiple="multiple">
             选择文件
           </a>
           <div class="file-list d-flex flex-clo flex-ai" v-if="fileList.length">
             <span class="text-sm">待上传文件列表</span>
             <ul>
-              <li v-for="(item, index) in fileList" :key="index" class="d-flex flex-ai text-sm">
+              <li class="d-flex flex-ai text-sm" v-for="(item, index) in fileList" :key="index">
                 <v-icon dense small>mdi-file</v-icon>
                 <span class="file-name">{{item.name}}</span>
-                <v-icon dense small class="icon pointer" @click="delFile(index)">mdi-close</v-icon>
+                <v-icon class="icon pointer" dense small @click="delFile(index)">mdi-close</v-icon>
               </li>
             </ul>
             <v-btn color="info" @click="upload">上传文件</v-btn>
@@ -147,17 +147,12 @@ export default {
           })
         }
         this.fileList = []
-        this.$message.success({
-          msg: '所有文件已全部上传成功！',
-        })
+        this.$message.success('所有文件已全部上传成功！')
       } catch (err) {
-        this.$message.error({
-          msg: '文件上传过程出错！',
-        })
+        this.$message.error('文件上传过程出错！')
       }
     },
   },
-  components: {},
 }
 </script>
 

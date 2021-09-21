@@ -21,10 +21,10 @@ export default {
     showCodeArea: Boolean,
   },
   data() {
+    this.lintList = ['HTML', 'CSS', 'JavaScript']
     return {
       codeOptions: {},
       code: '',
-      lintList: ['HTML', 'CSS', 'JavaScript'],
     }
   },
   created() {
@@ -47,7 +47,7 @@ export default {
         codeArea.refresh()
         codeArea.codemirror.focus()
       }
-    }, 1600)
+    })
   },
   computed: {
     ...mapState([
@@ -124,10 +124,14 @@ export default {
         'code',
         debounce(function (code) {
           const mode = judgeMode(this.codeMode)
-          this.handleInstanceCode({ mode, code })
+          this.setInstanceCode({ mode, code })
           if (this.instanceSetting.autoExecute) this.$emit('runCode', true)
         }, newState)
       )
+    },
+    'instanceSetting.font.size'(newSize) {
+      const codeArea = this.$refs.codeArea
+      codeArea.refresh()
     },
   },
   methods: {
@@ -145,7 +149,7 @@ export default {
       // 观察者会在组件初始化完就执行，因此需要在给编辑器赋予初始代码之后才执行
       this.watchCode = this.$watch(
         'code',
-        debounce(function (code) {
+        debounce(function (code, oldCode) {
           const mode = judgeMode(this.codeMode)
           this.setInstanceCode({ mode, code })
           if (this.instanceSetting.autoExecute) this.$emit('runCode', true)

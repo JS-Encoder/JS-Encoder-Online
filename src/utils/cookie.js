@@ -1,9 +1,9 @@
 /**
  * 存储cookie
- * @param {string} name
- * @param {any} value
- * @param {number} time 秒
- * @param {string} path
+ * @param {String} name
+ * @param {Any} value
+ * @param {Number} time 秒
+ * @param {String} path
  */
 function set (name, value, time, path = '/') {
   name = escape(name)
@@ -18,7 +18,8 @@ function set (name, value, time, path = '/') {
 }
 /**
  * 获取cookie中的id，用于自动登陆
- * @return {string}
+ * @param {String} name
+ * @returns {String}
  */
 function get (name) {
   name = escape(name)
@@ -38,8 +39,8 @@ function get (name) {
 }
 /**
  * 删除cookie
- * @param {string} name 
- * @param {string} path 
+ * @param {String} name 
+ * @param {String} path 
  */
 function del (name, path = '/') {
   name = escape(name)

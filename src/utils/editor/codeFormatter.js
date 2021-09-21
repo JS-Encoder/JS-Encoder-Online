@@ -1,4 +1,5 @@
 import Loader from '../loader'
+const loader = new Loader()
 
 const formatOptions = {
   indent_size: 2, // tab缩进数
@@ -6,8 +7,6 @@ const formatOptions = {
   space_in_empty_paren: true,
   preserve_newlines: true // 元素前的换行是否被允许存在
 }
-
-const loader = new Loader()
 
 function changeFormatOptions (newOption) {
   formatOptions[newOption.attr] = newOption.val

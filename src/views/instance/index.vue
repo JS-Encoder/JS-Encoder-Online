@@ -1,6 +1,6 @@
 <template>
   <div id="instanceBox">
-    <div v-if="!loaded" class="loader flex-jcc">
+    <div class="loader flex-jcc" v-if="!loaded">
       <div class="loader-content d-flex flex-clo flex-ai">
         <instance-loader class="page-loader"></instance-loader>
         <span class="tip">{{tip}}</span>

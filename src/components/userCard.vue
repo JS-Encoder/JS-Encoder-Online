@@ -1,8 +1,8 @@
 <template>
   <v-card class="user-card d-flex no-select">
     <div class="avatar">
-      <v-avatar size="50" class="pointer" color="primary" @click="viewUserProfile">
-        <img :src="qiNiuImgLink+avatar" v-if="avatar" :alt="nickname">
+      <v-avatar class="pointer" color="primary" size="50" @click="viewUserProfile">
+        <img v-if="avatar" :src="qiNiuImgLink+avatar" :alt="nickname">
         <span class="white--text text-h6" v-else>{{nickname|preNickname}}</span>
       </v-avatar>
       <v-spacer></v-spacer>
@@ -12,9 +12,9 @@
         <span class="nickname text-md pointer" @click="viewUserProfile">{{nickname}}</span>
         <span class="about text-xs">{{about||'ta还没想好怎么描述自己...'}}</span>
       </div>
-      <div v-if="!isSelf" class="btn-opt">
-        <v-btn color="#3C3C3C" v-if="myFollow" @click="unFollow" width="90" :loading="loading">取消关注</v-btn>
-        <v-btn color="primary" v-else @click="follow" width="90" :loading="loading">关注</v-btn>
+      <div class="btn-opt" v-if="!isSelf">
+        <v-btn color="#3C3C3C" width="90" v-if="myFollow" :loading="loading" @click="unFollow">取消关注</v-btn>
+        <v-btn color="primary" width="90" v-else :loading="loading" @click="follow">关注</v-btn>
       </div>
     </div>
   </v-card>

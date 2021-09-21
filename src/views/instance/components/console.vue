@@ -10,15 +10,15 @@
       </div>
       <div class="options d-flex">
         <div title="过滤器">
-          <v-menu top offset-y class="filter-dropdown">
+          <v-menu class="filter-dropdown" top offset-y>
             <template v-slot:activator="{ attrs, on }">
-              <v-btn icon v-bind="attrs" v-on="on" height="25" width="25">
+              <v-btn height="25" width="25" icon v-bind="attrs" v-on="on">
                 <i class="icon iconfont icon-filter1"></i>
               </v-btn>
             </template>
             <v-list>
-              <v-list-item v-for="(item, index) in filterList" :key="index" class="d-flex flex-ai"
-                style="font-family:Consolas, Monaco" :class="filter[item]?'active-dropdown-item':''"
+              <v-list-item class="d-flex flex-ai" style="font-family:Consolas, Monaco"
+                v-for="(item, index) in filterList" :key="index" :class="{'active-dropdown-item':filter[item]}"
                 @click.native="filter[item]=!filter[item]">
                 <span class="flex-1">{{item}}</span>
                 <v-icon v-show="filter[item]">mdi-check</v-icon>
@@ -27,17 +27,17 @@
           </v-menu>
         </div>
         <div title="设置" @click="closeSettings">
-          <v-btn icon height="25" width="25">
-            <i class="icon iconfont icon-config1" :class="settingsVisible?'active-opt':''"></i>
+          <v-btn height="25" width="25" icon>
+            <i class="icon iconfont icon-config1" :class="{'active-opt':settingsVisible}"></i>
           </v-btn>
         </div>
         <div title="清除日志" @click="clearLogs">
-          <v-btn icon height="25" width="25">
+          <v-btn height="25" width="25" icon>
             <i class="icon iconfont icon-recycle"></i>
           </v-btn>
         </div>
         <div title="最小化" @click="minimalConsole">
-          <v-btn icon height="25" width="25">
+          <v-btn height="25" width="25" icon>
             <i class="icon iconfont icon-zuixiaohua"></i>
           </v-btn>
         </div>
@@ -45,25 +45,25 @@
     </div>
     <div class="console-body d-flex flex-clo">
       <div class="cm-list flex-1 CodeMirror cm-s-default" ref="consoleList" v-show="!settingsVisible">
-        <div v-for="(item, index) in consoleInfo" :key="index" class="log-list">
-          <div v-if="item.type==='log'|| item.type==='dir'" v-show="filter.Log" class="log d-flex flex-ai">
+        <div class="log-list" v-for="(item, index) in consoleInfo" :key="index">
+          <div class="log d-flex flex-ai" v-if="item.type==='log'|| item.type==='dir'" v-show="filter.Log">
             <i class="icon iconfont icon-lfmonth"></i>
-            <pre v-for="(value, index) in item.logs" :key="index" v-html="value" class="CodeMirror-line"></pre>
+            <pre class="CodeMirror-line" v-for="(value, index) in item.logs" v-html="value" :key="index"></pre>
           </div>
-          <div v-if="item.type==='mix'" class="mix d-flex flex-ai">
+          <div class="mix d-flex flex-ai" v-if="item.type==='mix'">
             <i class="icon iconfont icon-lfmonth"></i>
-            <codemirror :options="codeOptions" @hook:mounted="cmFold(index)" v-show="settings.highlight" v-once
-              :value="item.content" class="code-log" :ref="`logArea${index}`">
+            <codemirror class="code-log" v-show="settings.highlight" v-once :options="codeOptions" :value="item.content"
+              :ref="`logArea${index}`" @hook:mounted="cmFold(index)">
             </codemirror>
             <div class="code-log" v-show="!settings.highlight" v-once>{{item.content}}</div>
           </div>
-          <div v-if="item.type==='info'" v-show="filter.Info" class="info d-flex flex-ai">
+          <div class="info d-flex flex-ai" v-if="item.type==='info'" v-show="filter.Info">
             <i class="icon iconfont icon-info"></i>
             <pre class="CodeMirror-line d-flex">
               <span class="content">{{item.content}}</span>
             </pre>
           </div>
-          <div v-if="item.type==='system-error'" v-show="filter.Error" class="system-error d-flex flex-ai">
+          <div class="system-error d-flex flex-ai" v-if="item.type==='system-error'" v-show="filter.Error">
             <i class="icon iconfont icon-error1"></i>
             <pre class="CodeMirror-line d-flex">
               <span class="content">{{item.content}}</span>
@@ -71,45 +71,45 @@
               <span class="col">col: {{item.col}}</span>
             </pre>
           </div>
-          <div v-if="item.type==='error'" v-show="filter.Error" class="error d-flex flex-ai">
+          <div class="error d-flex flex-ai" v-if="item.type==='error'" v-show="filter.Error">
             <i class="icon iconfont icon-error1"></i>
             <pre class="CodeMirror-line d-flex">
               <span class="content">{{item.content}}</span>
             </pre>
           </div>
-          <div v-if="item.type==='warn'" v-show="filter.Warning" class="warn d-flex flex-ai">
+          <div class="warn d-flex flex-ai" v-if="item.type==='warn'" v-show="filter.Warning">
             <i class="icon iconfont icon-warn1"></i>
             <pre class="CodeMirror-line d-flex">
               <span class="content">{{item.content}}</span>
             </pre>
           </div>
-          <div v-if="item.type==='print'" class="print d-flex flex-ai">
+          <div class="print d-flex flex-ai" v-if="item.type==='print'">
             <i class="icon iconfont icon-lfmonth"></i>
             <pre class="CodeMirror-line d-flex" v-html="item.logs[0]">
               <span class="content">{{item.content}}</span>
             </pre>
           </div>
-          <div v-if="item.type==='mixPrint'" class="mix-print d-flex flex-ai">
+          <div class="mix-print d-flex flex-ai" v-if="item.type==='mixPrint'">
             <i class="icon iconfont icon-lfmonth"></i>
-            <codemirror :options="codeOptions" @hook:mounted="cmFold(index)" v-show="settings.highlight" v-once
-              :value="item.content" class="code-log" :ref="`logArea${index}`">
+            <codemirror class="code-log" v-show="settings.highlight" v-once :value="item.content"
+              :ref="`logArea${index}`" :options="codeOptions" @hook:mounted="cmFold(index)">
             </codemirror>
             <div class="code-log" v-show="!settings.highlight" v-once>{{item.content}}</div>
           </div>
         </div>
       </div>
       <div class="settings borbox flex-1 flex-clo" v-show="settingsVisible">
-        <v-checkbox dense hide-details v-model="settings.clear" label="自动清除历史日志"></v-checkbox>
+        <v-checkbox label="自动清除历史日志" dense hide-details v-model="settings.clear"></v-checkbox>
         <span class="text-describe text-xs">选中此选项将会在每次执行代码之前清除先前生成的历史日志，你可以选择保留历史日志，但可能会影响性能</span>
-        <v-checkbox dense hide-details v-model="settings.highlight" label="代码高亮"></v-checkbox>
+        <v-checkbox label="代码高亮" dense hide-details v-model="settings.highlight"></v-checkbox>
         <span class="text-describe text-xs">选中此选项，日志内容将被高亮渲染</span>
       </div>
       <div class="textarea-box borbox d-flex flex-ai flex-sh">
         <i class="icon iconfont icon-lfmonth print-icon"></i>
-        <codemirror :options="cmdOptions" :value="consoleMsg" @keydown.native="handleCmd" v-model="consoleMsg"
-          class="cmd-codemirror" ref="cmdArea">
+        <codemirror class="cmd-codemirror" ref="cmdArea" :options="cmdOptions" :value="consoleMsg" v-model="consoleMsg"
+          @keydown.native="handleCmd">
         </codemirror>
-        <v-btn small class="flex-sh run-btn" :disabled="!consoleMsg" color="primary" @click="exeCmd">Run
+        <v-btn class="flex-sh run-btn" color="primary" small :disabled="!consoleMsg" @click="exeCmd">Run
         </v-btn>
       </div>
     </div>
@@ -123,7 +123,7 @@ import { codemirror } from 'vue-codemirror'
 export default {
   data() {
     return {
-      filterList: ['Info', 'Log', 'Warning', 'Error'],
+      filterList: Object.freeze(['Info', 'Log', 'Warning', 'Error']),
       filter: {
         Info: true,
         Log: true,
@@ -241,16 +241,18 @@ export default {
       switch (key) {
         case 38: {
           const { line, ch } = cm.getCursor()
-          if (line === 0 && ch === 0) {
-            if (this.currentCmdIndex >= 1) this.currentCmdIndex--
+          if (line === 0 && ch === 0 && this.currentCmdIndex >= 1) {
+            this.currentCmdIndex--
           }
           break
         }
         case 40: {
           const outside = cm.getCursor().outside
-          if (outside === 1) {
-            if (this.currentCmdIndex < this.historyCmd.length - 1)
-              this.currentCmdIndex++
+          if (
+            outside === 1 &&
+            this.currentCmdIndex < this.historyCmd.length - 1
+          ) {
+            this.currentCmdIndex++
           }
           break
         }

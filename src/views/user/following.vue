@@ -1,11 +1,11 @@
 <template>
   <div id="following">
     <div class="following-list" v-show="!nothing">
-      <div class="skeleton-list-item" v-for="(item, index) in 20" :key="index" v-show="loading">
+      <div class="skeleton-list-item" v-show="loading" v-for="(item, index) in 20" :key="index">
         <follow-skeleton></follow-skeleton>
       </div>
-      <div class="following-list-item" v-for="(item, index) in followingList" :key="item.username" v-show="!loading">
-        <follow-card :cardIndex="index" @setFollow="setFollow" :userInfo="item" @search="init"></follow-card>
+      <div class="following-list-item" v-show="!loading" v-for="(item, index) in followingList" :key="item.username">
+        <follow-card :cardIndex="index" :userInfo="item" @setFollow="setFollow" @search="init"></follow-card>
       </div>
     </div>
     <div class="following-tip flex-jcc" v-show="showNothingTip">
@@ -61,6 +61,7 @@ export default {
     async search(page) {
       this.loading = true
       this.nothing = false
+      this.$emit('setPageConn', true, true)
       try {
         const { state, data } = await this.$http.searchFollowings({
           currentPage: page,
@@ -70,7 +71,7 @@ export default {
           const { isFirstPage, isLastPage, list, total } = data
           this.nothing = list.length === 0
           this.showNothingTip = list.length === 0
-          this.followingList = list
+          this.followingList = Object.freeze(list)
           this.$emit('setPageConn', isFirstPage, isLastPage)
           this.$emit('updateNum', 'following', total)
           this.$message.success('查询成功！')

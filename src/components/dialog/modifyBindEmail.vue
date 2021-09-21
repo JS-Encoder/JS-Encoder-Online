@@ -1,5 +1,5 @@
 <template>
-  <v-dialog id="modifyBindEmail" v-model="visible" max-width="520" @click:outside="close">
+  <v-dialog id="modifyBindEmail" max-width="520" v-model="visible" @click:outside="close">
     <v-card>
       <v-card-title>
         <span class="title-sm">修改绑定邮箱</span>
@@ -7,27 +7,27 @@
       <v-card-text>
         <v-form class="form d-flex flex-clo" ref="form">
           <v-row>
-            <v-col sm="8" cols="12" style="padding-bottom: 0">
-              <v-text-field ref="emailField" label="邮箱" class="email-field" placeholder="修改后的邮箱" outlined
+            <v-col style="padding-bottom: 0" sm="8" cols="12">
+              <v-text-field class="email-field" ref="emailField" label="邮箱" placeholder="修改后的邮箱" outlined
                 color="primary" v-model="form.email" :rules="rules.email">
                 <template slot="append">
-                  <v-btn :disabled="!isEmailRight||emailOpts.sended" color="primary" class="send-email-btn"
-                    @click.stop="sendAuthCode" absolute :loading="emailOpts.authCodeLoading">{{emailOpts.emailText}}
+                  <v-btn color="primary" class="send-email-btn" absolute :disabled="!isEmailRight||emailOpts.sended"
+                    :loading="emailOpts.authCodeLoading" @click.stop="sendAuthCode">{{emailOpts.emailText}}
                   </v-btn>
                 </template>
               </v-text-field>
             </v-col>
-            <v-col sm="4" cols="12" class="auth-input">
-              <v-text-field label="验证码" :disabled="!isEmailRight" outlined color="primary" v-model="form.authCode"
+            <v-col class="auth-input" sm="4" cols="12">
+              <v-text-field label="验证码" outlined color="primary" v-model="form.authCode" :disabled="!isEmailRight"
                 :rules="rules.authCode">
               </v-text-field>
             </v-col>
           </v-row>
-          <v-text-field label="密码" placeholder="当前账户密码" autocomplete="new-password"
-            :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'"
-            @click:append="showPwd = !showPwd" outlined color="primary" v-model="form.password" :rules="rules.password">
+          <v-text-field label="密码" placeholder="当前账户密码" autocomplete="new-password" v-model="form.password"
+            :rules="rules.password" :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd" outlined color="primary">
           </v-text-field>
-          <v-btn @click="modify" block x-large color="primary" :loading="loading">修改邮箱</v-btn>
+          <v-btn color="primary" block x-large :loading="loading" @click="modify">修改邮箱</v-btn>
         </v-form>
       </v-card-text>
     </v-card>

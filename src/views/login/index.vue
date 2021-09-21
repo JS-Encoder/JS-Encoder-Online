@@ -9,10 +9,10 @@
         <v-form autocomplete="off" ref="loginForm">
           <v-text-field label="用户名或邮箱" outlined color="primary" v-model="form.username" :rules="rules.username"
             autocomplete="off"></v-text-field>
-          <v-text-field label="密码" autocomplete="new-password" outlined color="primary"
+          <v-text-field label="密码" autocomplete="new-password" outlined color="primary" v-model="form.password"
             :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'"
-            @click:append="showPwd = !showPwd" v-model="form.password" :rules="rules.password"></v-text-field>
-          <v-btn @click="login" block x-large color="primary" :loading="loginLoading">登录</v-btn>
+            :rules="rules.password" @click:append="showPwd = !showPwd"></v-text-field>
+          <v-btn color="primary" block x-large :loading="loginLoading" @click="login">登录</v-btn>
         </v-form>
         <div class="forget-pwd text-right">
           <router-link to="/forgetPwd">
@@ -23,7 +23,7 @@
         <div class="third-part-btn d-flex flex-jcc">
           <v-tooltip top disabled>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn icon x-large v-bind="attrs" v-on="on" class="btn-github" @click="loginWithGitHub" disabled>
+              <v-btn class="btn-github" icon x-large v-bind="attrs" v-on="on" @click="loginWithGitHub" disabled>
                 <i class="icon iconfont icon-github title-lg"></i>
               </v-btn>
             </template>
@@ -31,7 +31,7 @@
           </v-tooltip>
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn icon x-large v-bind="attrs" v-on="on" class="btn-gitee" @click="loginWithGitee">
+              <v-btn class="btn-gitee" icon x-large v-bind="attrs" v-on="on" @click="loginWithGitee">
                 <i class="icon iconfont icon-gitee title-lg"></i>
               </v-btn>
             </template>
@@ -52,7 +52,7 @@ import oauthCONFIG from '@utils/oauthConfig'
 import baseUrl from '@service/env'
 import qs from 'qs'
 export default {
-  name: "Login",
+  name: 'Login',
   data() {
     return {
       showPwd: false,
@@ -88,11 +88,7 @@ export default {
             // 自动登录
             localStore.set('REMEMBER_ME', true)
             // 存储用户信息到VueX
-            const {
-              username,
-              name: nickname,
-              userPicture: avatar,
-            } = data
+            const { username, name: nickname, userPicture: avatar } = data
             this.setLoginState(true)
             this.setLoginInfo({
               username,
@@ -134,7 +130,10 @@ export default {
         state: csrfT,
       })
       cookie.set('CSRF_TOKEN', csrfT, 60 * 10)
-      window.open(`https://gitee.com/oauth/authorize?${requireStr}scope=user_info`, '_self')
+      window.open(
+        `https://gitee.com/oauth/authorize?${requireStr}scope=user_info`,
+        '_self'
+      )
     },
   },
   components: {},

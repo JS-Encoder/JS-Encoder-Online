@@ -38,27 +38,3 @@ Object.assign(Vue.prototype, {
     return promise
   }
 })
-
-
-// old plugin
-// const AlertConstructor = Vue.extend(Alert)
-
-// const install = () => {
-//   Object.defineProperty(Vue.prototype, '$alert', {
-//     get () {
-//       let id = `jseAlert`
-//       return (options) => {
-//         const instance = new AlertConstructor({
-//           propsData: options
-//         })
-//         instance.id = id
-//         instance.vm = instance.$mount()
-//         instance.vm.$vuetify = new Vuetify().framework
-//         document.body.appendChild(instance.vm.$el)
-//         return instance.vm
-//       }
-//     }
-//   })
-// }
-
-// export default install

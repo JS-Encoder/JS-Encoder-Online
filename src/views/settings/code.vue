@@ -2,35 +2,35 @@
   <div id="code">
     <div class="code-item code-def-prep d-flex flex-clo">
       <span class="item-title title-xs">默认预处理器</span>
-      <div v-for="(value, key, index) in prepList" :key="key" class="d-flex flex-ai flex-jcb select-opt">
+      <div class="d-flex flex-ai flex-jcb select-opt" v-for="(value, key, index) in prepList" :key="key">
         <span class="sub-title">{{key}}</span>
-        <v-select :items="value" solo v-model="form.prep[index]" hide-details background-color="info"
-          :menu-props="{ offsetY: true }"></v-select>
+        <v-select background-color="info" hide-details solo v-model="form.prep[index]" :menu-props="{ offsetY: true }"
+          :items="value"></v-select>
       </div>
     </div>
     <div class="code-item code-def-code d-flex flex-clo">
       <span class="item-title title-xs">默认初始代码</span>
-      <div v-for="(value, key, index) in prepList" :key="index" class="d-flex flex-clo code-area">
+      <div class="d-flex flex-clo code-area" v-for="(value, key, index) in prepList" :key="index">
         <span class="code-area-title">{{form.prep[index]}}</span>
-        <v-textarea :style="fontStyle" solo :label="`${form.prep[index]} code...`" background-color="info" rows="3"
-          v-model="form.code[key]" hide-details>
+        <v-textarea background-color="info" rows="3" hide-details solo v-model="form.code[key]"
+          :label="`${form.prep[index]} code...`" :style="fontStyle">
         </v-textarea>
       </div>
     </div>
     <div class="code-item code-def-code d-flex flex-clo">
       <span class="item-title title-xs">默认 head</span>
       <div class="code-area">
-        <v-textarea :style="fontStyle" solo label="输入你想在 <head> 中添加的标签如 <meta...>" background-color="info" rows="3"
-          v-model="form.headTags" hide-details>
+        <v-textarea label="输入你想在 <head> 中添加的标签如 <meta...>" background-color="info" rows="3" hide-details solo
+          v-model="form.headTags" :style="fontStyle">
         </v-textarea>
       </div>
     </div>
     <div class="code-item code-def-indent d-flex flex-clo">
       <span class="item-title title-xs">代码缩进</span>
-      <v-checkbox v-model="form.indent.replace" label="用等宽空格替换Tab" @change="setIndentReplace"></v-checkbox>
+      <v-checkbox label="用等宽空格替换Tab" v-model="form.indent.replace" @change="setIndentReplace"></v-checkbox>
       <div class="d-flex flex-ai">
         <span class="sub-title">缩进数</span>
-        <v-slider v-model="form.indent.width" color="primary" thumb-label ticks="always" step="2" :max="8" hide-details
+        <v-slider color="primary" ticks="always" step="2" thumb-label hide-details v-model="form.indent.width" :max="8"
           @change="setIndentWidth">
         </v-slider>
       </div>
@@ -39,20 +39,20 @@
       <span class="item-title title-xs">字体</span>
       <div class="d-flex flex-ai font-opts">
         <span class="sub-title">字体</span>
-        <v-select class="family-select" solo hide-details dense :items="fontFamList" :menu-props="{ offsetY: true }"
-          v-model="form.font.family">
+        <v-select class="family-select" solo hide-details dense v-model="form.font.family" :items="fontFamList"
+          :menu-props="{ offsetY: true }">
         </v-select>
       </div>
       <div class="d-flex flex-ai font-opts">
         <span class="sub-title">字号(px)</span>
-        <v-select class="size-select" dense solo hide-details :items="fontSizeList" :menu-props="{ offsetY: true }"
-          v-model="form.font.size" @change="refreshEditor">
+        <v-select class="size-select" dense solo hide-details v-model="form.font.size" :items="fontSizeList"
+          :menu-props="{ offsetY: true }" @change="refreshEditor">
         </v-select>
       </div>
       <div class="d-flex flex-ai font-opts">
         <span class="sub-title">预览</span>
-        <codemirror :style="fontStyle" :options="codeOptions" :value="editorCode" class="preview-codemirror"
-          ref="editor">
+        <codemirror class="preview-codemirror" ref="editor" :style="fontStyle" :options="codeOptions"
+          :value="editorCode">
         </codemirror>
       </div>
     </div>
@@ -70,13 +70,13 @@ import localStore from '@utils/local-storage'
 export default {
   data() {
     return {
-      prepList: {
+      prepList: Object.freeze({
         HTML: ['HTML', 'Markdown', 'Pug'],
         CSS: ['CSS', 'Sass', 'Scss', 'Less', 'Stylus'],
         JavaScript: ['JavaScript', 'TypeScript', 'CoffeeScript'],
-      },
-      fontFamList,
-      fontSizeList,
+      }),
+      fontFamList: Object.freeze(fontFamList),
+      fontSizeList: Object.freeze(fontSizeList),
       codeOptions: {},
       editorCode: '',
       form: {

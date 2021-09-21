@@ -1,5 +1,5 @@
 <template>
-  <v-dialog id="loginVerify" v-model="visible" max-width="500" persistent>
+  <v-dialog id="loginVerify" max-width="500" v-model="visible" persistent>
     <v-card>
       <v-card-title class="info">
         <span class="title-md">第三方登陆确认</span>

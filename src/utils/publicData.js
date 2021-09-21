@@ -27,7 +27,8 @@ const defPrepOpts = {
 // 上传文件等后缀名列表
 const limitMimeType = ['html', 'css', 'js', 'md', 'pug', 'sass', 'scss', 'less', 'styl', 'ts', 'coffee']
 
-const qiNiuImgLink = isProd?'http://images.lliiooiill.cn/':'http://images.firstbird.asia/'
+// const qiNiuImgLink = isProd?'//images.lliiooiill.cn/':'//images.firstbird.asia/'
+const qiNiuImgLink = isProd?'/images/':'/images/'
 
 export {
   fontFamList,

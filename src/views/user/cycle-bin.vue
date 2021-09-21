@@ -7,16 +7,16 @@
     </v-card>
     <div class="cycle-bin-list">
       <v-skeleton-loader type="list-item-two-line" v-show="loading" v-for="item in 12" :key="item"></v-skeleton-loader>
-      <v-card elevation="0" color="#272727" class="instance flex-ai" v-show="!loading"
-        v-for="(item, index) in list" :key="item.exampleId">
+      <v-card class="instance flex-ai" color="#272727" elevation="0" v-show="!loading" v-for="(item, index) in list"
+        :key="item.exampleId">
         <div class="d-flex flex-clo">
           <span class="instance-title">{{item.exampleName}}</span>
           <span class="delete-time text-describe text-sm">删除日期：{{item.updateTime}}</span>
         </div>
         <v-spacer></v-spacer>
-        <v-btn color="#333333" class="restore-btn" @click="restore(item.exampleId,index)"
+        <v-btn class="restore-btn" color="#333333" @click="restore(item.exampleId,index)"
           :loading="restoreLoading&&curIndex===index">恢复</v-btn>
-        <v-btn color="error" class="delete-btn" @click="perDelete(item.exampleId,index)"
+        <v-btn class="delete-btn" color="error" @click="perDelete(item.exampleId,index)"
           :loading="deleteLoading&&curIndex===index">永久删除</v-btn>
       </v-card>
     </div>
@@ -62,7 +62,7 @@ export default {
       try {
         const { state, data } = await this.$http.searchCycleBin()
         if (state) {
-          this.list = data
+          this.list = Object.freeze(data)
           this.showNothing = data.length === 0
           this.$emit('setPageConn', true, true)
           this.$emit('updateNum', 'cycleBin', data.length)

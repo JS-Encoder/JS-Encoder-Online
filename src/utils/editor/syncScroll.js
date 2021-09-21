@@ -8,7 +8,7 @@ export default class SyncScroll {
   /**
    * 初始化同步滚动类SyncScroll(单例)
    * @param {Object} cm 当前CodeMirror实例
-   * @param {HTMLDocument} preview 当前预览窗口
+   * @param {HTMLElement} preview 当前预览窗口
    */
   constructor(cm, preview) {
     if (!SyncScroll.instance) {

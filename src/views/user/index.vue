@@ -1,21 +1,21 @@
 <template>
   <div id="user" class="d-flex flex-clo flex-ai">
-    <div class="user-info-box flex-clo flex-ai"
-      :style="{'--user-bgc':`url(${qiNiuImgLink+curUserDetail.avatar})`}" v-show="!userInfoLoading">
+    <div class="user-info-box flex-clo flex-ai" v-show="!userInfoLoading"
+      :style="{'--user-bgc':`url(${qiNiuImgLink+curUserDetail.avatar})`}">
       <v-avatar size="100" class="avatar" :color="curUserDetail.avatar?'':'primary'">
-        <v-img :src="qiNiuImgLink+curUserDetail.avatar" v-if="curUserDetail.avatar"></v-img>
+        <v-img v-if="curUserDetail.avatar" :src="qiNiuImgLink+curUserDetail.avatar"></v-img>
         <span class="white--text text-h4" v-else>{{curUserDetail.nickname|preNickname}}</span>
         <router-link to="/settings" v-if="isSelfProfile">
-          <v-btn fab class="edit-btn" x-small title="设置">
+          <v-btn class="edit-btn" title="设置" fab x-small>
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </router-link>
-        <v-btn fab class="edit-btn" x-small title="取消关注" :loading="unFollowLoading" v-else-if="isMyFollow"
-          color="#777777" @click="unFollow">
+        <v-btn class="edit-btn" title="取消关注" color="#777777" fab x-small v-else-if="isMyFollow" :loading="followLoading"
+          @click="unFollow">
           <v-icon>mdi-account-remove</v-icon>
         </v-btn>
-        <v-btn fab class="edit-btn" x-small title="关注" :loading="followLoading" v-else-if="!isMyFollow&&loginState"
-          color="primary" @click="follow">
+        <v-btn class="edit-btn" title="关注" color="primary" fab x-small v-else-if="loginState&&!isMyFollow"
+          :loading="followLoading" @click="follow">
           <v-icon>mdi-account-plus</v-icon>
         </v-btn>
       </v-avatar>
@@ -36,8 +36,8 @@
       <v-row class="user-tabs" no-gutters justify="center">
         <v-col md="7" sm="8" cols="12">
           <v-tabs ref="tabs" class="tab-list" v-model="curTabName" center-active show-arrows grow>
-            <v-tab class="tab" v-for="item in tabList" :key="item.route" @click="switchTabs(item)"
-              :href="`#${item.route}`">
+            <v-tab class="tab" v-for="item in tabList" :key="item.route" :href="`#${item.route}`"
+              @click="switchTabs(item)">
               <span class="text-md">{{item.name}}</span>
               <div class="item-num text-xs">{{num[item.path]|formatNumber}}</div>
             </v-tab>
@@ -45,18 +45,18 @@
         </v-col>
         <v-col cols="2" class="col-space"></v-col>
         <v-spacer></v-spacer>
-        <v-col md="2" sm="3" cols="11" class="flex-ai" style="display:flex" v-show="showSort">
+        <v-col class="flex-ai" style="display:flex" md="2" sm="3" cols="11" v-show="showSort">
           <span class="flex-sh sort-title" v-show="showSort">排序：</span>
-          <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="sortBy" hide-details
-            v-show="showSort" @change="switchRoute()">
+          <v-select v-show="showSort" v-model="sortBy" hide-details solo :items="sortList"
+            :menu-props="{ offsetY: true }" @change="switchRoute()">
           </v-select>
         </v-col>
-        <v-col md="1" sm="1" cols="1" class="add-work flex-ai" v-show="isSelfWorks">
+        <v-col class="add-work flex-ai" md="1" sm="1" cols="1" v-show="isSelfWorks">
           <v-spacer></v-spacer>
           <v-tooltip bottom color="info">
             <template v-slot:activator="{ on, attrs }">
               <router-link to="/newWork">
-                <v-btn small color="primary" fab v-bind="attrs" v-on="on">
+                <v-btn color="primary" small fab v-bind="attrs" v-on="on">
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </router-link>
@@ -70,8 +70,8 @@
           @updateNum="updateNum"></router-view>
       </div>
       <div class="page-opt flex-jcc" v-show="!isFirstPage||!isLastPage">
-        <v-btn class="before-btn" @click="switchPage(-1)" :disabled="isFirstPage">上一页</v-btn>
-        <v-btn color="primary" class="after-btn" @click="switchPage(1)" :disabled="isLastPage">下一页</v-btn>
+        <v-btn class="before-btn" :disabled="isFirstPage" @click="switchPage(-1)">上一页</v-btn>
+        <v-btn color="primary" class="after-btn" :disabled="isLastPage" @click="switchPage(1)">下一页</v-btn>
       </div>
     </div>
   </div>
@@ -94,24 +94,19 @@ export default {
         followers: 0,
         cycleBin: 0,
       },
-      sortList: [
+      sortList: Object.freeze([
         { text: '创建时间', value: 0 },
         { text: '更新日期', value: 1 },
         { text: '喜爱度', value: 2 },
-      ],
+      ]),
       page: 1,
       sortBy: 0,
-      showSort: true,
       showTabItems: false,
       isFirstPage: false,
       isLastPage: false,
       followLoading: false,
-      unFollowLoading: false,
       userInfoLoading: true,
     }
-  },
-  created() {
-    this.showSort = ['Works', 'Liked'].includes(this.$route.name)
   },
   mounted() {
     this.initUserData()
@@ -135,19 +130,14 @@ export default {
     },
     about() {
       const about = this.curUserDetail.about
-      if (!about) {
-        return !this.isSelfProfile ? 'ta还没想好怎么描述自己...' : ''
-      } else {
-        return about
-      }
+      return about || (!this.isSelfProfile ? 'ta还没想好怎么描述自己...' : '')
+    },
+    showSort() {
+      return ['Works', 'Liked'].includes(this.$route.name)
     },
   },
   methods: {
-    ...mapMutations([
-      'setCurUserDetail',
-      'clearCurUserDetail',
-      'setFollowState',
-    ]),
+    ...mapMutations(['setCurUserDetail', 'setFollowState']),
     async initUserData() {
       this.showTabItems = false
       this.userInfoLoading = true
@@ -169,21 +159,23 @@ export default {
       // 切换tab更新查询信息
       this.page = 1
       this.sortBy = 0
-      this.showSort = ['Works', 'Liked'].includes(item.route)
       this.switchRoute(item.route)
-    },
-    switchRoute(name) {
-      // 切换路由，如果没有name就只更新query查询信息
-      const f = { page: this.page }
-      this.showSort && (f.sortBy = this.sortBy)
-      name = name || this.$route.name
-      const routeObj = { name, query: { f: p2b.encode(f) } }
-      this.$router.push(routeObj).catch((err) => err)
-      this.setPageConn(false, false)
     },
     switchPage(changeNum) {
       this.page += changeNum
       this.switchRoute()
+    },
+    switchRoute(name) {
+      // 切换路由，如果没有name就只更新query查询信息
+      name = name || this.$route.name
+      const f = { page: this.page }
+      // 只有在实例列表和喜爱列表页面才有条件查询
+      if (['Works', 'Liked'].includes(name)) {
+        f.sortBy = this.sortBy
+      }
+      const routeObj = { name, query: { f: p2b.encode(f) } }
+      this.$router.push(routeObj).catch(() => {})
+      this.setPageConn(false, false)
     },
     setPageConn(isFirstPage, isLastPage) {
       this.isFirstPage = isFirstPage
@@ -219,10 +211,10 @@ export default {
           path: 'cycleBin',
         })
       }
-      this.tabList = tabList
+      this.tabList = Object.freeze(tabList)
     },
     updateNum(key, newNum) {
-      // 在子路由列表进行删除的时候
+      // 在子路由列表重新查询的时候更新数据
       this.num[key] = newNum
     },
     async getUserInfo() {
@@ -267,7 +259,7 @@ export default {
         } else {
           // 没有该用户，跳转到404
           this.$message.error('获取用户个人信息失败!')
-          this.$router.replace({ name: '404' })
+          this.$router.replace('/404')
         }
       } catch (err) {
         console.log(err)
@@ -301,7 +293,7 @@ export default {
         this.$message.info('请登录后再进行相关操作！')
         return void 0
       }
-      this.unFollowLoading = true
+      this.followLoading = true
       try {
         const res = await this.$http.delFollow({
           username: this.loginInfo.username,
@@ -317,10 +309,10 @@ export default {
       } catch (err) {
         console.log(err)
       }
-      this.unFollowLoading = false
+      this.followLoading = false
     },
     callSlider() {
-      // 显示tabs slider
+      // 刷新tabs slider的位置
       this.$refs.tabs.onResize()
     },
   },

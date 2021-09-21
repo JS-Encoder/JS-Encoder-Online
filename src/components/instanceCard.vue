@@ -1,17 +1,17 @@
 <template>
   <v-card class="instance-card">
-    <v-img :src="`${qiNiuImgLink}${info.img}`" class="instance-card-img">
+    <v-img class="instance-card-img" :src="`${qiNiuImgLink}${info.img}`">
       <div class="img-screen pointer d-flex flex-ai flex-jcc" @click="viewInstance">
         <v-icon>mdi-eye</v-icon>
       </div>
     </v-img>
     <v-card-actions>
-      <v-menu transition="none" :close-on-content-click="false" offset-y open-delay="500" close-delay="200"
-        :open-on-hover="true" top>
+      <v-menu transition="none" offset-y open-delay="500" close-delay="200" top :open-on-hover="true"
+        :close-on-content-click="false">
         <template v-slot:activator="{ on, attrs }">
           <v-avatar size="40" class="pointer" v-bind="attrs" v-on="on" :color="info.userPicture?'':'primary'"
             @click.native="viewUserProfile">
-            <v-img :src="qiNiuImgLink+info.userPicture" v-if="info.userPicture" :alt="info.name"></v-img>
+            <v-img v-if="info.userPicture" :src="qiNiuImgLink+info.userPicture" :alt="info.name"></v-img>
             <span class="white--text text-h7" v-else>{{info.name|preNickname}}</span>
           </v-avatar>
         </template>
@@ -27,7 +27,7 @@
         <v-icon>mdi-heart</v-icon>
       </v-btn>
       <span class="liked-num text-xs">{{info.favorites|formatNumber}}</span>
-      <v-btn icon class="icon-share" @click="shareLink">
+      <v-btn class="icon-share" icon @click="shareLink">
         <v-icon>mdi-share-variant</v-icon>
       </v-btn>
     </v-card-actions>

@@ -1,4 +1,6 @@
 import store from '@store'
+import Loader from '@utils/loader'
+const loader = new Loader()
 
 // 处理实例iframe的代码执行
 class IframeHandler {
@@ -52,7 +54,7 @@ class IframeHandler {
         resolve(() => {
           // 为了让截图中的文字不产生变化，在编译后的代码中加上默认文字样式
           head = `
-          <style>body{font-family:"Microsoft YaHei";}</style>
+          <style>html,body{font-family:"Microsoft YaHei";overflow:hidden;}</style>
           ${head}
           `.trim()
           store.commit('setCompiledCode', this.jointHTML(head, HTMLCode))
@@ -109,7 +111,12 @@ class IframeHandler {
     }
   }
 
-  // 拼接html代码
+  /**
+   * 拼接html代码
+   * @param {String} head 
+   * @param {String} body 
+   * @returns {String}
+   */
   jointHTML (head, body) {
     return `
     <!DOCTYPE html>

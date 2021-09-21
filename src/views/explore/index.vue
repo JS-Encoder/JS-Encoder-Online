@@ -5,16 +5,16 @@
       <div class="explore-search">
         <v-row>
           <v-col lg="6" md="8" sm="8" cols="12">
-            <v-text-field ref="searchField" solo label="找找你想要的..." height="60" class="search-keyword" clearable
+            <v-text-field class="search-keyword" ref="searchField" solo label="找找你想要的..." height="60" clearable
               hide-details v-model="searchForm.keyword" @keypress.enter="search">
               <template slot="append">
-                <v-btn @click.stop="search" :loading="searchLoading" color="primary" class="search-btn" absolute x-large
-                  :disabled="!searchForm.keyword">搜索</v-btn>
+                <v-btn class="search-btn" color="primary" absolute x-large :disabled="!searchForm.keyword"
+                  :loading="searchLoading" @click.stop="search">搜索</v-btn>
               </template>
             </v-text-field>
           </v-col>
           <v-col lg="2" md="2" sm="2" cols="12">
-            <v-btn height="60" x-large :elevation="showFilter?5:0" plain @click="showFilter=!showFilter" block>
+            <v-btn height="60" x-large plain block :elevation="showFilter?5:0" @click="showFilter=!showFilter">
               <v-icon left>mdi-filter-variant</v-icon> 过滤
             </v-btn>
           </v-col>
@@ -22,14 +22,14 @@
         <v-row v-show="showFilter">
           <v-col lg="4" md="4" sm="6" cols="12">
             <span>预处理：</span>
-            <v-select :items="prepList" clearable solo :menu-props="{ offsetY: true }" v-model="searchForm.prep"
-              hide-details @change="newSearch">
+            <v-select hide-details clearable solo v-model="searchForm.prep" :items="prepList"
+              :menu-props="{ offsetY: true }" @change="newSearch">
             </v-select>
           </v-col>
           <v-col lg="4" md="4" sm="6" cols="12">
             <span>排序：</span>
-            <v-select :items="sortList" solo :menu-props="{ offsetY: true }" v-model="searchForm.sort" item-text="text"
-              item-value="value" hide-details @change="newSearch">
+            <v-select solo item-text="text" item-value="value" hide-details v-model="searchForm.sort"
+              :menu-props="{ offsetY: true }" :items="sortList" @change="newSearch">
             </v-select>
           </v-col>
         </v-row>
@@ -51,7 +51,7 @@
           <div class="explore-list-item" v-for="(item, index) in instanceList" :key="item.exampleId">
             <instance-card :info="item" :cardIndex="index" @setFollow="setFollow" @setFav="setFav"></instance-card>
           </div>
-          <div class="skeleton-list-item" v-for="(item, index) in 12" :key="index" v-show="listLoading">
+          <div class="skeleton-list-item" v-show="listLoading" v-for="(item, index) in 12" :key="index">
             <instance-skeleton></instance-skeleton>
           </div>
         </div>
@@ -75,11 +75,11 @@ export default {
   name: 'Explore',
   data() {
     return {
-      sortList: [
+      sortList: Object.freeze([
         { text: '创建时间', value: 0 },
         { text: '更新日期', value: 1 },
         { text: '喜爱度', value: 2 },
-      ],
+      ]),
       prepList: [],
       searchForm: {
         keyword: '',
@@ -202,17 +202,6 @@ export default {
     InstanceSkeleton,
     InstanceCard,
     GoToTop,
-  },
-  beforeRouteUpdate(to, from, next) {
-    next()
-    this.instanceList = []
-    this.getInstance()
-  },
-  beforeRouteLeave(to, from, next) {
-    if (from.name === 'Explore' && to.name !== 'Work') {
-      this.$destroy()
-    }
-    next()
   },
 }
 </script>

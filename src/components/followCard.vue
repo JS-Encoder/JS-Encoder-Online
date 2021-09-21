@@ -1,16 +1,16 @@
 <template>
   <div class="follow-card">
     <v-avatar class="avatar pointer" :color="userInfo.userPicture?'':'primary'" @click="viewUserProfile">
-      <v-img :src="qiNiuImgLink+userInfo.userPicture" v-if="userInfo.userPicture" :alt="userInfo.name"></v-img>
+      <v-img v-if="userInfo.userPicture" :src="qiNiuImgLink+userInfo.userPicture" :alt="userInfo.name"></v-img>
       <span class="white--text text-h4" v-else>{{userInfo.name|preNickname}}</span>
     </v-avatar>
     <div class="follow-user-info">
       <div class="d-flex flex-ai">
         <span class="text-bold text-md">{{userInfo.name}}</span>
         <v-spacer></v-spacer>
-        <v-btn small color="#3C3C3C" depressed v-if="userInfo.myFollow" width="80" :loading="unFollowLoading"
+        <v-btn width="80" small color="#3C3C3C" depressed v-if="userInfo.myFollow" :loading="unFollowLoading"
           @click="unFollow">取消关注</v-btn>
-        <v-btn small color="primary" depressed v-else width="80" :loading="followLoading" @click="follow">关注</v-btn>
+        <v-btn small color="primary" depressed width="80" v-else :loading="followLoading" @click="follow">关注</v-btn>
       </div>
       <span class="about text-describe text-sm">{{userInfo.description||'ta还没想好怎么描述自己...'}}</span>
       <div class="text-sm num">
@@ -95,7 +95,6 @@ export default {
       this.unFollowLoading = false
     },
   },
-  components: {},
 }
 </script>
 

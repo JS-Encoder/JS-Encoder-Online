@@ -7,15 +7,15 @@
       </div>
       <div class="reset-pwd-form">
         <v-form autocomplete="off" ref="form">
-          <v-text-field label="密码" autocomplete="new-password" :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd" outlined color="primary"
-            hint="密码必须包含字母数字和下划线且长度为6-12" v-model="form.password" :rules="rules.password">
+          <v-text-field label="密码" autocomplete="new-password" color="primary" hint="密码必须包含字母数字和下划线且长度为6-12"
+            :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" outlined
+            v-model="form.password" :rules="rules.password" @click:append="showPwd = !showPwd">
           </v-text-field>
-          <v-text-field label="重复密码" autocomplete="new-password" :append-icon="showRePwd ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="showRePwd ? 'text' : 'password'" @click:append="showRePwd = !showRePwd" outlined color="primary"
-            v-model="form.rePassword" :rules="rules.rePassword" :disabled="!isPwdRight">
+          <v-text-field label="重复密码" autocomplete="new-password" outlined color="primary" v-model="form.rePassword"
+            :append-icon="showRePwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showRePwd ? 'text' : 'password'"
+            :rules="rules.rePassword" :disabled="!isPwdRight" @click:append="showRePwd = !showRePwd">
           </v-text-field>
-          <v-btn block color="primary" x-large :loading="loading" @click="reset">重置密码</v-btn>
+          <v-btn color="primary" block x-large :loading="loading" @click="reset">重置密码</v-btn>
         </v-form>
       </div>
     </div>

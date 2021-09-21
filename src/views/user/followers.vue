@@ -1,11 +1,11 @@
 <template>
   <div id="followers">
     <div class="follower-list" v-show="!nothing">
-      <div class="skeleton-list-item" v-for="(item, index) in 20" :key="index" v-show="loading">
+      <div class="skeleton-list-item" v-show="loading" v-for="(item, index) in 20" :key="index">
         <follow-skeleton></follow-skeleton>
       </div>
-      <div class="follower-list-item" v-for="(item, index) in followersList" :key="item.username" v-show="!loading">
-        <follow-card :cardIndex="index" @setFollow="setFollow" :userInfo="item"></follow-card>
+      <div class="follower-list-item" v-show="!loading" v-for="(item, index) in followersList" :key="item.username">
+        <follow-card :cardIndex="index" :userInfo="item" @setFollow="setFollow"></follow-card>
       </div>
     </div>
     <div class="followers-tip flex-jcc" v-show="showNothingTip">
@@ -61,6 +61,7 @@ export default {
     async search(page) {
       this.loading = true
       this.nothing = false
+      this.$emit('setPageConn', true, true)
       try {
         const { state, data } = await this.$http.searchFollowers({
           currentPage: page,

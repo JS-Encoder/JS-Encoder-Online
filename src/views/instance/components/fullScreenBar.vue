@@ -2,7 +2,7 @@
   <div id="fullScreenBar" class="borbox">
     <div class="scale-box d-flex flex-ai flex-jcc">
       <span class="proportion">{{scale}}%</span>
-      <v-slider v-model="scale" :show-tooltip="false" step="25" min="25" max="500" hide-details>
+      <v-slider step="25" min="25" max="500" hide-details v-model="scale" :show-tooltip="false">
       </v-slider>
     </div>
     <div class="opt-list d-flex">

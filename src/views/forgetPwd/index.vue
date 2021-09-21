@@ -23,7 +23,6 @@
 
 <script>
 import regexpList from '@utils/regexp'
-import cookie from '@utils/cookie'
 export default {
   name: 'ForgetPwd',
   data() {
@@ -57,7 +56,7 @@ export default {
       const emailOpts = this.emailOpts
       emailOpts.authCodeLoading = true
       try {
-        const { state, token } = await this.$http.emailAuthLink(this.form)
+        const { state } = await this.$http.emailAuthLink(this.form)
         if (state) {
           this.$message.success('邮件发送成功！')
           emailOpts.sended = true
@@ -85,7 +84,6 @@ export default {
       emailOpts.authCodeLoading = false
     },
   },
-  components: {},
 }
 </script>
 

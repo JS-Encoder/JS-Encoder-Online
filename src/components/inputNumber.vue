@@ -1,13 +1,13 @@
 <template>
-  <v-text-field @blur="onBlur" dense flat solo background-color="info" @keypress="onKeypress" v-model="inputVal"
-    class="v-input-number" :hide-details="hideDetails">
+  <v-text-field class="v-input-number" dense flat solo background-color="info" v-model="inputVal"
+    :hide-details="hideDetails" @blur="onBlur" @keypress="onKeypress">
     <template v-slot:prepend-inner>
       <v-btn icon class="icon-btn" @click="subtract">
         <v-icon>mdi-minus</v-icon>
       </v-btn>
     </template>
     <template v-slot:append>
-      <v-btn icon class="icon-btn" @click="add">
+      <v-btn class="icon-btn" icon @click="add">
         <v-icon class="icon">mdi-plus</v-icon>
       </v-btn>
     </template>

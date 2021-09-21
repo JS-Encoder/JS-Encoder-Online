@@ -1,10 +1,10 @@
 <template>
   <div id="settings" class="d-flex">
-    <v-row no-gutters justify="center" class="head-tabs">
+    <v-row class="head-tabs" no-gutters justify="center">
       <v-col cols="12">
         <v-tabs class="tab-list" v-model="curRouteName" center-active show-arrows grow>
-          <v-tab class="tab" v-for="item in menuList" :key="item.name" @click="switchItem(item.name)"
-            :href="`#${item.name}`">
+          <v-tab class="tab" v-for="item in menuList" :key="item.name" :href="`#${item.name}`"
+            @click="switchItem(item.name)">
             <span class="text-md">{{item.text}}</span>
           </v-tab>
         </v-tabs>
@@ -12,11 +12,11 @@
     </v-row>
     <div class="side-menu d-flex flex-clo flex-end">
       <span class="menu-title title-lg">设置</span>
-      <v-card color="info" class="menu-card" rounded="lg">
+      <v-card class="menu-card" color="info" rounded="lg">
         <v-list class="menu-list">
-          <v-list-item-group :value="curRouteName" color="info">
-            <v-list-item v-for="item in menuList" :key="item.name" class="menu-list-item"
-              active-class="menu-list-item-active" :value="item.name" @click="switchItem(item.name)">
+          <v-list-item-group color="info" :value="curRouteName">
+            <v-list-item class="menu-list-item" active-class="menu-list-item-active" v-for="item in menuList"
+              :key="item.name" :value="item.name" @click="switchItem(item.name)">
               <v-list-item-icon>
                 <v-icon class="icon">{{item.icon}}</v-icon>
               </v-list-item-icon>
@@ -30,7 +30,7 @@
     </div>
     <div class="settings-content d-flex flex-1 flex-jcc">
       <router-view class="content-view" v-if="isUserInfoGot"></router-view>
-      <div v-else class="content-view">
+      <div class="content-view" v-else>
         <v-skeleton-loader type="article@5"></v-skeleton-loader>
       </div>
     </div>
@@ -43,7 +43,7 @@ export default {
   name: 'Settings',
   data() {
     return {
-      menuList: [
+      menuList: Object.freeze([
         {
           text: '个人设置',
           name: 'Profile',
@@ -59,19 +59,25 @@ export default {
           name: 'Account',
           icon: 'mdi-shield-account-outline',
         },
-      ],
-      curRouteName: 'Profile',
+      ]),
       isUserInfoGot: false,
     }
   },
   created() {
-    this.curRouteName = this.$route.name
-    // 先清空
+    // 先清空用户信息
     this.clearCurUserDetail()
     this.getUserInfo()
   },
   computed: {
     ...mapState(['loginInfo']),
+    curRouteName: {
+      get() {
+        return this.$route.name
+      },
+      set(val) {
+        return val
+      },
+    },
   },
   methods: {
     ...mapMutations(['setCurUserDetail', 'clearCurUserDetail']),
@@ -106,11 +112,9 @@ export default {
       }
     },
     switchItem(name) {
-      this.curRouteName = name
       this.$router.push({ name })
     },
   },
-  components: {},
 }
 </script>
 

@@ -7,12 +7,12 @@
       </div>
     </div>
     <div class="tools d-flex flex-sh">
-      <div class="d-flex flex-ai flex-jcc" title="刷新" @click="refresh">
+      <v-btn height="30" width="30" icon title="刷新" @click="refresh">
         <i class="icon iconfont icon-zhongzhi"></i>
-      </div>
-      <div class="d-flex flex-ai flex-jcc" title="全屏" @click="fullScreen">
+      </v-btn>
+      <v-btn height="30" width="30" icon title="全屏" @click="fullScreen" disabled>
         <i class="icon iconfont icon-fangda"></i>
-      </div>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@
 export default {
   data() {
     return {
-      showView: true
+      showView: true,
     }
   },
   methods: {
@@ -30,9 +30,8 @@ export default {
     },
     fullScreen() {
       this.$emit('fullScreen', true)
-    }
+    },
   },
-  components: {}
 }
 </script>
 
@@ -64,14 +63,11 @@ export default {
   .tools {
     font-size: 18px;
     color: $light-5;
-    & > div {
+    & > .v-btn {
       width: 40px;
-      cursor: pointer;
+      margin-right: 5px;
       i {
         font-size: 18px;
-      }
-      &:hover {
-        color: $light-2;
       }
     }
   }

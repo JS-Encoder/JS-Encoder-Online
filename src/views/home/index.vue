@@ -1,9 +1,9 @@
 <template>
-  <div id="home" class="d-flex flex-clo">
+  <div id="home" class="d-flex flex-clo" v-once>
     <div class="introduce d-flex">
       <div class="preview">
-        <img class="preview1-img" src="http://images.lliiooiill.cn/preview3.svg?1" alt="">
-        <img class="preview2-img" src="http://images.lliiooiill.cn/preview2.svg" alt="">
+        <img class="preview1-img" :src="`${qiNiuImgLink}preview3.svg?1`" alt="">
+        <img class="preview2-img" :src="`${qiNiuImgLink}preview2.svg`" alt="">
       </div>
       <div class="main-content">
         <div class="slogan d-flex flex-clo">
@@ -22,7 +22,7 @@
         <span class="title-xl"> 能做什么？</span>
       </div>
       <ul class="features-list">
-        <li v-for="(item, index) in featuresList" :key="index" class="d-flex flex-clo">
+        <li class="d-flex flex-clo" v-for="(item, index) in featuresList" :key="index">
           <div>
             <i class="icon iconfont" :class="item.icon" :style="{color:item.color}"></i>
             <span class="feature-title">{{item.title}}</span>
@@ -37,11 +37,13 @@
 
 <script>
 import loginVerify from '@components/dialog/loginVerify'
+import { qiNiuImgLink } from '@utils/publicData'
 export default {
   name: 'Home',
   data() {
     return {
-      featuresList: [
+      qiNiuImgLink,
+      featuresList: Object.freeze([
         {
           icon: 'icon-yuncunchu',
           title: '云存储',
@@ -81,7 +83,7 @@ export default {
             '模拟 Chrome 原生 Console, 支持多种类型的日志高亮显示；也可直接输入命令进行调试。',
           color: '#1afa29',
         },
-      ],
+      ]),
     }
   },
   methods: {
@@ -298,12 +300,21 @@ export default {
         }
       }
       .main-content {
-        margin: 200px 0 0 50px;
+        margin: 150px 0 0 50px;
       }
     }
     .features-list,
     .features-question {
       width: 85%;
+    }
+  }
+}
+@include screenLG {
+  #home {
+    .introduce {
+      .main-content {
+        margin: 150px 0 0 0;
+      }
     }
   }
 }
