@@ -1,4 +1,4 @@
-if (window.hasOwnProperty('JSE')) {
+if (!window.hasOwnProperty('JSE')) {
   Object.defineProperty(window, 'JSE', {
     value: {
       InfiniteLoopController: {
