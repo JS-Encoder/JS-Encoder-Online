@@ -19,10 +19,11 @@ class IframeHandler {
    * @param {Boolean} isMD 是否为markdown模式
    * @param {String} headTags 需要添加在头部的标签字符串
    */
-  async insertCode (code, links, isMD, headTags = '') {
+  async insertCode (code, links, isMD, headTags, onerror, onunhandledrejection) {
     const { HTMLCode, CSSCode, JSCode } = code
     const { cssLinks, JSLinks } = links
-    const iDoc = this.iframe.contentWindow.document
+    const iWin = this.iframe.contentWindow
+    const iDoc = iWin.document
     let extCss = '',
       extJS = ''
     for (let i = 0, k = cssLinks.length;i < k;i++) {
@@ -36,17 +37,28 @@ class IframeHandler {
     let head = `
     ${headTags}
     ${extCss}
-    ${extJS}
     <style>
     ${CSSCode}
     </style>
     `.trim()
-    const compiledCode = this.jointHTML(head, HTMLCode)
+    let body = `
+    ${HTMLCode}
+    ${extJS}
+    <script>
+    ${JSCode}
+    </script>
+    `.trim()
+    const compiledCode = this.jointHTML(head, body)
     iDoc.open()
+    // 在执行js脚本前向iframe注入错误监听回调函数
+    iWin.onerror = onerror
+    iWin.onunhandledrejection = onunhandledrejection
     iDoc.write(compiledCode)
     iDoc.close()
     return new Promise((resolve) => {
       this.iframe.onload = () => {
+        // 执行用户在写的onload回调函数
+        iWin.onload?.()
         if (isMD) {
           this.renderMathFormula()
           this.renderFlowchart()
@@ -57,8 +69,7 @@ class IframeHandler {
           <style>html,body{font-family:"Microsoft YaHei";overflow:hidden;}</style>
           ${head}
           `.trim()
-          store.commit('setCompiledCode', this.jointHTML(head, HTMLCode))
-          this.insertScript(JSCode)
+          store.commit('setCompiledCode', this.jointHTML(head, body))
         })
       }
     })
@@ -127,7 +138,7 @@ class IframeHandler {
     <title></title>
     ${head}
     </head>
-    <body>
+    <body translate="no">
     ${body}
     </body>
     </html>
