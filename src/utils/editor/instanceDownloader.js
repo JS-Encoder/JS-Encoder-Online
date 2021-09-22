@@ -72,14 +72,14 @@ export default class InstanceDownloader {
   single (code, links, headTags) {
     const { HTMLCode, CSSCode, JSCode } = code
     const { extCss = '', extJS = '' } = links
-    const htmlCode = `<!DOCTYPE html>
+    const htmlCode = `
+    <!DOCTYPE html>
     <html lang="en">
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     ${headTags}
     ${extCss}
-    ${extJS}
     <title></title>
     <style>
     ${CSSCode}
@@ -87,10 +87,11 @@ export default class InstanceDownloader {
     </head>
     <body>
     ${HTMLCode}
+    ${extJS}
     <script>${JSCode}</script>
     </body>
     </html>
-    `
+    `.trim()
     this.download(htmlCode, 'index.html')
   }
 
@@ -113,13 +114,13 @@ export default class InstanceDownloader {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     ${headTags}
     ${extCss}
-    ${extJS}
     <link rel="stylesheet" href="./index.css">
     <script src="./index.js"><\/script>
     <title></title>
     </head>
     <body>
     ${HTMLCode}
+    ${extJS}
     </body>
     </html>
     `
