@@ -57,8 +57,6 @@ class IframeHandler {
     iDoc.close()
     return new Promise((resolve) => {
       this.iframe.onload = () => {
-        // 执行用户在写的onload回调函数
-        iWin.onload?.()
         if (isMD) {
           this.renderMathFormula()
           this.renderFlowchart()
