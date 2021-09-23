@@ -2,7 +2,7 @@
   <div id="home" class="d-flex flex-clo" v-once>
     <div class="introduce d-flex">
       <div class="preview">
-        <img class="preview1-img" :src="`${qiNiuImgLink}preview3.svg?1`" alt="">
+        <img class="preview1-img" :src="`${qiNiuImgLink}preview1.svg?2`" alt="">
         <img class="preview2-img" :src="`${qiNiuImgLink}preview2.svg`" alt="">
       </div>
       <div class="main-content">
