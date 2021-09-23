@@ -123,7 +123,6 @@ export default {
         sort = parseInt(fSort)
         keyword = fKeyword
         prep = fPrep
-        console.log(p2b.decode(f))
       }
       this.searchForm = { sort, prep, keyword }
       this.page = page
@@ -141,12 +140,13 @@ export default {
     switchRoute() {
       // 切换路由，如果没有name就只更新query查询信息
       const f = p2b.encode({ ...this.searchForm, page: this.page })
-      if (this.$route.query.f === f) {
-        this.getInstance()
-      } else {
+      if (this.$route.query.f !== f) {
         const routeObj = { name: 'Explore', query: { f } }
-        this.$router.push(routeObj).catch((err) => err)
+        this.$router.push(routeObj).catch((err) => {
+          console.log(err)
+        })
       }
+      this.getInstance()
     },
     search() {
       this.$refs.searchField.blur()
@@ -161,6 +161,7 @@ export default {
         this.searchLoading = true
         this.listLoading = true
         this.nothing = false
+        this.showNothingTip = false
         this.init = true
         const prepKey = judgeMode(prep)
         const res = await this.$http.searchWorksByContent({
