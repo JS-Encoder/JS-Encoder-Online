@@ -94,16 +94,12 @@ export default {
             case 'NewWork': {
               this.$router.push({ name: 'NewWork' }).catch((err) => {
                 this.changeRouterKey()
-                IframeHandler.clearIframe()
-                this.resetInstanceState()
               })
               break
             }
             case 'Work': {
               this.$router.push({ name: 'NewWork' }).then(() => {
                 this.changeRouterKey()
-                IframeHandler.clearIframe()
-                this.resetInstanceState()
               })
               break
             }
@@ -123,7 +119,8 @@ export default {
             okColor: 'error',
             okText: '登出',
           }).then((isLogout) => {
-            if (!isLogout) void 0
+            if (!isLogout) return void 0
+            console.log(isLogout)
             // 删除登录身份凭证
             cookie.del('AUTH_TOKEN')
             // 取消自动登录
