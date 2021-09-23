@@ -72,43 +72,6 @@ const instance = {
   setIframeInit: (state, isInit) => {
     state.iframeInit = isInit
   },
-  resetInstanceState: (state) => {
-    // 重置部分instance属性至初始状态
-    state.instanceCode = {
-      HTML: '',
-      CSS: '',
-      JavaScript: '',
-    }
-    state.instanceSetting = {
-      delayTime: 500,
-      autoExecute: true,
-      autoComplete: true,
-      lint: true,
-      lineWrap: true,
-      indent: {
-        replace: false,
-        width: 2,
-      },
-      font: {
-        family: 'Consolas',
-        size: 14,
-      },
-      headTags: ''
-    }
-    state.curInstanceDetail = {
-      username: '',
-      nickname: '',
-      title: '',
-      tags: '',
-      liked: false,
-      id: '',
-      saved: true
-    },
-      state.compiledCode = ''
-    state.consoleH = 150
-    state.consoleInfo = []
-    state.consoleInfoCount = { error: 0, warn: 0, info: 0 }
-  }
 }
 
 export default instance

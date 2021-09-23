@@ -9,6 +9,8 @@ import userStates from './state/user'
 
 Vue.use(Vuex)
 
+const cpyInstanceStateStr = JSON.stringify(instanceStates)
+
 export default new Vuex.Store({
   state: {
     ...instanceStates,
@@ -24,6 +26,10 @@ export default new Vuex.Store({
     },
     setHasNewFeatures (state, has) {
       state.hasNewFeatures = has
+    },
+    resetInstanceState (state) {
+      Object.assign(state, JSON.parse(cpyInstanceStateStr))
+      state.iframeInit = true
     }
   },
   actions: {
