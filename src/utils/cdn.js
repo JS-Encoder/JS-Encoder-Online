@@ -7,15 +7,15 @@ const externalLinks = {
 
 const iframeLinks = {
   mdCSS: [
-    'http://images.lliiooiill.cn/markdown-style.css',
-    'https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css'
+    '/images/markdown-style.css',
+    'https://cdn.bootcdn.net/ajax/libs/KaTeX/0.12.0/katex.min.css'
   ],
   mdJS: [
     'https://cdn.bootcdn.net/ajax/libs/raphael/2.3.0/raphael.min.js',
     'https://cdn.bootcdn.net/ajax/libs/flowchart/1.15.0/flowchart.min.js'
   ],
   commonJS: [
-    'http://images.lliiooiill.cn/JSEController.js'
+    '/images/JSEController.js'
   ]
 }
 
