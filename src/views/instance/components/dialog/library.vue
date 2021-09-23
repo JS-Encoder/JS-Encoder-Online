@@ -48,7 +48,7 @@
           <v-btn class="add-btn" block color="info" @click="showCSSInput++">添加外部样式</v-btn>
           <span class="text-md lib-title">外部脚本</span>
           <span class="text-xs text-describe">你所添加的外部脚本，将按照顺序在本地JavaScript执行之前依次执行，支持http和https协议链接</span>
-          <v-autocomplete :items="jsLibList" flat dense solo hide-details background-color="info" label="查找外部样式..."
+          <v-autocomplete :items="jsLibList" flat dense solo hide-details background-color="info" label="查找外部脚本..."
             return-object item-text="name" :menu-props="{ offsetY: true, closeOnContentClick: true}"
             no-data-text="无匹配CDN">
             <template v-slot:item="{ item }">
