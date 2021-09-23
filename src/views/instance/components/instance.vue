@@ -184,7 +184,8 @@ export default {
       if (!isMD) {
         if (this.iframeInit) {
           // 在非markdown模式下必须重新加载iframe来避免上一次执行的javascript代码影响到新代码的执行结果
-          iframe.src += ''
+          iframe.contentWindow.location.replace(iframe.src)
+          // iframe.src += ''
           // 使用reload重载似乎在新版chrome和edge中会加载外部的vueApp，因此使用src代替
           // iframe.contentWindow.location.reload()
           const consoleSettings = this.consoleSettings
