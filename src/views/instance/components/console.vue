@@ -279,7 +279,7 @@ export default {
       }
     },
     clearLogs() {
-      new IframeConsole().clear()
+      IframeConsole.clear()
       this.setConsoleInfo([])
       this.setConsoleInfoCount({
         error: 0,
