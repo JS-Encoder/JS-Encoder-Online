@@ -8,9 +8,11 @@
       <div class="d-flex flex-ai">
         <span class="text-bold text-md">{{userInfo.name}}</span>
         <v-spacer></v-spacer>
-        <v-btn width="80" small color="#3C3C3C" depressed v-if="userInfo.myFollow" :loading="unFollowLoading"
-          @click="unFollow">取消关注</v-btn>
-        <v-btn small color="primary" depressed width="80" v-else :loading="followLoading" @click="follow">关注</v-btn>
+        <div v-if="userInfo.myFollow!==null">
+          <v-btn width="80" small color="#3C3C3C" depressed v-if="userInfo.myFollow" :loading="unFollowLoading"
+            @click="unFollow">取消关注</v-btn>
+          <v-btn small color="primary" depressed width="80" v-else :loading="followLoading" @click="follow">关注</v-btn>
+        </div>
       </div>
       <span class="about text-describe text-sm">{{userInfo.description||'ta还没想好怎么描述自己...'}}</span>
       <div class="text-sm num">
