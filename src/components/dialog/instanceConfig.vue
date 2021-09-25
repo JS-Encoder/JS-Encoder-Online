@@ -22,6 +22,12 @@
               </v-chip>
             </template>
           </v-combobox>
+          <span class="form-item-title">公共性</span>
+          <span class="text-describe">将实例设置为私有，其他人将不会访问到你的实例。但每位用户最多只能有5个私有实例</span>
+          <v-radio-group v-model="form.ispublic" row mandatory>
+            <v-radio label="公共" :value="true"></v-radio>
+            <v-radio label="私有" :value="false"></v-radio>
+          </v-radio-group>
         </v-form>
       </v-card-text>
       <v-card-actions style="padding-bottom:20px">
@@ -41,6 +47,7 @@ export default {
       form: {
         title: '',
         tags: [],
+        ispublic: true,
       },
       rules: {
         title: [(v) => !!v || '请填写实例标题！'],
@@ -60,10 +67,11 @@ export default {
     }
   },
   created() {
-    const { title, tags } = this.curInstanceDetail
+    const { title, tags, ispublic } = this.curInstanceDetail
     this.form = {
       title,
       tags: tags ? tags.split(',') : [],
+      ispublic,
     }
   },
   computed: {
@@ -83,19 +91,31 @@ export default {
       if (!this.validate()) return void 0
       this.loading = true
       try {
-        const { title, tags } = this.form
-        const res = await this.$http.configWork({
-          exampleId: this.curInstanceDetail.id,
+        const { title, tags, ispublic } = this.form
+        const { id, ispublic: oldIspublic } = this.curInstanceDetail
+        const reqObj = {
+          exampleId: id,
           label: tags.toString(),
           exampleName: title,
-        })
+        }
+        if (ispublic !== oldIspublic) {
+          reqObj.ispublic = ispublic
+        }
+        const res = await this.$http.configWork(reqObj)
         if (res.state) {
           this.setVisibleDialogName('')
           this.setCurInstanceDetail({ title, tags: tags.toString() })
-          this.setVisibleDialogName('')
           this.$message.success('实例设置修改成功！')
         } else {
-          this.$message.success('实例设置修改失败！')
+          switch (res.msg) {
+            case 1: {
+              this.$message.error('私有实例已达上限！')
+              break
+            }
+            default: {
+              this.$message.error('实例设置修改失败！')
+            }
+          }
         }
       } catch (err) {
         console.log(err)

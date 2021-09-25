@@ -178,6 +178,7 @@ export default {
             jsStyle,
             name: nickname,
             myFavorites,
+            ispublic,
           } = res.data
           const { instanceCode, instanceExtLinks, headTags } =
             JSON.parse(codeContent)
@@ -187,6 +188,7 @@ export default {
             id,
             title,
             tags,
+            ispublic,
             liked: myFavorites,
             saved: true,
           })

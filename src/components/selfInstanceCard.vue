@@ -4,6 +4,9 @@
       <div class="img-screen pointer d-flex flex-ai flex-jcc" @click="viewInstance">
         <v-icon>mdi-eye</v-icon>
       </div>
+      <div class="private" v-if="!info.ispublic">
+        <v-icon>mdi-lock</v-icon>
+      </div>
     </v-img>
     <v-card-actions>
       <div class="instance-info d-flex flex-clo pointer">
@@ -179,6 +182,12 @@ export default {
       &:hover {
         opacity: 1;
       }
+    }
+    .private {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      text-shadow: 0 2px 4px $deep-5;
     }
   }
   .instance-info {
