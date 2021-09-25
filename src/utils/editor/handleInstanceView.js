@@ -45,6 +45,37 @@ class IframeHandler {
     ${HTMLCode}
     ${extJS}
     <script>
+    ${isMD ? `
+    !function() {
+      /**
+       * Render the KaTeX
+       * 渲染KaTeX数学公式
+       */
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ]
+      })
+      /**
+       * Render the flowchart in markdown
+       * 渲染markdown中的流程图
+       */
+      const flows = document.querySelectorAll('.language-flow')
+      for (let i = 0, k = flows.length;i < k;i++) {
+        const currentFlow = flows[i]
+        const pre = currentFlow.parentNode
+        const chartBox = document.createElement('div')
+        chartBox.id = 'flow'+i
+        pre.parentNode.replaceChild(chartBox, pre)
+        const code = currentFlow.value || currentFlow.textContent
+        flowchart.parse(code).drawSVG('flow'+i)
+      }
+    }()
+    `.trim() : ''
+    }
     ${JSCode}
     </script>
     `.trim()
@@ -57,10 +88,10 @@ class IframeHandler {
     iDoc.close()
     return new Promise((resolve) => {
       this.iframe.onload = () => {
-        if (isMD) {
-          this.renderMathFormula()
-          this.renderFlowchart()
-        }
+        // if (isMD) {
+        //   this.renderMathFormula()
+        //   this.renderFlowchart()
+        // }
         resolve(() => {
           // 为了让截图中的文字不产生变化，在编译后的代码中加上默认文字样式
           head = `
@@ -77,48 +108,48 @@ class IframeHandler {
    * 向iframe中插入script标签
    * @param {String} JSCode
    */
-  insertScript (JSCode) {
-    const doc = this.iframe.contentWindow.document
-    const script = doc.createElement('script')
-    script.text = JSCode
-    doc.body.appendChild(script)
-  }
+  // insertScript (JSCode) {
+  //   const doc = this.iframe.contentWindow.document
+  //   const script = doc.createElement('script')
+  //   script.text = JSCode
+  //   doc.body.appendChild(script)
+  // }
 
   // 渲染markdown中的数学公式
-  async renderMathFormula () {
-    const iBody = this.iframe.contentWindow.document.body
-    let KaTeX
-    if (!loader.get('KaTeX')) {
-      // 导入renderMathInElement方法
-      KaTeX = (await import('katex/dist/contrib/auto-render')).default
-      loader.set('KaTeX', KaTeX)
-    } else {
-      KaTeX = loader.get('KaTeX')
-    }
-    KaTeX(iBody, {
-      delimiters: [
-        { left: '$$', right: '$$', display: true },
-        { left: '$', right: '$', display: false },
-        { left: '\\(', right: '\\)', display: false },
-        { left: '\\[', right: '\\]', display: true },
-      ],
-    })
-  }
+  // async renderMathFormula () {
+  //   const iBody = this.iframe.contentWindow.document.body
+  //   let KaTeX
+  //   if (!loader.get('KaTeX')) {
+  //     // 导入renderMathInElement方法
+  //     KaTeX = (await import('katex/dist/contrib/auto-render')).default
+  //     loader.set('KaTeX', KaTeX)
+  //   } else {
+  //     KaTeX = loader.get('KaTeX')
+  //   }
+  //   KaTeX(iBody, {
+  //     delimiters: [
+  //       { left: '$$', right: '$$', display: true },
+  //       { left: '$', right: '$', display: false },
+  //       { left: '\\(', right: '\\)', display: false },
+  //       { left: '\\[', right: '\\]', display: true },
+  //     ],
+  //   })
+  // }
 
   // 渲染markdown中的流程图
-  renderFlowchart () {
-    const iframeWindow = this.iframe.contentWindow
-    const flows = iframeWindow.document.querySelectorAll('.language-flow')
-    for (let i = 0, k = flows.length;i < k;i++) {
-      const currentFlow = flows[i]
-      const pre = currentFlow.parentNode
-      const chartBox = document.createElement('div')
-      chartBox.id = `flow${i}`
-      pre.parentNode.replaceChild(chartBox, pre)
-      const code = currentFlow.value || currentFlow.textContent
-      iframeWindow.flowchart.parse(code).drawSVG(`flow${i}`)
-    }
-  }
+  // renderFlowchart () {
+  //   const iframeWindow = this.iframe.contentWindow
+  //   const flows = iframeWindow.document.querySelectorAll('.language-flow')
+  //   for (let i = 0, k = flows.length;i < k;i++) {
+  //     const currentFlow = flows[i]
+  //     const pre = currentFlow.parentNode
+  //     const chartBox = document.createElement('div')
+  //     chartBox.id = `flow${i}`
+  //     pre.parentNode.replaceChild(chartBox, pre)
+  //     const code = currentFlow.value || currentFlow.textContent
+  //     iframeWindow.flowchart.parse(code).drawSVG(`flow${i}`)
+  //   }
+  // }
 
   /**
    * 拼接html代码
