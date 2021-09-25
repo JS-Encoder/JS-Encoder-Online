@@ -28,12 +28,15 @@ const defPrepOpts = {
 const limitMimeType = ['html', 'css', 'js', 'md', 'pug', 'sass', 'scss', 'less', 'styl', 'ts', 'coffee']
 
 // const qiNiuImgLink = isProd?'//images.lliiooiill.cn/':'//images.firstbird.asia/'
-const qiNiuImgLink = isProd?'/images/':'/images/'
+const qiNiuImgLink = isProd ? '/images/' : '/images/'
+
+const defPosterKey = 'Flxq97KeOG1bd9gMls4YEIRLVttn'
 
 export {
   fontFamList,
   fontSizeList,
   defPrepOpts,
   limitMimeType,
-  qiNiuImgLink
+  qiNiuImgLink,
+  defPosterKey
 }

@@ -1,6 +1,6 @@
 <template>
   <v-card class="self-instance-card">
-    <v-img class="instance-card-img" :src="`${qiNiuImgLink}${info.img}`">
+    <v-img class="instance-card-img" :src="`${qiNiuImgLink}${info.img||defPosterKey}`">
       <div class="img-screen pointer d-flex flex-ai flex-jcc" @click="viewInstance">
         <v-icon>mdi-eye</v-icon>
       </div>
@@ -40,7 +40,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import { copyToClip } from '@utils/tools'
-import { qiNiuImgLink } from '@utils/publicData'
+import { qiNiuImgLink, defPosterKey } from '@utils/publicData'
 import env from '@service/env'
 export default {
   props: {
@@ -50,6 +50,7 @@ export default {
   data() {
     return {
       qiNiuImgLink,
+      defPosterKey,
       menuList: Object.freeze([
         {
           name: '分享',
