@@ -58,6 +58,9 @@ export default {
           name: 'Feedback',
         },
         {
+          text: '文档',
+        },
+        {
           text: 'GitHub',
         },
       ]),
@@ -76,10 +79,18 @@ export default {
   methods: {
     ...mapMutations(['setHasNewFeatures']),
     navJumpTo(navItem) {
-      if (navItem.text === 'GitHub') {
-        window.open('https://github.com/Longgererer/JS-Encoder-Online')
-      } else {
-        this.$router.push({ name: navItem.name }).catch(() => {})
+      switch (navItem.text) {
+        case 'GitHub': {
+          window.open('https://github.com/Longgererer/JS-Encoder-Online')
+          break
+        }
+        case '文档': {
+          window.open('http://doc.lliiooiill.cn/')
+          break
+        }
+        default: {
+          this.$router.push({ name: navItem.name }).catch(() => {})
+        }
       }
     },
     judgeShowBadge() {
@@ -93,7 +104,7 @@ export default {
     },
   },
   components: {
-    'header-account': HeaderAccount,
+    HeaderAccount,
   },
 }
 </script>
