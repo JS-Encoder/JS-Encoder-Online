@@ -10,7 +10,7 @@
       <v-btn height="30" width="30" icon title="刷新" @click="refresh">
         <i class="icon iconfont icon-zhongzhi"></i>
       </v-btn>
-      <v-btn height="30" width="30" icon title="全屏" @click="fullScreen" disabled>
+      <v-btn height="30" width="30" icon title="全屏" @click="fullScreen">
         <i class="icon iconfont icon-fangda"></i>
       </v-btn>
     </div>

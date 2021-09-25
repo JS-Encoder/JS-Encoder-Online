@@ -1,10 +1,10 @@
 <template>
   <div id="fullScreenBar" class="borbox">
-    <div class="scale-box d-flex flex-ai flex-jcc">
+    <!-- <div class="scale-box d-flex flex-ai flex-jcc">
       <span class="proportion">{{scale}}%</span>
       <v-slider step="25" min="25" max="500" hide-details v-model="scale" :show-tooltip="false">
       </v-slider>
-    </div>
+    </div> -->
     <div class="opt-list d-flex">
       <div class="opt d-flex flex-ai flex-jcc" @click="refresh">
         <i class="icon iconfont icon-zhongzhi"></i>
