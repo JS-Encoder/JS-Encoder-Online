@@ -227,8 +227,8 @@ export default {
           docConsole.consoleInfo.push({
             type: 'system-error',
             content: msg,
-            row,
-            col,
+            row: row - 1,
+            col: col - 4,
           })
           return void 0
         }
