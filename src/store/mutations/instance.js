@@ -72,6 +72,9 @@ const instance = {
   setIframeInit: (state, isInit) => {
     state.iframeInit = isInit
   },
+  setHasUploadCode: (state, status) => {
+    state.hasUploadCode = status
+  }
 }
 
 export default instance

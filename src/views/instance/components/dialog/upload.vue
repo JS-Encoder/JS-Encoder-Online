@@ -64,6 +64,7 @@ export default {
       'setInstanceCode',
       'setPrep',
       'setCurTab',
+      'setHasUploadCode'
     ]),
     chooseFile() {
       // 判断上传的文件中哪些是符合后缀名要求的
@@ -96,6 +97,7 @@ export default {
         const fileList = this.fileList
         const resolve = this.resolve
         const codeObj = {}
+        this.setHasUploadCode(false)
         await uploader(fileList, resolve).then((res) => {
           let visibleTab = ''
           const { HTML, CSS, JavaScript } = res
@@ -147,6 +149,8 @@ export default {
           })
         }
         this.fileList = []
+        this.setHasUploadCode(true)
+        this.$refs.fileInput.value = ''
         this.$message.success('所有文件已全部上传成功！')
       } catch (err) {
         this.$message.error('文件上传过程出错！')

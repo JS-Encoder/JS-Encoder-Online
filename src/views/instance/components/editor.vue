@@ -55,6 +55,7 @@ export default {
       'instanceSetting',
       'mdToolbarVisible',
       'curTab',
+      'hasUploadCode',
     ]),
     fontStyle() {
       const { family: fontFamily, size: fontSize } = this.instanceSetting.font
@@ -69,6 +70,9 @@ export default {
     },
   },
   watch: {
+    hasUploadCode(status) {
+      if (status) this.code = this.codeContent
+    },
     codeMode(newMode) {
       const codeOptions = this.codeOptions
       codeOptions.mode = modeStyleList[newMode]

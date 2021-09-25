@@ -58,10 +58,13 @@ const instance = {
     tags: '',
     liked: false,
     id: '',
-    saved: true // 当前实例是否被保存了
+    saved: true, // 当前实例是否被保存了
+    ispublic: true,
   },
 
-  iframeInit: false // iframe是否被初始化过
+  iframeInit: false, // iframe是否被初始化过
+
+  hasUploadCode: false // 当前是否有代码上传
 }
 
 export default instance
