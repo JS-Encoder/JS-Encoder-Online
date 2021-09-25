@@ -30,6 +30,8 @@ const limitMimeType = ['html', 'css', 'js', 'md', 'pug', 'sass', 'scss', 'less',
 // const qiNiuImgLink = isProd?'//images.lliiooiill.cn/':'//images.firstbird.asia/'
 const qiNiuImgLink = isProd ? '/images/' : '/images/'
 
+const qiNiuRowLink = 'http://images.lliiooiill.cn/'
+
 const defPosterKey = 'Flxq97KeOG1bd9gMls4YEIRLVttn'
 
 export {
@@ -38,5 +40,6 @@ export {
   defPrepOpts,
   limitMimeType,
   qiNiuImgLink,
-  defPosterKey
+  defPosterKey,
+  qiNiuRowLink
 }
