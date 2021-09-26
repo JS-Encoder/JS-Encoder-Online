@@ -1,6 +1,7 @@
 import store from '@store'
-import Loader from '@utils/loader'
-const loader = new Loader()
+import { qiNiuRowLink } from '@utils/publicData'
+// import Loader from '@utils/loader'
+// const loader = new Loader()
 
 // 处理实例iframe的代码执行
 class IframeHandler {
@@ -34,6 +35,48 @@ class IframeHandler {
       const linkStr = `<script src="${JSLinks[i]}"></script>\n`
       extJS += linkStr
     }
+
+    function jointBody () {
+      return `
+      ${HTMLCode}
+      ${extJS}
+      <script>
+      ${isMD ? `
+      !function() {
+        /**
+         * Render the KaTeX
+         * 渲染KaTeX数学公式
+         */
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ]
+        })
+        /**
+         * Render the flowchart in markdown
+         * 渲染markdown中的流程图
+         */
+        const flows = document.querySelectorAll('.language-flow')
+        for (let i = 0, k = flows.length;i < k;i++) {
+          const currentFlow = flows[i]
+          const pre = currentFlow.parentNode
+          const chartBox = document.createElement('div')
+          chartBox.id = 'flow'+i
+          pre.parentNode.replaceChild(chartBox, pre)
+          const code = currentFlow.value || currentFlow.textContent
+          flowchart.parse(code).drawSVG('flow'+i)
+        }
+      }()
+      `.trim() : ''
+        }
+      ${JSCode}
+      </script>
+      `.trim()
+    }
+
     let head = `
     ${headTags}
     ${extCss}
@@ -41,50 +84,13 @@ class IframeHandler {
     ${CSSCode}
     </style>
     `.trim()
-    let body = `
-    ${HTMLCode}
-    ${extJS}
-    <script>
-    ${isMD ? `
-    !function() {
-      /**
-       * Render the KaTeX
-       * 渲染KaTeX数学公式
-       */
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: '$$', right: '$$', display: true},
-          {left: '$', right: '$', display: false},
-          {left: '\\(', right: '\\)', display: false},
-          {left: '\\[', right: '\\]', display: true}
-        ]
-      })
-      /**
-       * Render the flowchart in markdown
-       * 渲染markdown中的流程图
-       */
-      const flows = document.querySelectorAll('.language-flow')
-      for (let i = 0, k = flows.length;i < k;i++) {
-        const currentFlow = flows[i]
-        const pre = currentFlow.parentNode
-        const chartBox = document.createElement('div')
-        chartBox.id = 'flow'+i
-        pre.parentNode.replaceChild(chartBox, pre)
-        const code = currentFlow.value || currentFlow.textContent
-        flowchart.parse(code).drawSVG('flow'+i)
-      }
-    }()
-    `.trim() : ''
-    }
-    ${JSCode}
-    </script>
-    `.trim()
-    const compiledCode = this.jointHTML(head, body)
+    let body = jointBody()
+    const runTimeCode = this.jointHTML(head, body)
     iDoc.open()
     // 在执行js脚本前向iframe注入错误监听回调函数
     iWin.onerror = onerror
     iWin.onunhandledrejection = onunhandledrejection
-    iDoc.write(compiledCode)
+    iDoc.write(runTimeCode)
     iDoc.close()
     return new Promise((resolve) => {
       this.iframe.onload = () => {
@@ -98,6 +104,9 @@ class IframeHandler {
           <style>html,body{font-family:"Microsoft YaHei";overflow:hidden;}</style>
           ${head}
           `.trim()
+          // 将外部链接中的代理地址/images/替换成原始地址
+          extJS = extJS.replaceAll('\"/images', '\"http://images.lliiooiill.cn')
+          body = jointBody()
           store.commit('setCompiledCode', this.jointHTML(head, body))
         })
       }

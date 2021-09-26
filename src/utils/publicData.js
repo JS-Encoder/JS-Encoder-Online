@@ -30,7 +30,10 @@ const limitMimeType = ['html', 'css', 'js', 'md', 'pug', 'sass', 'scss', 'less',
 // const qiNiuImgLink = isProd?'//images.lliiooiill.cn/':'//images.firstbird.asia/'
 const qiNiuImgLink = isProd ? '/images/' : '/images/'
 
-const defPosterKey = 'Flxq97KeOG1bd9gMls4YEIRLVttn'
+const qiNiuRowLink = 'http://images.lliiooiill.cn/'
+
+// 加载实例封面中的图片
+const defPosterKey = '%E5%B0%81%E9%9D%A2%E5%8A%A0%E8%BD%BD%E4%B8%AD.jpg'
 
 export {
   fontFamList,
@@ -38,5 +41,6 @@ export {
   defPrepOpts,
   limitMimeType,
   qiNiuImgLink,
-  defPosterKey
+  defPosterKey,
+  qiNiuRowLink
 }
