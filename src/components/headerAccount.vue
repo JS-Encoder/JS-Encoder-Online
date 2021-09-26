@@ -35,7 +35,6 @@ import { mapState, mapMutations } from 'vuex'
 import localStore from '@utils/local-storage'
 import { qiNiuImgLink } from '@utils/publicData'
 import cookie from '@utils/cookie'
-import IframeHandler from '@utils/editor/handleInstanceView'
 export default {
   props: {
     dense: {
