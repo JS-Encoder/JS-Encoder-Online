@@ -16,7 +16,7 @@
           </v-avatar>
         </template>
         <user-card :avatar="info.userPicture" :myFollow="info.myFollow" :username="info.username" :nickname="info.name"
-          :about="info.description" @setFollow="setFollow"></user-card>
+          :about="info.description"></user-card>
       </v-menu>
       <div class="instance-info d-flex flex-clo pointer">
         <span class="text-sm" :title="info.exampleName">{{info.exampleName}}</span>
@@ -103,9 +103,6 @@ export default {
         console.log(err)
       }
       this.likeLoading = false
-    },
-    setFollow(isFollow) {
-      this.$emit('setFollow', isFollow, this.cardIndex)
     },
     setFav(isFav) {
       this.$emit('setFav', isFav, this.cardIndex)

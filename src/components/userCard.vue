@@ -31,6 +31,7 @@ export default {
     myFollow: Boolean,
     username: String,
   },
+  inject: ['setFollow'],
   data() {
     return {
       qiNiuImgLink,
@@ -57,7 +58,7 @@ export default {
         })
         if (res.state) {
           this.$message.success('关注成功！')
-          this.$emit('setFollow', true)
+          this.setFollow(true, this.username)
         } else {
           this.$message.error('关注失败！')
         }
@@ -79,7 +80,7 @@ export default {
         })
         if (res.state) {
           this.$message.success('取消关注成功！')
-          this.$emit('setFollow', false)
+          this.setFollow(false, this.username)
         } else {
           this.$message.error('取消关注失败！')
         }

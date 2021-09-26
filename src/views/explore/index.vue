@@ -49,7 +49,7 @@
       <div v-show="!nothing">
         <div class="explore-instance-list">
           <div class="explore-list-item" v-for="(item, index) in instanceList" :key="item.exampleId">
-            <instance-card :info="item" :cardIndex="index" @setFollow="setFollow" @setFav="setFav"></instance-card>
+            <instance-card :info="item" :cardIndex="index" @setFav="setFav"></instance-card>
           </div>
           <div class="skeleton-list-item" v-show="listLoading" v-for="(item, index) in 12" :key="index">
             <instance-skeleton></instance-skeleton>
@@ -73,6 +73,17 @@ import { judgeMode } from '@utils/editor/judgeMode'
 import * as p2b from '@utils/paramsToBase64'
 export default {
   name: 'Explore',
+  provide() {
+    return {
+      setFollow: (isFollow, username) => {
+        this.instanceList.forEach((item) => {
+          if (item.username === username) {
+            item.myFollow = isFollow
+          }
+        })
+      },
+    }
+  },
   data() {
     return {
       sortList: Object.freeze([
@@ -189,9 +200,6 @@ export default {
       }
       this.searchLoading = false
       this.listLoading = false
-    },
-    setFollow(isFollow, index) {
-      this.instanceList[index].myFollow = isFollow
     },
     setFav(isFav, index) {
       const item = this.instanceList[index]

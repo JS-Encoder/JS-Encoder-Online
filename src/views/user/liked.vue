@@ -5,7 +5,7 @@
         <instance-skeleton></instance-skeleton>
       </div>
       <div class="liked-list-item" v-show="!loading" v-for="(item, index) in likedList" :key="item.exampleId">
-        <instance-card :info="item" :cardIndex="index" @setFollow="setFollow" @setFav="setFav" @search="init">
+        <instance-card :info="item" :cardIndex="index" @setFav="setFav" @search="init">
         </instance-card>
       </div>
     </div>
@@ -30,6 +30,17 @@ import InstanceCard from '@components/instanceCard'
 import * as p2b from '@utils/paramsToBase64'
 export default {
   name: 'Liked',
+  provide() {
+    return {
+      setFollow: (isFollow, username) => {
+        this.likedList.forEach((item) => {
+          if (item.username === username) {
+            item.myFollow = isFollow
+          }
+        })
+      },
+    }
+  },
   data() {
     return {
       likedList: [],
@@ -82,9 +93,6 @@ export default {
         console.log(err)
       }
       this.loading = false
-    },
-    setFollow(isFollow, index) {
-      this.likedList[index].myFollow = isFollow
     },
     setFav(isFav, index) {
       const item = this.likedList[index]
