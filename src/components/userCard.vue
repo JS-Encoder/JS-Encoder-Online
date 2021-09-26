@@ -56,10 +56,10 @@ export default {
           followUsername: this.username,
         })
         if (res.state) {
-          this.$message.success('关注成功！')
+          // this.$message.success('关注成功！')
           this.$emit('setFollow', true)
         } else {
-          this.$message.error('关注失败！')
+          // this.$message.error('关注失败！')
         }
       } catch (err) {
         console.log(err)
@@ -78,10 +78,10 @@ export default {
           followUsername: this.username,
         })
         if (res.state) {
-          this.$message.success('取消关注成功！')
+          // this.$message.success('取消关注成功！')
           this.$emit('setFollow', false)
         } else {
-          this.$message.error('取消关注失败！')
+          // this.$message.error('取消关注失败！')
         }
       } catch (err) {
         console.log(err)

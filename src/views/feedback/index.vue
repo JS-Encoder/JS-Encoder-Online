@@ -66,10 +66,10 @@ export default {
         const username = this.$store.state.loginState.username
         const res = await this.$http.sendFeedback({ ...this.form, username })
         if (res.state) {
-          this.$message.success('反馈成功！')
+          // this.$message.success('反馈成功！')
           this.reset()
         } else {
-          this.$message.error('反馈失败！')
+          // this.$message.error('反馈失败！')
         }
       } catch (err) {
         console.log(err)

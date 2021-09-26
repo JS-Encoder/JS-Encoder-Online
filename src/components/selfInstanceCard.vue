@@ -96,9 +96,9 @@ export default {
           })
           if (delRes.state) {
             this.$emit('search')
-            this.$message.success('实例删除成功！')
+            // this.$message.success('实例删除成功！')
           } else {
-            this.$message.error('实例删除失败！')
+            // this.$message.error('实例删除失败！')
           }
         }
       })
@@ -124,7 +124,7 @@ export default {
         const req = myFavorites ? api.delLikeWork : api.addLikeWork
         const res = await req({ username: this.loginInfo.username, exampleId })
         if (res.state) {
-          this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
+          // this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
           this.setFav(!myFavorites)
         }
       } catch (err) {

@@ -97,7 +97,7 @@ export default {
           } else {
             this.setFav(!myFavorites)
           }
-          this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
+          // this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
         }
       } catch (err) {
         console.log(err)

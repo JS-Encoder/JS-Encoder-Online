@@ -59,10 +59,10 @@ export default {
           followUsername: this.userInfo.username,
         })
         if (res.state) {
-          this.$message.success('关注成功！')
+          // this.$message.success('关注成功！')
           this.$emit('setFollow', true, this.cardIndex)
         } else {
-          this.$message.error('关注失败！')
+          // this.$message.error('关注失败！')
         }
       } catch (err) {
         console.log(err)
@@ -81,7 +81,7 @@ export default {
           followUsername: this.userInfo.username,
         })
         if (res.state) {
-          this.$message.success('取消关注成功！')
+          // this.$message.success('取消关注成功！')
           // 如果在自己的主页的关注页面取消关注，则重新查询关注列表
           if (this.isSelfProfile && this.$route.name === 'Following') {
             this.$emit('search')
@@ -89,7 +89,7 @@ export default {
             this.$emit('setFollow', false, this.cardIndex)
           }
         } else {
-          this.$message.error('取消关注失败！')
+          // this.$message.error('取消关注失败！')
         }
       } catch (err) {
         console.log(err)

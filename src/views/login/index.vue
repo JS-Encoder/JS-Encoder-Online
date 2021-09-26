@@ -116,7 +116,6 @@ export default {
         })
         .catch((err) => {
           console.log(err)
-          this.$message.error('啊哦！服务器出了点问题😭')
           this.loginLoading = false
         })
     },

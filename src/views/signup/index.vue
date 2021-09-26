@@ -208,7 +208,7 @@ export default {
             }
           }
         } catch (err) {
-          this.$message.error('啊哦！服务器出了点问题😭')
+          // this.$message.error('啊哦！服务器出了点问题😭')
         }
         this.signUpLoading = false
       }

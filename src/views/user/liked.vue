@@ -74,9 +74,9 @@ export default {
           this.likedList = list
           this.$emit('setPageConn', isFirstPage, isLastPage)
           this.$emit('updateNum', 'liked', total)
-          this.$message.success('查询成功！')
+          // this.$message.success('查询成功！')
         } else {
-          this.$message.error('查询失败！')
+          // this.$message.error('查询失败！')
         }
       } catch (err) {
         console.log(err)

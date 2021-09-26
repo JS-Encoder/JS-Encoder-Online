@@ -77,9 +77,9 @@ export default {
           this.workList = list
           this.$emit('setPageConn', isFirstPage, isLastPage)
           this.$emit('updateNum', 'works', total)
-          this.$message.success('查询用户实例成功！')
+          // this.$message.success('查询用户实例成功！')
         } else {
-          this.$message.error('查询失败！')
+          // this.$message.error('查询失败！')
         }
       } catch (err) {
         console.log(err)

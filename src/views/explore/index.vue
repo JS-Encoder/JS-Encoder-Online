@@ -173,7 +173,7 @@ export default {
           jsStyle: prepKey === 'JavaScript' ? prep : '',
         })
         if (res.state) {
-          this.$message.success('查询成功！')
+          // this.$message.success('查询成功！')
           const { list, isLastPage, isFirstPage } = res.data
           this.nothing = list.length === 0
           this.showNothingTip = list.length === 0
@@ -182,7 +182,7 @@ export default {
           this.isLastPage = isLastPage
         } else {
           this.nothing = true
-          this.$message.error('查询失败！')
+          // this.$message.error('查询失败！')
         }
       } catch (err) {
         console.log(err)

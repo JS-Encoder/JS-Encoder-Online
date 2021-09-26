@@ -108,7 +108,7 @@ export default {
         })
         this.isUserInfoGot = true
       } catch (err) {
-        this.$message.error('获取用户信息失败!')
+        // this.$message.error('获取用户信息失败!')
       }
     },
     switchItem(name) {

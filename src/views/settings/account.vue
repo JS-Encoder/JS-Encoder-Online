@@ -42,7 +42,7 @@
       <span class="item-title title-xs">删除账户</span>
       <span class="text-sm text-describe">请注意！这样会删除你的账户和里面的所有信息，该操作无法恢复！</span>
       <div class="item-content">
-        <v-btn class="col-6" color="error" x-large>删除账户</v-btn>
+        <v-btn class="col-6" color="error" x-large disabled>删除账户</v-btn>
       </div>
     </div>
     <modify-bind-email></modify-bind-email>

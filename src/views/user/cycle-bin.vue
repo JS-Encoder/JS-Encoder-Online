@@ -66,9 +66,9 @@ export default {
           this.showNothing = data.length === 0
           this.$emit('setPageConn', true, true)
           this.$emit('updateNum', 'cycleBin', data.length)
-          this.$message.success('查询成功！')
+          // this.$message.success('查询成功！')
         } else {
-          this.$message.error('查询失败！')
+          // this.$message.error('查询失败！')
         }
       } catch (err) {}
       this.loading = false
@@ -82,10 +82,10 @@ export default {
           exampleId,
         })
         if (res.state) {
-          this.$message.success('恢复成功！')
+          // this.$message.success('恢复成功！')
           this.getRecycle()
         } else {
-          this.$message.error('恢复失败！')
+          // this.$message.error('恢复失败！')
         }
       } catch (err) {}
       this.curIndex = null
@@ -106,10 +106,10 @@ export default {
             exampleId,
           })
           if (res.state) {
-            this.$message.success('永久删除成功！')
+            // this.$message.success('永久删除成功！')
             this.getRecycle()
           } else {
-            this.$message.error('永久删除失败！')
+            // this.$message.error('永久删除失败！')
           }
         } catch (err) {
           console.log(err)

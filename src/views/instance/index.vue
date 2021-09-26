@@ -202,14 +202,14 @@ export default {
             this.setInstanceSetting({ name: 'indent', value: indent })
             this.setInstanceSetting({ name: 'font', value: font })
           }
-          this.$message.success('获取实例信息成功！')
+          // this.$message.success('获取实例信息成功！')
         } else {
-          this.$message.error('获取实例信息失败！')
+          // this.$message.error('获取实例信息失败！')
           this.$router.go(-1)
         }
       } catch (err) {
         console.log(err)
-        this.$message.error('实例不存在!')
+        // this.$message.error('实例不存在!')
         this.$router.replace('/404')
       }
     },

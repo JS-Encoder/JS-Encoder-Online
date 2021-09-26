@@ -148,7 +148,7 @@ export default {
         const res = await req({ username: this.loginInfo.username, exampleId })
         if (res.state) {
           this.setCurInstanceDetail({ liked: !myFavorites })
-          this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
+          // this.$message.success(myFavorites ? '已取消喜爱！' : '已喜爱！')
         }
       } catch (err) {
         console.log(err)

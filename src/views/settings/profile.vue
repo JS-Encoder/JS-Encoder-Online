@@ -221,7 +221,7 @@ export default {
         return res.data.key
       } catch (err) {
         console.log(err)
-        this.$message.error('上传头像失败！')
+        // this.$message.error('上传头像失败！')
       }
     },
   },

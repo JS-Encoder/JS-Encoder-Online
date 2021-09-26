@@ -91,7 +91,7 @@ export default {
         }
       } catch (err) {
         console.log(err)
-        this.$message.error('未知错误！')
+        // this.$message.error('未知错误！')
       }
       this.loading = false
     },

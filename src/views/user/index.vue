@@ -255,10 +255,10 @@ export default {
             recycle,
             myFollow,
           })
-          this.$message.success('获取用户个人信息成功!')
+          // this.$message.success('获取用户个人信息成功!')
         } else {
           // 没有该用户，跳转到404
-          this.$message.error('获取用户个人信息失败!')
+          // this.$message.error('获取用户个人信息失败!')
           this.$router.replace('/404')
         }
       } catch (err) {
@@ -277,11 +277,11 @@ export default {
           followUsername: this.curUserDetail.username,
         })
         if (res.state) {
-          this.$message.success('关注成功！')
+          // this.$message.success('关注成功！')
           this.setCurUserDetail({ myFollow: true })
           this.setFollowState(true)
         } else {
-          this.$message.error('关注失败！')
+          // this.$message.error('关注失败！')
         }
       } catch (err) {
         console.log(err)
@@ -300,11 +300,11 @@ export default {
           followUsername: this.curUserDetail.username,
         })
         if (res.state) {
-          this.$message.success('取消关注成功！')
+          // this.$message.success('取消关注成功！')
           this.setCurUserDetail({ myFollow: false })
           this.setFollowState(false)
         } else {
-          this.$message.error('取消关注失败！')
+          // this.$message.error('取消关注失败！')
         }
       } catch (err) {
         console.log(err)
