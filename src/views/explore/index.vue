@@ -77,6 +77,7 @@ export default {
     return {
       setFollow: (isFollow, username) => {
         this.instanceList.forEach((item) => {
+          console.log(item.username, username)
           if (item.username === username) {
             item.myFollow = isFollow
           }
