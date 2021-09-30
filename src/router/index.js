@@ -196,9 +196,9 @@ router.beforeEach(async (to, _, next) => {
                 // 临时的第三方登录TMP_REMEMBER_ME
                 sessionStorage.setItem('TMP_REMEMBER_ME', true)
                 history.replaceState({}, '', '/')
-                message.success('登录成功！')
+                // message.success('登录成功！')
               } else {
-                message.error('登录失败！')
+                // message.error('登录失败！')
               }
             } else {
               // 没有绑定过账号就弹出dialog询问用户是否有账号
@@ -244,9 +244,9 @@ async function login () {
           nickname,
           avatar,
         })
-        message.success('登录成功！')
+        // message.success('登录成功！')
       } else {
-        message.error('登录失败！')
+        // message.error('登录失败！')
       }
     } catch (err) {
       console.log(err)
