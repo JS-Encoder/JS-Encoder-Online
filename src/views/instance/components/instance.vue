@@ -250,7 +250,16 @@ export default {
           .then((callback) => {
             callback()
           })
-        const logs = docConsole.getLogs()
+        let logs = docConsole.getLogs()
+        // 日志超出1000条弹出错误警报
+        if (logs.length > 1000) {
+          logs = logs.slice(0, 999)
+          logs.push({
+            type: 'error',
+            content:
+              'You have over 1000 logs on the Console, rendering too many logs will cause the page to stage. please use your browser Console to view more logs!',
+          })
+        }
         this.calcConsoleInfoCount(logs)
         this.consoleInfo = logs
         if (isMD) this.initSyncScroll(iframe)
@@ -279,7 +288,12 @@ export default {
       this.cursorPos = pos
     },
     calcConsoleInfoCount(consoleInfo) {
-      const consoleInfoCount = { error: 0, warn: 0, info: 0 }
+      const consoleInfoCount = {
+        error: 0,
+        warn: 0,
+        info: 0,
+        sum: consoleInfo.length,
+      }
       for (let item of consoleInfo) {
         const type = item.type
         switch (item.type) {
