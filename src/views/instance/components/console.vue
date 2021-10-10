@@ -5,6 +5,9 @@
         <i class="icon iconfont icon-console"></i>
         <span>Console</span>
       </div>
+      <div class="info-sum" v-show="consoleInfoCount.sum > 0">
+        <span>{{consoleInfoCount.sum}}</span>
+      </div>
       <div class="resize d-flex flex-ai" @mousedown="resize">
         <i class="icon iconfont icon-resize"></i>
       </div>
@@ -158,7 +161,13 @@ export default {
     })
   },
   computed: {
-    ...mapState(['iframeH', 'consoleH', 'consoleSettings', 'consoleInfo']),
+    ...mapState([
+      'iframeH',
+      'consoleH',
+      'consoleSettings',
+      'consoleInfo',
+      'consoleInfoCount',
+    ]),
   },
   watch: {
     currentCmdIndex(newIndex) {
@@ -365,6 +374,14 @@ export default {
         margin-left: 5px;
         font-family: $code !important;
       }
+    }
+    .info-sum {
+      margin-left: 5px;
+      border-radius: 4px;
+      font-size: 12px;
+      background-color: $deep-1;
+      padding: 0 5px;
+      margin-top: 2px;
     }
     .resize {
       height: 100%;
