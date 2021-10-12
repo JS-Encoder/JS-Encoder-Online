@@ -84,7 +84,10 @@ export default {
           if (res.state) {
             const { data, token, msg } = res
             // 存储请求权限凭证
-            cookie.set('AUTH_TOKEN', token, Infinity)
+            cookie.set('AUTH_TOKEN', token, Infinity, {
+              secure: true,
+              sameSite: 'Lax',
+            })
             // 自动登录
             localStore.set('REMEMBER_ME', true)
             // 存储用户信息到VueX

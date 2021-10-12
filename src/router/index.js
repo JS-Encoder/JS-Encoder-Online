@@ -183,7 +183,10 @@ router.beforeEach(async (to, _, next) => {
               const { state: loginState, token: loginToken, data } = oauthLoginRes
               if (loginState) {
                 // 存储请求权限凭证
-                cookie.set('AUTH_TOKEN', loginToken, Infinity)
+                cookie.set('AUTH_TOKEN', loginToken, Infinity, {
+                  secure: true,
+                  sameSite: 'Lax',
+                })
                 // 存储用户信息到VueX
                 const { username, name: nickname, userPicture: avatar } = data
                 store.commit('setLoginState', true)
