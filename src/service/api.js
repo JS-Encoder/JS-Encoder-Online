@@ -2,9 +2,9 @@ import { get, post, put, del } from './request'
 
 const api = {
   /* 获取仓库版本列表 */
-  repoRelease: () => get('/githubApi/repos/Longgererer/JS-Encoder-Online/releases'),
+  repoRelease: () => get('/githubApi/repositories/396618645/releases'),
   /* 获取仓库最高版本 */
-  repoLatestV: () => get('/githubApi/repos/Longgererer/JS-Encoder-Online/releases/latest'),
+  repoLatestV: () => get('/githubApi/repositories/396618645/releases/latest'),
   /* cdn 列表 */
   searchCDNList: (params) => get('/cdnJS', params),
 
