@@ -8,9 +8,9 @@
   * @param {Boolean} sameSite 是否需要权限验证，如果需要，该cookie在请求第三方网站的时候不会发送
   * @param {Boolean} httpOnly 是否可以通过javascript代码获取cookie
   * @param {String} path 
-  * 
  */
-function set (name, value, time, { secure = false, sameSite = 'None', httpOnly = false, path = '/' }) {
+function set (name, value, time, opts = { secure: false, sameSite: 'None', httpOnly: false, path: '/' }) {
+  const { secure, sameSite, httpOnly, path } = opts
   name = escape(name)
   value = escape(value)
   let newCookie = ''

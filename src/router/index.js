@@ -223,7 +223,7 @@ router.beforeEach(async (to, _, next) => {
 
 async function login () {
   const api = Vue.prototype.$http
-  const message = Vue.prototype.$message
+  // const message = Vue.prototype.$message
   // 在本地存有REMEMBER_ME或在session中存有TMP_REMEMBER_ME(第三方记住我)进行正常登录
   const rememberMe = localStore.get('REMEMBER_ME')
   const oauthRememberMe = sessionStorage.getItem('TMP_REMEMBER_ME')
