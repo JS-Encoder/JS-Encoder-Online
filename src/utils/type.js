@@ -48,7 +48,7 @@ function judgeBaseArray (arr) {
  * @param {Object} obj
  * @returns {Boolean}
  */
- function judgeWindow (obj) {
+function judgeWindow (obj) {
   const type = getType(obj)
   return type === 'global' || type === 'Window' || type === 'DOMWindow'
 }
@@ -59,7 +59,7 @@ function judgeBaseArray (arr) {
  * @param {Element} dom
  * @returns {String}
  */
- function stringifyDOM (dom) {
+function stringifyDOM (dom) {
   let objE = document.createElement('div')
   objE.appendChild(dom.cloneNode(true))
   const domStr = objE.innerHTML
@@ -70,67 +70,101 @@ function judgeBaseArray (arr) {
 /**
  * Convert the object into a string (topmost key-value pair)
  * 将对象转化成字符串（最顶层的键值对）
- * @param {Object} strObj
+ * @param {Object} target
+ * @param {Array} cache
  * @returns {String}
  */
- function JSONStringify (strObj) {
-  const type = getType(strObj)
-  if (type !== 'Object' && type !== 'Array' && type !== 'Map') {
-    return JSON.stringify(strObj)
+function JSONStringify (target, cache = []) {
+  // 如果缓存中存在相同的引用对象，即为循环引用
+  if (cache.includes(target)) throw 'circular reference'
+
+  let prefix = '', suffix = ''
+  const type = getType(target)
+  switch (type) {
+    case 'Object': {
+      prefix = '{'
+      suffix = '}'
+      break
+    }
+    case 'Array': {
+      prefix = '['
+      suffix = ']'
+      break
+    }
+    case 'Map': {
+      prefix = `Map(${target.size}){`
+      suffix = '}'
+      break
+    }
+    case 'Set': {
+      prefix = `Set(${target.size}){`
+      suffix = '}'
+      target = [...target]
+      break
+    }
+    case 'Error': {
+      return `Error: ${JSONStringify(target.message)}`
+    }
+    case 'RegExp': {
+      return target.toString()
+    }
+    default: {
+      return JSON.stringify(target)
+    }
   }
-  let prefix = '{',
-    suffix = '}'
-  if (type === 'Array') {
-    prefix = '['
-    suffix = ']'
-  }
+
   let str = prefix
-  const keys = getObjAllKeys(strObj)
+  const keys = getObjAllKeys(target)
   for (let i = 0;i < keys.length;i++) {
     const key = keys[i]
-    let value = strObj[key]
-    if (type === 'Map') value = strObj.get(key)
-    try {
-      // key
-      if (type !== 'Array') {
-        const keyType = getType(key)
-        switch (keyType) {
-          case 'Object':
-          case 'Array':
-          case 'symbol':
-            str += Object.prototype.toString.call(key)
-            break
-          default:
-            str += key
-        }
-        str += ': '
-      }
-      // value
-      let valueType = getType(value)
-      if (/^HTML/.test(valueType)) valueType = 'dom'
-      switch (valueType) {
-        case 'Array':
-          str += JSONStringify(value)
-          break
+    let value = target[key]
+    if (type === 'Map') {
+      value = target.get(key)
+    }
+
+    // key
+    if (type !== 'Array') {
+      const keyType = getType(key)
+      switch (keyType) {
         case 'Object':
-          str += JSONStringify(value)
-          break
-        case 'function':
-          str += String(value)
-          break
+        case 'Array':
+        case 'Set':
         case 'symbol':
-          str += String(value)
-          break
-        case 'dom':
-          str += stringifyDOM(value)
+          str += Object.prototype.toString.call(key)
           break
         default:
-          str += JSON.stringify(value)
+          str += key
       }
-      if (i < keys.length - 1) str += ', '
-    } catch (e) {
-      continue
+      str += ': '
     }
+    // value
+    let valueType = getType(value)
+    if (/^HTML/.test(valueType)) valueType = 'dom'
+    switch (valueType) {
+      case 'Array':
+      case 'Object':
+        cache.push(value)
+        str += JSONStringify(value)
+        break
+      case 'RegExp':
+        str += value.toString()
+        break
+      case 'function':
+        str += String(value)
+        break
+      case 'symbol':
+        str += String(value)
+        break
+      case 'dom':
+        str += stringifyDOM(value)
+        break
+      case 'Error':
+        str += `Error: ${JSONStringify(value.message)}`
+        break
+      default:
+        str += JSON.stringify(value)
+    }
+    if (i < keys.length - 1) str += ', '
   }
   str += suffix
   return str
@@ -142,28 +176,31 @@ function judgeBaseArray (arr) {
  * @param {Object} obj
  * @returns {Array}
  */
- function getObjAllKeys (obj) {
+function getObjAllKeys (obj) {
   const type = getType(obj)
-  if (type === 'Map') {
-    const arr = []
-    for (let key of obj) {
-      const keyType = getType(key[0])
-      if (keyType !== 'Object' && keyType !== 'Array') {
-        arr.push(key[0])
-      } else {
+  switch (type) {
+    case 'Map': {
+      const arr = []
+      for (let key of obj) {
         arr.push(key[0])
       }
+      return arr
     }
-    return arr
-  } else if (type !== 'Object' && type !== 'Array') return []
-  if (type === 'Array') {
-    const arr = []
-    obj.forEach((_, index) => {
-      arr.push(index)
-    })
-    return arr
+    case 'Array': {
+      const arr = []
+      obj.forEach((_, index) => {
+        arr.push(index)
+      })
+      return arr
+    }
+    default: {
+      if (type !== 'Object' && type !== 'Array') {
+        return []
+      } else {
+        return Object.getOwnPropertyNames(obj).sort()
+      }
+    }
   }
-  return Object.getOwnPropertyNames(obj).sort()
 }
 
 export {
