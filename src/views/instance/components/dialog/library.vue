@@ -7,12 +7,11 @@
       <v-card-text>
         <v-card class="d-flex flex-ai error-tip" color="error" v-if="cdnError">
           <div class="d-flex flex-ai">
-            <v-icon style="margin-right: 5px" small>mdi-close-circle</v-icon>
             <span>获取CDN列表失败</span>
           </div>
           <v-spacer></v-spacer>
           <div>
-            <v-btn small>重试</v-btn>
+            <v-btn small @click="loadLibs" :loading="loadingLibs">重试</v-btn>
           </div>
         </v-card>
         <div class="d-flex flex-clo">
@@ -100,6 +99,7 @@ export default {
       showJSInput: 1,
       visible: false,
       cdnError: false,
+      loadingLibs: false
     }
   },
   mounted() {
@@ -120,6 +120,7 @@ export default {
   methods: {
     ...mapMutations(['setVisibleDialogName', 'setAllInstanceExtLinks']),
     loadLibs() {
+      this.loadingLibs = true
       this.$http
         .searchCDNList({
           search: '',
@@ -128,8 +129,10 @@ export default {
         .then(({ results }) => {
           this.cssLibList = Object.freeze(results.filter((item) => item.fileType === 'css'))
           this.jsLibList = Object.freeze(results.filter((item) => item.fileType === 'js'))
+          this.loadingLibs = false
         })
-        .catch((err) => {
+        .catch(() => {
+          this.loadingLibs = false
           this.cdnError = true
         })
     },
