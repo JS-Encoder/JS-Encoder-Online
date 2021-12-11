@@ -154,22 +154,28 @@ export default {
       const f = p2b.encode({ ...this.searchForm, page: this.page })
       if (this.$route.query.f !== f) {
         const routeObj = { name: 'Explore', query: { f } }
-        this.$router.push(routeObj).catch((err) => {
-          console.log(err)
-        })
+        this.$router
+          .push(routeObj)
+          .then(() => {
+            this.getInstance()
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        this.getInstance()
       }
-      this.getInstance()
     },
     search() {
       this.$refs.searchField.blur()
-      // 每次改变条件或点击按钮查询都清空列表再查
-      this.instanceList = []
-      this.switchRoute()
+      this.newSearch()
     },
     async getInstance() {
       try {
         const { keyword, sort, prep } = this.searchForm
         // if (keyword === '') return void 0
+        // 每次改变条件或点击按钮查询都清空列表再查
+        this.instanceList = []
         this.searchLoading = true
         this.listLoading = true
         this.nothing = false
