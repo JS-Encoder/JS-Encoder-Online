@@ -76,9 +76,14 @@ export function get (url, params = {}, config = {}) {
       params,
       ...config
     }).then(res => {
+      console.log(res)
       resolve(res.data)
     }).catch(err => {
-      message.error('啊哦~服务器出了点问题😭！')
+      if (err.config.url === '/cdnJS') {
+        message.error('请求cdnJS失败')
+      } else {
+        message.error('啊哦~服务器出了点问题😭！')
+      }
       reject(err)
     })
   })
