@@ -5,7 +5,8 @@
         <template v-slot:activator="{ on, attrs }">
           <v-avatar class="avatar" v-bind="attrs" v-on="on" :size="dense?30:40" :color="loginInfo.avatar?'':'primary'">
             <v-img v-if="loginInfo.avatar" :src="qiNiuImgLink+loginInfo.avatar"></v-img>
-            <span class="white--text text-h7" v-else>{{loginInfo.nickname|preNickname}}</span>
+            <span class="white--text text-h7" :class="{'text-xs':dense}"
+              v-else>{{loginInfo.nickname|preNickname}}</span>
           </v-avatar>
         </template>
         <v-list class="user-menu">
@@ -148,6 +149,7 @@ export default {
   .user-menu-list {
     color: $light-5 !important;
     @include setTransition(color, 0.3s, ease);
+
     &:hover {
       color: $light-1 !important;
     }
