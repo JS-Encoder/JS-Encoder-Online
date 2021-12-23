@@ -1,6 +1,16 @@
 <template>
   <div id="feedback" class="d-flex flex-jcc">
-    <!-- <div class="feedback-box">
+    <div class="feedback-list d-flex borbox" v-if="showList">
+      <article class="feedback-item borbox d-flex flex-clo" v-for="(item, index) in feedbackList" :key="index">
+        <span class="title-sm">{{item.title}}</span>
+        <span class="item-content">{{item.content}}</span>
+        <div class="item-footer d-flex flex-jcb">
+          <span>{{expList[item.emoji]}}</span>
+          <span>By {{item.username}}</span>
+        </div>
+      </article>
+    </div>
+    <div class="feedback-box" v-else>
       <div class="title-xl">
         <span>快来提出你宝贵的建议吧！</span>
       </div>
@@ -23,16 +33,6 @@
         </div>
         <v-btn color="primary" :loading="loading" @click="submitSuggestion">提交建议</v-btn>
       </div>
-    </div> -->
-    <div class="feedback-list d-flex borbox" v-if="showList">
-      <article class="feedback-item borbox d-flex flex-clo" v-for="(item, index) in feedbackList" :key="index">
-        <span class="title-sm">{{item.title}}</span>
-        <span class="item-content">{{item.content}}</span>
-        <div class="item-footer d-flex flex-jcb">
-          <span>{{expList[item.emoji]}}</span>
-          <span>By {{item.username}}</span>
-        </div>
-      </article>
     </div>
   </div>
 </template>
@@ -155,18 +155,18 @@ export default {
       &:nth-child(3n) {
         order: 3;
       }
-      .item-content{
+      .item-content {
         margin-top: 5px;
         color: $light-4;
       }
-      .item-footer{
+      .item-footer {
         margin-top: 10px;
       }
     }
   }
 }
 
-@include screenLG {
+@include PC {
   #feedback {
     .feedback-box {
       width: 50%;
