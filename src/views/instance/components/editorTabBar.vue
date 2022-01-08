@@ -7,9 +7,25 @@
       </div>
     </div>
     <div class="tools d-flex flex-sh">
-      <div class="d-flex flex-ai flex-jcc" v-if="curTab === 'Markdown'" :class="{'active':mdToolbarVisible}"
+      <div class="tool d-flex flex-ai flex-jcc" v-if="curTab === 'Markdown'" :class="{'active':mdToolbarVisible}"
         @click="setMdToolbarVisible(!mdToolbarVisible)">
         <i class="icon iconfont icon-gongju1"></i>
+      </div>
+      <div class="tool other d-flex flex-ai flex-jcc">
+        <v-menu class="tools-dropdown" bottom offset-y left>
+          <template v-slot:activator="{ attrs, on }">
+            <v-btn height="25" width="25" icon v-bind="attrs" v-on="on">
+              <i class="icon iconfont icon-menu"></i>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="(item, index) in toolsList" :key="item.value"
+            class="d-flex flex-ai pointer text-sm" style="font-family:Consolas, Monaco" @click.native="selectTool(item.value)"
+            dense link>
+              <span class="flex-1">{{item.label}}</span>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
     </div>
   </div>
@@ -34,6 +50,10 @@ export default {
         TypeScript: 'icon-typescript',
         CoffeeScript: 'icon-coffeescript',
       }),
+      toolsList: [{
+        label: '格式化代码',
+        value: 'format'
+      }]
     }
   },
   mounted() {
@@ -44,6 +64,9 @@ export default {
   },
   methods: {
     ...mapMutations(['setCurTab', 'setMdToolbarVisible']),
+    selectTool(toolName){
+      this.$emit('selectTool', toolName)
+    }
   },
   components: {},
 }
@@ -102,11 +125,20 @@ export default {
   .tools {
     font-size: 18px;
     color: $light-5;
-    & > div {
+    .tool {
       width: 40px;
       cursor: pointer;
       &:hover {
         color: $light-2;
+      }
+    }
+    .other {
+      i {
+        color: $light-5;
+        cursor: pointer;
+        &:hover {
+          color: $light-2;
+        }
       }
     }
     .active {

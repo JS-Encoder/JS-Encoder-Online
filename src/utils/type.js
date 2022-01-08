@@ -20,26 +20,61 @@ function getObjType (data) {
 }
 
 /**
+ * 判断对象中是否存在循环引用
+ * @param {Object} obj
+ * @returns {Boolean}
+ */
+function judgeCyclic (obj) {
+  let stackSet = new Set()
+  let detected = false
+  const detect = (obj) => {
+    if (obj && typeof obj !== 'object') {
+      return void 0
+    }
+    if (stackSet.has(obj)) {
+      return (detected = true)
+    }
+    stackSet.add(obj)
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        detect(obj[key])
+      }
+    }
+    stackSet.delete(obj)
+  }
+  detect(obj)
+  return detected
+}
+
+/**
  * 判断数组的所有元素是不是都是基本类型
  * @param {Array} arr
  * @returns {Boolean}
  */
 function judgeBaseArray (arr) {
+  return arr.every((item) => judgeBaseType(item))
+}
+
+/**
+ * 判断数据是否为基本类型
+ * @param {Any} data
+ * @returns {Boolean}
+ */
+function judgeBaseType (data) {
   let isBase = true
-  arr.forEach((item) => {
-    const type = getType(item)
-    switch (type) {
-      case 'number':
-      case 'symbol':
-      case null:
-      case 'boolean':
-      case 'undefined':
-      case 'string':
-        break
-      default:
-        isBase = false
-    }
-  })
+  const type = getType(data)
+  switch (type) {
+    case 'number':
+    case 'symbol':
+    case null:
+    case 'boolean':
+    case 'undefined':
+    case 'string':
+    case 'bigint':
+      break
+    default:
+      isBase = false
+  }
   return isBase
 }
 
@@ -71,13 +106,9 @@ function stringifyDOM (dom) {
  * Convert the object into a string (topmost key-value pair)
  * 将对象转化成字符串（最顶层的键值对）
  * @param {Object} target
- * @param {Array} cache
  * @returns {String}
  */
-function JSONStringify (target, cache = []) {
-  // 如果缓存中存在相同的引用对象，即为循环引用
-  if (cache.includes(target)) throw 'circular reference'
-
+function JSONStringify (target) {
   let prefix = '', suffix = ''
   const type = getType(target)
   switch (type) {
@@ -143,7 +174,6 @@ function JSONStringify (target, cache = []) {
     switch (valueType) {
       case 'Array':
       case 'Object':
-        cache.push(value)
         str += JSONStringify(value)
         break
       case 'RegExp':
@@ -160,6 +190,9 @@ function JSONStringify (target, cache = []) {
         break
       case 'Error':
         str += `Error: ${JSONStringify(value.message)}`
+        break
+      case 'bigint':
+        str += `${value.toString()}n`
         break
       default:
         str += JSON.stringify(value)
@@ -206,9 +239,10 @@ function getObjAllKeys (obj) {
 export {
   getType,
   getObjType,
+  judgeCyclic,
   judgeBaseArray,
   judgeWindow,
   stringifyDOM,
   JSONStringify,
-  getObjAllKeys
+  getObjAllKeys,
 }

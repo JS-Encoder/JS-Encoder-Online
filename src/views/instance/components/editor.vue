@@ -10,7 +10,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import { codemirror } from 'vue-codemirror'
-import cmConfig from '@utils/editor/editorOpts'
+import cmConfig, { formatCode } from '@utils/editor/editorOpts'
 import { judgeMode, modeStyleList } from '@utils/editor/judgeMode'
 import { debounce } from '@utils/tools'
 import { changeFormatOptions } from '@utils/editor/codeFormatter'
@@ -163,6 +163,10 @@ export default {
     getCodeMirror() {
       return this.$refs.codeArea.codemirror
     },
+    format() {
+      const mode = judgeMode(this.codeMode)
+      formatCode(this.getCodeMirror(), mode)
+    },
     autoComplete(cm, changeObj) {
       // 在写注释的时候或者输入字符不是英文的时候不需要提示
       if (cm.state.completionActive) return void 0
@@ -179,7 +183,7 @@ export default {
         switch (codeMode) {
           case 'JavaScript': {
             lint = {
-              esversion: 10,
+              esversion: 2021,
             }
             break
           }

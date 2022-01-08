@@ -94,7 +94,10 @@ export default {
   methods: {
     ...mapMutations(['setVisibleDialogName', 'setAllInstanceSetting']),
     closeDialog() {
-      const settings = this.settings
+      const settings = { ...this.settings }
+      if (settings.lint) {
+        settings.lint = { options: { esversion: 2021 } }
+      }
       this.setAllInstanceSetting(settings)
       this.setVisibleDialogName('')
     },

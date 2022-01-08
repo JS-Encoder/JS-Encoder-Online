@@ -6,7 +6,7 @@
         <sidebar class="flex-sh"></sidebar>
         <div class="d-flex flex-1 area">
           <div class="code-area d-flex flex-clo" :style="{ width: `${editorW}px` }">
-            <editor-tab-bar></editor-tab-bar>
+            <editor-tab-bar @selectTool="selectTool"></editor-tab-bar>
             <markdown-tools v-if="mdToolbarVisible && curTab === 'Markdown'" :getCodeMirror="getCodeMirror"
               :getIframeBody="getIframeBody"></markdown-tools>
             <editor class="flex-1" v-show="item === curTab" v-for="(item, index) in prep" :key="index" :codeMode="item"
@@ -73,6 +73,8 @@ import SyncScroll from '@utils/editor/syncScroll'
 import IframeHandler from '@utils/editor/handleInstanceView'
 import IframeConsole from '@utils/editor/console'
 import handleLoop from '@utils/editor/handleLoop'
+import { judgeMode } from '@utils/editor/judgeMode'
+
 export default {
   data() {
     return {
@@ -274,6 +276,18 @@ export default {
     },
     changeFullScreenState(visible) {
       this.iframeFullScreen = visible
+    },
+    selectTool(toolName){
+      if(this.isChildrenMounted){
+        switch(toolName){
+          case 'format': {
+            const mode = judgeMode(this.curTab)
+            const tabs = [ 'HTML', 'CSS', 'JavaScript' ]
+            const index = tabs.indexOf(mode)
+            this.$refs[`editor${index}`][0].format()
+          }
+        }
+      }
     },
     getCodeMirror(index) {
       // 在codemirror组件挂载完毕，获取其内部方法

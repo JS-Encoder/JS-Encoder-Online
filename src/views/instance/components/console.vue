@@ -13,18 +13,18 @@
       </div>
       <div class="options d-flex">
         <div title="过滤器">
-          <v-menu class="filter-dropdown" top offset-y>
+          <v-menu class="filter-dropdown" top offset-y :close-on-content-click="false">
             <template v-slot:activator="{ attrs, on }">
               <v-btn height="25" width="25" icon v-bind="attrs" v-on="on">
                 <i class="icon iconfont icon-filter1"></i>
               </v-btn>
             </template>
-            <v-list>
-              <v-list-item class="d-flex flex-ai" style="font-family:Consolas, Monaco"
+            <v-list width="120">
+              <v-list-item class="d-flex flex-ai pointer text-sm" style="font-family:Consolas, Monaco"
                 v-for="(item, index) in filterList" :key="index" :class="{'active-dropdown-item':filter[item]}"
-                @click.native="filter[item]=!filter[item]">
+                @click.native="filter[item]=!filter[item]" dense link>
                 <span class="flex-1">{{item}}</span>
-                <v-icon v-show="filter[item]">mdi-check</v-icon>
+                <v-icon v-show="filter[item]" class="text-sm">mdi-check</v-icon>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -49,24 +49,24 @@
     <div class="console-body d-flex flex-clo">
       <div class="cm-list flex-1 CodeMirror cm-s-default" ref="consoleList" v-show="!settingsVisible">
         <div class="log-list" v-for="(item, index) in consoleInfo" :key="index">
-          <div class="log d-flex flex-ai" v-if="item.type==='log'|| item.type==='dir'" v-show="filter.Log">
+          <div class="log flex-ai" v-if="item.type==='log'|| item.type==='dir'" v-show="filter.Log">
             <i class="icon iconfont icon-lfmonth"></i>
             <pre class="CodeMirror-line" v-for="(value, index) in item.logs" v-html="value" :key="index"></pre>
           </div>
-          <div class="mix d-flex flex-ai" v-if="item.type==='mix'">
+          <div class="mix flex-ai" v-if="item.type==='mix'" v-show="filter.Log">
             <i class="icon iconfont icon-lfmonth"></i>
             <codemirror class="code-log" v-show="settings.highlight" v-once :options="codeOptions" :value="item.content"
               :ref="`logArea${index}`" @hook:mounted="cmFold(index)">
             </codemirror>
             <div class="code-log" v-show="!settings.highlight" v-once>{{item.content}}</div>
           </div>
-          <div class="info d-flex flex-ai" v-if="item.type==='info'" v-show="filter.Info">
+          <div class="info flex-ai" v-if="item.type==='info'" v-show="filter.Info">
             <i class="icon iconfont icon-info"></i>
             <pre class="CodeMirror-line d-flex">
               <span class="content">{{item.content}}</span>
             </pre>
           </div>
-          <div class="system-error d-flex flex-ai" v-if="item.type==='system-error'" v-show="filter.Error">
+          <div class="system-error flex-ai" v-if="item.type==='system-error'" v-show="filter.Error">
             <i class="icon iconfont icon-error1"></i>
             <pre class="CodeMirror-line d-flex">
               <span class="content">{{item.content}}</span>
@@ -74,25 +74,25 @@
               <span class="col">col: {{item.col}}</span>
             </pre>
           </div>
-          <div class="error d-flex flex-ai" v-if="item.type==='error'" v-show="filter.Error">
+          <div class="error flex-ai" v-if="item.type==='error'" v-show="filter.Error">
             <i class="icon iconfont icon-error1"></i>
             <pre class="CodeMirror-line d-flex">
               <span class="content">{{item.content}}</span>
             </pre>
           </div>
-          <div class="warn d-flex flex-ai" v-if="item.type==='warn'" v-show="filter.Warning">
+          <div class="warn flex-ai" v-if="item.type==='warn'" v-show="filter.Warning">
             <i class="icon iconfont icon-warn1"></i>
             <pre class="CodeMirror-line d-flex">
               <span class="content">{{item.content}}</span>
             </pre>
           </div>
-          <div class="print d-flex flex-ai" v-if="item.type==='print'">
+          <div class="print flex-ai" v-if="item.type==='print'">
             <i class="icon iconfont icon-lfmonth"></i>
             <pre class="CodeMirror-line d-flex" v-html="item.logs[0]">
               <span class="content">{{item.content}}</span>
             </pre>
           </div>
-          <div class="mix-print d-flex flex-ai" v-if="item.type==='mixPrint'">
+          <div class="mix-print flex-ai" v-if="item.type==='mixPrint'">
             <i class="icon iconfont icon-lfmonth"></i>
             <codemirror class="code-log" v-show="settings.highlight" v-once :value="item.content"
               :ref="`logArea${index}`" :options="codeOptions" @hook:mounted="cmFold(index)">
@@ -448,6 +448,7 @@ export default {
           box-sizing: border-box;
           padding: 0 10px;
           min-height: 25px;
+          display: flex;
           ::v-deep.vue-codemirror {
             width: 100%;
             .CodeMirror {
