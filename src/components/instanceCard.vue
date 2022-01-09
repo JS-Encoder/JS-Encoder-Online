@@ -18,7 +18,7 @@
         <user-card :avatar="info.userPicture" :myFollow="info.myFollow" :username="info.username" :nickname="info.name"
           :about="info.description"></user-card>
       </v-menu>
-      <div class="instance-info d-flex flex-clo pointer">
+      <div class="instance-info d-flex flex-clo flex-start pointer">
         <span class="text-sm" :title="info.exampleName">{{info.exampleName}}</span>
         <span class="text-xs author" @click="viewUserProfile">{{info.name}}</span>
       </div>

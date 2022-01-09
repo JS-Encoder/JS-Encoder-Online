@@ -5,7 +5,7 @@
 function copyToClip (content) {
   // 由于execCommand面临被废弃的问题，使用navigator.clipboard替代它
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(info)
+    navigator.clipboard.writeText(content)
   } else {
     const aux = document.createElement('input')
     aux.setAttribute('value', content)
