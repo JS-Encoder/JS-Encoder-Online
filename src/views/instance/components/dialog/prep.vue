@@ -44,6 +44,11 @@ export default {
     visibleDialogName(name) {
       this.visible = this.name === name
     },
+    visible(newState) {
+      if(newState){
+        this.prepList = [...this.prep]
+      }
+    }
   },
   methods: {
     ...mapMutations(['setVisibleDialogName', 'setPrep', 'setCurTab']),

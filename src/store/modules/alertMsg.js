@@ -1,5 +1,3 @@
-import Vue from 'vue'
-
 /**
  * 通过vuex管理snackbar信息
  */

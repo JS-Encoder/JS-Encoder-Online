@@ -20,6 +20,11 @@ export default {
     return {
       menuList: Object.freeze([
         {
+          text: '模板',
+          name: 'templates',
+          icon: 'icon-template'
+        },
+        {
           text: '预处理语言',
           name: 'prep',
           icon: 'icon-shalou',

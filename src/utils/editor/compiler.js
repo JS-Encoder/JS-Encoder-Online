@@ -4,31 +4,10 @@
 
 import { externalLinks } from '../cdn'
 import Loader from '../loader'
-const loader = new Loader()
 
 const publicPath = process.env.BASE_URL
-const cdn = {
-  typeScript: 'https://cdn.jsdelivr.net/npm/browserified-typescript@0.3.0/index.js',
-  coffeeScript: 'https://cdn.jsdelivr.net/npm/coffeescript@2.5.1/lib/coffeescript-browser-compiler-legacy/coffeescript.js'
-}
+const loader = new Loader()
 
-/**
- * 将script插入head以引入外部js
- * @param {String} source 文件路径
- * @returns {Primary}
- */
-async function createScript (source) {
-  const head = document.getElementsByTagName('head')[0]
-  const script = document.createElement('script')
-  script.type = 'text/javascript'
-  script.src = source
-  head.appendChild(script)
-  return new Promise((resolve, reject) => {
-    script.onload = () => {
-      resolve()
-    }
-  })
-}
 async function compileMarkdown (code) {
   let highlightJS, marked
   if (!loader.get('highlight')) {
@@ -100,7 +79,7 @@ async function compileStylus (code) {
   if (!loader.get('stylus')) {
     // 将stylus.js添加到head中
     // const source = `${publicPath}js/compiler/stylus.js`
-    await createScript(externalLinks.stylus).then(() => {
+    await loader.loadScript(externalLinks.stylus).then(() => {
       loader.set('stylus', true)
     })
   }
@@ -113,7 +92,7 @@ async function compileStylus (code) {
 }
 async function compileTypeScript (code) {
   if (!loader.get('typeScript')) {
-    await createScript(cdn.typeScript).then(() => {
+    await loader.loadScript(cdn.typeScript).then(() => {
       loader.set('typeScript', true)
     })
   }
@@ -128,11 +107,19 @@ async function compileTypeScript (code) {
 }
 async function compileCoffeeScript (code) {
   if (!loader.get('coffeeScript')) {
-    await createScript(cdn.coffeeScript).then(() => {
+    await loader.loadScript(cdn.coffeeScript).then(() => {
       loader.set('coffeeScript', true)
     })
   }
   return window.CoffeeScript.compile(code)
+}
+async function compileJSX (code) {
+  if (!loader.get('JSX')) {
+    await loader.loadScript(externalLinks.babel).then(() => {
+      loader.set('JSX', true)
+    })
+  }
+  return window.Babel.transform(code, { presets: ['react'] }).code
 }
 async function compileHTML (code, prep) {
   switch (prep) {
@@ -187,6 +174,13 @@ async function compileJS (code, prep) {
       break
     case 'CoffeeScript':
       await compileCoffeeScript(code).then(res => {
+        code = res
+      }).catch(err => {
+        console.log(err)
+      })
+      break
+    case 'JSX':
+      await compileJSX(code).then(res => {
         code = res
       }).catch(err => {
         console.log(err)

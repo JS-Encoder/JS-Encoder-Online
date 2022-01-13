@@ -74,6 +74,9 @@ const instance = {
   },
   setHasUploadCode: (state, status) => {
     state.hasUploadCode = status
+  },
+  setShouldResetCode: (state, status) => {
+    state.shouldResetCode = status
   }
 }
 

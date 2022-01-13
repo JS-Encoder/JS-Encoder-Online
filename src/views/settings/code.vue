@@ -66,7 +66,7 @@ import { codemirror } from 'vue-codemirror'
 import '@assets/themes/default.css'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/lib/codemirror.css'
-import localStore from '@utils/local-storage'
+import localStore from '@utils/localStorage'
 export default {
   data() {
     return {

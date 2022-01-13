@@ -76,7 +76,6 @@ export function get (url, params = {}, config = {}) {
       params,
       ...config
     }).then(res => {
-      console.log(res)
       resolve(res.data)
     }).catch(err => {
       if (err.config.url === '/cdnJS') {

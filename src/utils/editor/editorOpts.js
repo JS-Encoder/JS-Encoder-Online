@@ -12,6 +12,7 @@ import markdownTools from './markdownTools'
 
 // 语言高亮
 import 'codemirror/mode/javascript/javascript'
+import 'codemirror/mode/jsx/jsx'
 import 'codemirror/mode/pug/pug'
 import 'codemirror/mode/xml/xml'
 import 'codemirror/mode/css/css'
@@ -148,17 +149,7 @@ const formatCode = (cm, mode) => {
   if (cm.getOption('mode') === 'text/md-mix') {
     return void 0
   } else {
-    switch (mode) {
-      case 'HTML':
-        finCode = formatter.formatHtml(code)
-        break
-      case 'CSS':
-        finCode = formatter.formatCss(code)
-        break
-      case 'JavaScript':
-        finCode = formatter.formatJavaScript(code)
-        break
-    }
+    finCode = formatter.format(code, mode)
   }
   cm.setValue(finCode)
   cm.setCursor(cursor)

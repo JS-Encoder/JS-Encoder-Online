@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '@views/home'
 import store from '@store/index.js'
 import cookie from '@utils/cookie'
-import localStore from '@utils/local-storage'
+import localStore from '@utils/localStorage'
 
 Vue.use(VueRouter)
 

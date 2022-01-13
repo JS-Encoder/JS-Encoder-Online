@@ -2,9 +2,25 @@
  * 缓存模块，防止多次引入相同模块
  */
 
- class Loader {
+class Loader {
   constructor() {
-    this.map = {}
+    if (!Loader.instance) {
+      Loader.instance = this
+      this.map = {}
+    }
+    return Loader.instance
+  }
+  async loadScript (url) {
+    const head = document.getElementsByTagName('head')[0]
+    const script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.src = url
+    head.appendChild(script)
+    return new Promise((resolve, reject) => {
+      script.onload = () => {
+        resolve()
+      }
+    })
   }
   async loadUrl (url) {
     let text = ''
@@ -19,8 +35,8 @@
   set (k, v) {
     this.map[k] = v
   }
-  has(k){
-    return this.map.hasOwnProperty()
+  has (k) {
+    return this.map.hasOwnProperty(k)
   }
   get (k) {
     return this.map[k]

@@ -49,6 +49,7 @@ export default {
         JavaScript: 'icon-javascript',
         TypeScript: 'icon-typescript',
         CoffeeScript: 'icon-coffeescript',
+        JSX: 'icon-jsx'
       }),
       toolsList: [{
         label: '格式化代码',
@@ -176,5 +177,8 @@ export default {
 }
 .icon-coffeescript {
   color: $pink-2;
+}
+.icon-jsx {
+  color: #61dafb;
 }
 </style>

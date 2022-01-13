@@ -44,8 +44,10 @@ export default {
     setTimeout(() => {
       if (this.showCodeArea) {
         const codeArea = this.$refs.codeArea
-        codeArea.refresh()
-        codeArea.codemirror.focus()
+        if(codeArea) {
+          codeArea.refresh()
+          codeArea.codemirror.focus()
+        }
       }
     })
   },
@@ -56,6 +58,7 @@ export default {
       'mdToolbarVisible',
       'curTab',
       'hasUploadCode',
+      'shouldResetCode'
     ]),
     fontStyle() {
       const { family: fontFamily, size: fontSize } = this.instanceSetting.font
@@ -77,6 +80,16 @@ export default {
       const codeOptions = this.codeOptions
       codeOptions.mode = modeStyleList[newMode]
       codeOptions.lint = this.getLintOpts(newMode)
+    },
+    shouldResetCode(newState) {
+      if (newState) {
+        const codeMode = this.codeMode
+        const mode = judgeMode(codeMode)
+        this.code = this.instanceCode[mode]
+        this.$nextTick(() => {
+          this.setShouldResetCode(false)
+        })
+      }
     },
     showCodeArea(newState) {
       // 确保当前编辑窗口获取焦点
@@ -112,7 +125,7 @@ export default {
       codeOptions.tabSize = newState
       codeOptions.indentUnit = newState
       changeFormatOptions({
-        attr: 'indent_size',
+        attr: 'tabWidth',
         val: newState,
       })
     },
@@ -139,13 +152,13 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['setInstanceCode']),
+    ...mapMutations(['setInstanceCode', 'setShouldResetCode']),
     initEditor() {
       // 初始化编辑器配置
       const instanceCode = this.instanceCode
       const codeMode = this.codeMode
       const mode = judgeMode(codeMode)
-      this.codeOptions = cmConfig(mode)
+      this.codeOptions = cmConfig(codeMode)
       const codeOptions = this.codeOptions
       codeOptions.mode = modeStyleList[codeMode]
       codeOptions.lint = this.getLintOpts(codeMode)
@@ -153,7 +166,7 @@ export default {
       // 观察者会在组件初始化完就执行，因此需要在给编辑器赋予初始代码之后才执行
       this.watchCode = this.$watch(
         'code',
-        debounce(function (code, oldCode) {
+        debounce(function (code) {
           const mode = judgeMode(this.codeMode)
           this.setInstanceCode({ mode, code })
           if (this.instanceSetting.autoExecute) this.$emit('runCode', true)
@@ -164,8 +177,7 @@ export default {
       return this.$refs.codeArea.codemirror
     },
     format() {
-      const mode = judgeMode(this.codeMode)
-      formatCode(this.getCodeMirror(), mode)
+      formatCode(this.getCodeMirror(), this.codeMode)
     },
     autoComplete(cm, changeObj) {
       // 在写注释的时候或者输入字符不是英文的时候不需要提示

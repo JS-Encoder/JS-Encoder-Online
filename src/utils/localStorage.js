@@ -8,7 +8,7 @@ const localStorage = window.localStorage
  */
 function set (key, val) {
   if (!key) return void 0
-  return localStorage.setItem(key, val)
+  return localStorage.setItem(key, JSON.stringify(val))
 }
 
 /**
@@ -18,7 +18,13 @@ function set (key, val) {
  */
 function get (key) {
   if (!key) return void 0
-  return localStorage.getItem(key)
+  let result = localStorage.getItem(key)
+  try {
+    result = JSON.parse(result)
+  } catch(err) {
+    console.log(err)
+  }
+  return result
 }
 
 /**

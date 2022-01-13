@@ -33,7 +33,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import localStore from '@utils/local-storage'
+import localStore from '@utils/localStorage'
 import { qiNiuImgLink } from '@utils/publicData'
 import cookie from '@utils/cookie'
 export default {
@@ -120,7 +120,6 @@ export default {
             okText: '登出',
           }).then((isLogout) => {
             if (!isLogout) return void 0
-            console.log(isLogout)
             // 删除登录身份凭证
             cookie.del('AUTH_TOKEN')
             // 取消自动登录

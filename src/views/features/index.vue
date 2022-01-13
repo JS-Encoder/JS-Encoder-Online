@@ -33,7 +33,7 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import localStorage from '@utils/local-storage'
+import localStorage from '@utils/localStorage'
 export default {
   name: 'Features',
   data() {

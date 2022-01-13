@@ -21,11 +21,11 @@ const fontSizeList = [10, 12, 14, 16, 18, 20, 22, 24, 26]
 const defPrepOpts = {
   HTML: ['HTML', 'Markdown', 'Pug'],
   CSS: ['CSS', 'Sass', 'Scss', 'Less', 'Stylus'],
-  JavaScript: ['JavaScript', 'TypeScript', 'CoffeeScript'],
+  JavaScript: ['JavaScript', 'TypeScript', 'CoffeeScript', 'JSX'],
 }
 
 // 上传文件等后缀名列表
-const limitMimeType = ['html', 'css', 'js', 'md', 'pug', 'sass', 'scss', 'less', 'styl', 'ts', 'coffee']
+const limitMimeType = ['html', 'css', 'js', 'jsx', 'md', 'pug', 'sass', 'scss', 'less', 'styl', 'ts', 'coffee']
 
 // const qiNiuImgLink = isProd?'//images.lliiooiill.cn/':'//images.firstbird.asia/'
 const qiNiuImgLink = isProd ? '/images/' : '/images/'

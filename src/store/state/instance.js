@@ -65,7 +65,9 @@ const instance = {
 
   iframeInit: false, // iframe是否被初始化过
 
-  hasUploadCode: false // 当前是否有代码上传
+  hasUploadCode: false, // 当前是否有代码上传
+
+  shouldResetCode: false // 是否需要更新编辑器代码
 }
 
 export default instance

@@ -15,7 +15,7 @@ import { mapState, mapMutations, mapGetters } from 'vuex'
 import Instance from './components/instance.vue'
 import InstanceLoader from './components/loader.vue'
 import IframeHandler from '@utils/editor/handleInstanceView'
-import localStore from '@utils/local-storage'
+import localStore from '@utils/localStorage'
 /* css */
 import '@assets/css/codemirror.css'
 import '@assets/css/codemirror-dialog.css'
@@ -31,7 +31,6 @@ export default {
       clientWidth: window.innerWidth,
       clientHeight: document.documentElement.clientHeight,
       tip: '实例页面加载中',
-      rendered: false,
     }
   },
   mounted() {
@@ -84,7 +83,6 @@ export default {
       this.setIframeH(iframeH + avgH)
       this.setConsoleH(consoleH + avgH)
     },
-    $route() {},
   },
   computed: {
     ...mapState([
@@ -112,15 +110,19 @@ export default {
       'setAllInstanceSetting',
       'setAllInstanceExtLinks',
       'resetInstanceState',
+      'setVisibleDialogName'
     ]),
     async init() {
-      this.rendered = false
       this.loaded = false
       await this.initInstanceInfo()
       await this.calcSize()
       // 完成后隐藏全页面的加载动画
       this.loaded = true
-      this.rendered = true
+      this.$nextTick(() => {
+        if (this.$route.name === 'NewWork') {
+          this.setVisibleDialogName('templates')
+        }
+      })
     },
     async calcSize() {
       this.tip = '实例页面加载中'
@@ -231,6 +233,7 @@ export default {
       }).then((isLogout) => {
         if (isLogout) {
           IframeHandler.clearIframe()
+          this.setVisibleDialogName('')
           this.resetInstanceState()
         }
         next(isLogout)

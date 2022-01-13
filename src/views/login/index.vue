@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import localStore from '@utils/local-storage'
+import localStore from '@utils/localStorage'
 import { mapState, mapMutations } from 'vuex'
 import { randomCSRFToken } from '@utils/tools'
 import cookie from '@utils/cookie'

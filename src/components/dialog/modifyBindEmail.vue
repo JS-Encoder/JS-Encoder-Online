@@ -38,7 +38,7 @@
 import { mapMutations, mapState } from 'vuex'
 import regexpList from '@utils/regexp'
 import cookie from '@utils/cookie'
-import localStore from '@utils/local-storage'
+import localStore from '@utils/localStorage'
 export default {
   data() {
     return {

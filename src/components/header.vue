@@ -39,7 +39,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import HeaderAccount from './headerAccount.vue'
-import localStorage from '@utils/local-storage'
+import localStorage from '@utils/localStorage'
 
 export default {
   data() {

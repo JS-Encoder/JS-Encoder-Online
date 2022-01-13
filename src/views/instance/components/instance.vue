@@ -35,6 +35,7 @@
       </div>
       <instance-footer :isCompiling="isCompiling" :cursorPos="cursorPos"></instance-footer>
     </div>
+    <template-dialog></template-dialog>
     <prep-dialog></prep-dialog>
     <library-dialog></library-dialog>
     <settings-dialog></settings-dialog>
@@ -57,6 +58,7 @@ import Console from './console.vue'
 import InstanceFooter from './footer.vue'
 
 /* dialog */
+import TemplateDialog from './dialog/template.vue'
 import PrepDialog from './dialog/prep.vue'
 import LibraryDialog from './dialog/library.vue'
 import SettingsDialog from './dialog/settings.vue'
@@ -339,6 +341,7 @@ export default {
     UploadDialog,
     DownloadDialog,
     ShortcutDialog,
+    TemplateDialog
   },
 }
 </script>

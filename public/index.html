@@ -8,14 +8,11 @@
   <meta name="Author" content="lliiooiill" />
   <meta name="keywords" content="JS Encoder,code,editor,compiler,front end,online" />
   <meta name="description" content="JS Encoder 是一个可以分享代码，共同学习的在线编码平台。" />
-  <link rel="stylesheet" href="https://at.alicdn.com/t/font_2729832_67wlsu7avuh.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_2729832_ypfuohm322p.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
   <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.css) { %>
     <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.cdn.css[i] %>" />
-  <% } %>
-  <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
-    <script type="text/javascript" src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
   <% } %>
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
   <title><%= htmlWebpackPlugin.options.title %></title>
@@ -27,6 +24,10 @@
         Please enable it to continue.</strong>
   </noscript>
   <div id="app"></div>
+  <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
+    <script type="text/javascript" src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
+  <% } %>
+  <script src="https://unpkg.com/prettier@2.5.1/parser-typescript.js"></script>
 </body>
 
 </html>
