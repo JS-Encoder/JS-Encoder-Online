@@ -24,7 +24,12 @@ const iframeLinks = {
   ]
 }
 
+const formatLinks = {
+  typeScript: 'https://unpkg.com/prettier@2.5.1/parser-typescript.js'
+}
+
 export {
   externalLinks,
-  iframeLinks
+  iframeLinks,
+  formatLinks
 }

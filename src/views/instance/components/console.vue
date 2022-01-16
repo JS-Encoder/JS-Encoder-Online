@@ -228,7 +228,7 @@ export default {
     },
     initOptions() {
       const codeOptions = {
-        mode: 'text/javascript',
+        mode: 'text/jsx',
         readOnly: 'nocursor',
         matchBrackets: false,
         scrollPastEnd: false,
@@ -239,7 +239,7 @@ export default {
       }
       this.codeOptions = codeOptions
       const cmdOptions = {
-        mode: 'text/javascript',
+        mode: 'text/jsx',
         lineWrapping: true,
       }
       this.cmdOptions = cmdOptions

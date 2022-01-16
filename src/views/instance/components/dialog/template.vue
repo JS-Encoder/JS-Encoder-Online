@@ -20,7 +20,7 @@
               :key="template.label"
               @click="selectTemplate(template.label)"
             >
-              <img :src="`${publicPath}images/${template.svgName}.svg`" :alt="template.label" />
+              <img :src="`/images/${template.svgName}.svg`" :alt="template.label" />
               <span class="name">{{ template.label }}</span>
             </div>
           </div>

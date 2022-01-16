@@ -24,6 +24,7 @@
     "flowchart.js": "^1.15.0",
     "highlight.js": "^11.2.0",
     "htmlhint": "^0.15.1",
+    "js-beautify": "^1.13.5",
     "jshint": "^2.13.1",
     "jszip": "^3.7.1",
     "katex": "^0.13.16",
