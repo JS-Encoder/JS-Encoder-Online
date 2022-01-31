@@ -14,12 +14,12 @@ const cdn = {
     less: 'less',
   },
   js: [
-    'https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js',
-    'https://cdn.bootcdn.net/ajax/libs/vuex/3.5.1/vuex.min.js',
-    'https://cdn.bootcdn.net/ajax/libs/vue-router/3.2.0/vue-router.min.js',
-    'https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.min.js',
-    'https://cdn.bootcdn.net/ajax/libs/vuetify/2.4.0/vuetify.min.js',
-    'https://cdn.bootcdn.net/ajax/libs/less.js/3.12.2/less.min.js'
+    'https://cdn.staticfile.org/vue/2.6.11/vue.min.js',
+    'https://cdn.staticfile.org/vuex/3.5.1/vuex.min.js',
+    'https://cdn.staticfile.org/vue-router/3.2.0/vue-router.min.js',
+    'https://cdn.staticfile.org/axios/0.19.2/axios.min.js',
+    'https://cdn.staticfile.org/vuetify/2.4.0/vuetify.min.js',
+    'https://cdn.staticfile.org/less.js/3.12.2/less.min.js'
   ]
 }
 // 本地环境是否需要使用cdn
