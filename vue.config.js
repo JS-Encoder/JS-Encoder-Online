@@ -12,6 +12,8 @@ const cdn = {
     axios: 'axios',
     vuetify: 'vuetify',
     less: 'less',
+    jszip: 'JSZip',
+    prettier: 'prettier',
   },
   js: [
     'https://cdn.staticfile.org/vue/2.6.11/vue.min.js',
@@ -19,7 +21,9 @@ const cdn = {
     'https://cdn.staticfile.org/vue-router/3.2.0/vue-router.min.js',
     'https://cdn.staticfile.org/axios/0.19.2/axios.min.js',
     'https://cdn.staticfile.org/vuetify/2.4.0/vuetify.min.js',
-    'https://cdn.staticfile.org/less.js/3.12.2/less.min.js'
+    'https://cdn.staticfile.org/less.js/3.12.2/less.min.js',
+    'https://cdn.staticfile.org/jszip/3.7.1/jszip.min.js',
+    'https://cdn.staticfile.org/prettier/2.5.1/standalone.min.js',
   ]
 }
 // 本地环境是否需要使用cdn
@@ -51,12 +55,12 @@ module.exports = {
           '^/githubApi': '',
         },
       },
-      '/cdnJS': {
-        target: 'https://api.cdnjs.com/libraries',
+      '/qiNiuCdn': {
+        target: 'http://picstore.lliiooiill.cn',
         secure: true,
         changeOrigin: true,
         pathRewrite: {
-          '^/cdnJS': '',
+          '^/qiNiuCdn': '',
         },
       },
       '/qiNiu': {

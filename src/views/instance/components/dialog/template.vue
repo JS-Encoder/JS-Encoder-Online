@@ -20,7 +20,7 @@
               :key="template.label"
               @click="selectTemplate(template.label)"
             >
-              <img :src="`/images/${template.svgName}.svg`" :alt="template.label" />
+              <img :src="`/qiNiuCdn/${template.svgName}.svg`" :alt="template.label" />
               <span class="name">{{ template.label }}</span>
             </div>
           </div>
@@ -55,7 +55,7 @@ export default {
           preprocessor: ['HTML', 'CSS', 'JavaScript'],
           links: {
             cssLinks: [],
-            JSLinks: ['https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js']
+            JSLinks: ['https://cdn.staticfile.org/vue/2.6.14/vue.min.js']
           },
           code: {
             HTML: '<div id=\"app\">\n\t{{ message }}\n</div>',
@@ -67,7 +67,7 @@ export default {
           preprocessor: ['HTML', 'CSS', 'JavaScript'],
           links: {
             cssLinks: [],
-            JSLinks: ['https://unpkg.com/vue@next']
+            JSLinks: ['https://cdn.staticfile.org/vue/3.2.31/vue.global.min.js']
           },
           code: {
             HTML: '<div id=\"app\">\n\t{{message}}\n</div>',
@@ -80,8 +80,8 @@ export default {
           links: {
             cssLinks: [],
             JSLinks: [
-              'https://unpkg.com/react@17/umd/react.development.js',
-              'https://unpkg.com/react-dom@17/umd/react-dom.development.js'
+              'https://cdn.staticfile.org/react/17.0.0/umd/react.development.min.js',
+              'https://cdn.staticfile.org/react-dom/17.0.0/umd/react-dom.development.min.js'
             ]
           },
           code: {
@@ -94,7 +94,7 @@ export default {
           preprocessor: ['HTML', 'CSS', 'JavaScript'],
           links: {
             cssLinks: [],
-            JSLinks: ['https://unpkg.com/angular@1.8.2/angular.js']
+            JSLinks: ['https://cdn.staticfile.org/angular.js/1.8.0/angular.min.js']
           },
           code: {
             HTML: `<div ng-app="myApp" ng-controller="myCtrl">\n\t{{message}}\n</div>`,

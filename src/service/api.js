@@ -6,7 +6,7 @@ const api = {
   /* 获取仓库最高版本 */
   repoLatestV: () => get('/githubApi/repositories/396618645/releases/latest'),
   /* cdn 列表 */
-  searchCDNList: (params) => get('/cdnJS', params),
+  searchCDNList: () => get('/qiNiuCdn/cdn.json'),
 
   /* 用户名是否唯一 */
   usernameUnique: (params) => get('/api/index/isDuplicate', params),

@@ -122,10 +122,7 @@ export default {
     loadLibs() {
       this.loadingLibs = true
       this.$http
-        .searchCDNList({
-          search: '',
-          fields: 'version,fileType',
-        })
+        .searchCDNList()
         .then(({ results }) => {
           this.cssLibList = Object.freeze(results.filter((item) => item.fileType === 'css'))
           this.jsLibList = Object.freeze(results.filter((item) => item.fileType === 'js'))
