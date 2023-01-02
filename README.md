@@ -6,6 +6,8 @@
 
 <p align="center">👉 一个由 Vue.js 和 Codemirror 构建的前端代码在线编辑分享平台 👈</p>
 
+<p align="center">JS-Encoder-Online由于后台服务器已过期，目前已停止维护，无法访问后台数据，请见谅</p>
+
 查看[离线版 JS-Encoder](https://github.com/Longgererer/JS-Encoder)
 
 ## 新特性 🌟
